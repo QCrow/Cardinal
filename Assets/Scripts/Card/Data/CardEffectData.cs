@@ -8,7 +8,7 @@ using System.Collections.Generic;
 /// specific game effects based on the provided information.
 /// </summary>
 [System.Serializable]
-public class EffectData
+public class CardEffectData
 {
     public string Keyword;
     public string Trigger;

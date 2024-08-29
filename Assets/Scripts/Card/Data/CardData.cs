@@ -11,17 +11,17 @@ public abstract class CardData
 {
     public int ID;
     public string CardName;
-    public List<EffectData> Effects = new();
+    public List<CardEffectData> Effects = new();
     public List<string> ValidTargets = new();
 
     protected CardData() { }
 
     // Constructor for CardData
-    protected CardData(int id, string cardName, List<EffectData> effects, List<string> validTargets)
+    protected CardData(int id, string cardName, List<CardEffectData> effects, List<string> validTargets)
     {
         ID = id;
         CardName = cardName;
-        Effects = effects ?? new List<EffectData>();  // Initialize with an empty list if null
+        Effects = effects ?? new List<CardEffectData>();  // Initialize with an empty list if null
         ValidTargets = validTargets ?? new List<string>();  // Initialize with an empty list if null
     }
 }
@@ -34,7 +34,7 @@ public class BuildingCardData : CardData
     public BuildingCardData() { }
 
     // Constructor for BuildingCardData
-    public BuildingCardData(int id, string cardName, List<EffectData> effects, List<string> validTargets, List<string> buildingTraits)
+    public BuildingCardData(int id, string cardName, List<CardEffectData> effects, List<string> validTargets, List<string> buildingTraits)
         : base(id, cardName, effects, validTargets)
     {
         BuildingTraits = buildingTraits ?? new List<string>();  // Initialize with an empty list if null
@@ -48,7 +48,7 @@ public class SpellCardData : CardData
     public SpellCardData() { }
 
     // Constructor for SpellCardData
-    public SpellCardData(int id, string cardName, List<EffectData> effects, List<string> validTargets, int targetRange)
+    public SpellCardData(int id, string cardName, List<CardEffectData> effects, List<string> validTargets, int targetRange)
         : base(id, cardName, effects, validTargets)
     {
         TargetRange = targetRange;
