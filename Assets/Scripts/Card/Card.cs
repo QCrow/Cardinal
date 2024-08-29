@@ -19,7 +19,6 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     private Vector3 _initialPosition;
     private Transform _initialParent;
 
-    //? This might not be needed in the future, right now is kept in for early dev
     [HideInInspector] public Slot Slot;
 
     private void Start()

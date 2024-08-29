@@ -5,19 +5,17 @@ using Newtonsoft.Json;
 using UnityEditor;
 using System.IO;
 
-[CreateAssetMenu(fileName = "CardScriptable", menuName = "CardScriptable", order = 0)]
-public class CardScriptable : SerializedScriptableObject
+public abstract class CardScriptable : SerializedScriptableObject
 {
     [JsonIgnore]
     private int _prevID;
-
     [OnValueChanged("ValidateAndUpdateID")]
     public int ID;
-    public string CardName;
-    public Dictionary<string, int> Products;
-    public List<EffectData> Effects;
 
-    public string PlaceableCondition;
+    public string CardName;
+    public List<EffectData> Effects = new();
+    public List<string> ValidTargets = new();
+
 
     private void OnEnable()
     {
@@ -56,13 +54,4 @@ public class CardScriptable : SerializedScriptableObject
         AssetDatabase.Refresh();
         Debug.Log($"Card ID updated to {ID} and asset file renamed.");
     }
-}
-
-[System.Serializable]
-public class EffectData
-{
-    public string Keyword;
-    public string Trigger;
-    public List<int> Values;
-    public List<string> Modifiers;
 }

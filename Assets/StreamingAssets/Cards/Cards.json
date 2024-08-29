@@ -1,0 +1,30 @@
+[
+  {
+    "$type": "BuildingCardData, Assembly-CSharp",
+    "BuildingTraits": ["Production", "Nature"],
+    "ID": 1,
+    "CardName": "Void Energy Spring",
+    "Effects": [
+      {
+        "Keyword": "Produce Energy",
+        "Trigger": "End Turn",
+        "Values": [2]
+      }
+    ],
+    "ValidTargets": []
+  },
+  {
+    "$type": "SpellCardData, Assembly-CSharp",
+    "TargetRange": 1,
+    "ID": 2,
+    "CardName": "Get To Work!",
+    "Effects": [
+      {
+        "Keyword": "Apply Overwork",
+        "Trigger": "On Play",
+        "Values": [1]
+      }
+    ],
+    "ValidTargets": []
+  }
+]

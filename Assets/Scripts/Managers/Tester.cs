@@ -6,8 +6,6 @@ public class Tester : MonoBehaviour
     public Canvas UICanvas;
     public GameObject Hand;
 
-    public GameObject Target;
-
     private GameObject _card;
 
     void Start()
@@ -19,14 +17,9 @@ public class Tester : MonoBehaviour
         _card = Instantiate(BuildingCardPrefab, Hand.transform);
         buildingCard = _card.GetComponent<BuildingCard>();
         buildingCard.Initialize(1, "Test Card", "Nothing fancy, seems just to be a test card.", ColorType.YELLOW);
-    }
 
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            TransformUtil.MoveTo(_card, Target);
-            _card.transform.SetParent(Target.transform);
-        }
+        CardManager.Instance.LoadCards();
+        CardData data = CardManager.Instance.GetCardDataByID(1);
+        Debug.Log(data.CardName);
     }
 }

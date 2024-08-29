@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using System.Collections.Generic;
 
 public class CardVisual : MonoBehaviour
 {
@@ -35,11 +34,6 @@ public class CardVisual : MonoBehaviour
         _cardDescriptionContainer.SetActive(true);
         TMP_Text cardDescriptionText = Instantiate(_cardDescriptionComponentPrefab, _cardDescriptionContainer.transform).GetComponentInChildren<TMP_Text>();
         cardDescriptionText.text = cardDescription;
-    }
-
-    private void SetCardDescription(List<BuildingCardEffect> effects)
-    {
-        //TODO: To be implemented
     }
 }
 
