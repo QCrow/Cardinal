@@ -6,8 +6,6 @@ public class Tester : MonoBehaviour
     public Canvas UICanvas;
     public GameObject Hand;
 
-    public GameObject Target;
-
     private GameObject _card;
 
     void Start()
@@ -19,41 +17,9 @@ public class Tester : MonoBehaviour
         _card = Instantiate(BuildingCardPrefab, Hand.transform);
         buildingCard = _card.GetComponent<BuildingCard>();
         buildingCard.Initialize(1, "Test Card", "Nothing fancy, seems just to be a test card.", ColorType.YELLOW);
-    }
-
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            TransformUtil.MoveTo(_card, Target);
-            _card.transform.SetParent(Target.transform);
-        }
-
-        if (Input.GetKeyDown(KeyCode.W))
-        {
-            ResourceManager.Instance.ModifyResource(ResourceType.Food, 10);
-        }
-        else if (Input.GetKeyDown(KeyCode.Q))
-        {
-            ResourceManager.Instance.ModifyResource(ResourceType.Energy, 10);
-        }
-        else if (Input.GetKeyDown(KeyCode.E))
-        {
-            ResourceManager.Instance.ModifyResource(ResourceType.Morale, 10);
-        }
-
-        // Decrease resources
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            ResourceManager.Instance.ModifyResource(ResourceType.Food, -10);
-        }
-        else if (Input.GetKeyDown(KeyCode.A))
-        {
-            ResourceManager.Instance.ModifyResource(ResourceType.Energy, -10);
-        }
-        else if (Input.GetKeyDown(KeyCode.D))
-        {
-            ResourceManager.Instance.ModifyResource(ResourceType.Morale, -10);
-        }
+        
+        CardManager.Instance.LoadCards();
+        CardData data = CardManager.Instance.GetCardDataByID(1);
+        Debug.Log(data.CardName);
     }
 }
