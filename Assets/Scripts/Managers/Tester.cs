@@ -28,5 +28,32 @@ public class Tester : MonoBehaviour
             TransformUtil.MoveTo(_card, Target);
             _card.transform.SetParent(Target.transform);
         }
+
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            ResourceManager.Instance.ModifyResource(ResourceType.Food, 10);
+        }
+        else if (Input.GetKeyDown(KeyCode.Q))
+        {
+            ResourceManager.Instance.ModifyResource(ResourceType.Energy, 10);
+        }
+        else if (Input.GetKeyDown(KeyCode.E))
+        {
+            ResourceManager.Instance.ModifyResource(ResourceType.Morale, 10);
+        }
+
+        // Decrease resources
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            ResourceManager.Instance.ModifyResource(ResourceType.Food, -10);
+        }
+        else if (Input.GetKeyDown(KeyCode.A))
+        {
+            ResourceManager.Instance.ModifyResource(ResourceType.Energy, -10);
+        }
+        else if (Input.GetKeyDown(KeyCode.D))
+        {
+            ResourceManager.Instance.ModifyResource(ResourceType.Morale, -10);
+        }
     }
 }
