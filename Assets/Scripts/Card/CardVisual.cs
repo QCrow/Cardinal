@@ -16,7 +16,7 @@ public class CardVisual : MonoBehaviour
     [SerializeField] private GameObject _cardDescriptionContainer;
     [SerializeField] private GameObject _cardDescriptionComponentPrefab;
 
-    public void Initialize(int cardID, string cardName, string cardDescription, ColorType buildingColor)
+    public void Initialize(int cardID, string cardName)
     {
         CardName = cardName;
 
@@ -25,8 +25,9 @@ public class CardVisual : MonoBehaviour
         if (icon == null) Debug.LogError($"Icon not found for card ID {cardID}");
         else CardIcon = icon;
 
-        BackgroundColor = ColorUtil.GetColorFromBuildingColor(buildingColor);
-        SetCardDescription(cardDescription);
+        // BackgroundColor = ColorUtil.GetColorFromBuildingColor(buildingColor);
+        BackgroundColor = new Color(0.949f, 0.506f, 0.306f); // TODO: This will eventually be changed to match either the trait or other argument
+        SetCardDescription("Placeholder");
     }
 
     private void SetCardDescription(string cardDescription)
