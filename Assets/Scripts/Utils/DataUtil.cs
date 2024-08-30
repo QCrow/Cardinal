@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.Reflection;
+using System;
+using Newtonsoft.Json.Linq;
 
 public class DataUtil : MonoBehaviour
 {
@@ -33,19 +35,16 @@ public class DataUtil : MonoBehaviour
         }
     }
 
-    #region Cards
-    // Helper class for deserialization
-    private class CardData
+    readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings
     {
-        public int ID;
-        public string CardName;
-        public Dictionary<string, int> Products;
-        public List<EffectData> Effects;
-        public string PlaceableCondition;
-    }
+        ContractResolver = new CustomContractResolver(),
+        Formatting = Formatting.Indented,
+        TypeNameHandling = TypeNameHandling.Auto
+    };
 
+    #region Cards
     /// <summary>
-    /// Serializes all CardScriptable objects found in the specified path to a single JSON file.
+    /// Serializes all <see cref="CardScriptable"/> objects found in the specified path to a single JSON file.
     /// </summary>
     [Button("Save to JSON")]
     private void SerializeAllCardsToJson()
@@ -56,43 +55,61 @@ public class DataUtil : MonoBehaviour
 
         try
         {
-            // Ensure the serialized directory exists
+            // Ensure the serialized directory exists, create it if not
             Directory.CreateDirectory(cardSerializedPath);
 
             // Find all CardScriptable objects in the specified path
             string[] guids = AssetDatabase.FindAssets("t:CardScriptable", new[] { cardScriptablePath });
-            List<CardScriptable> cardList = new List<CardScriptable>();
+            List<CardData> cardList = new List<CardData>();
 
             // Load each CardScriptable object and add it to the list
             foreach (string guid in guids)
             {
                 string path = AssetDatabase.GUIDToAssetPath(guid);
                 CardScriptable card = AssetDatabase.LoadAssetAtPath<CardScriptable>(path);
-                if (card)
-                {
-                    cardList.Add(card);
-                }
-                else
+
+                if (card == null)
                 {
                     Debug.LogWarning($"Failed to load CardScriptable at path: {path}");
+                    continue;
+                }
+
+                // Handle each specific type of CardScriptable and map it to the corresponding CardData
+                if (card is BuildingCardScriptable buildingCard)
+                {
+                    BuildingCardData data = new BuildingCardData(
+                        buildingCard.ID,
+                        buildingCard.CardName,
+                        buildingCard.Effects,
+                        buildingCard.ValidTargets,
+                        buildingCard.BuildingTraits
+                    );
+                    cardList.Add(data);
+                }
+                else if (card is SpellCardScriptable spellCard)
+                {
+                    SpellCardData data = new SpellCardData(
+                        spellCard.ID,
+                        spellCard.CardName,
+                        spellCard.Effects,
+                        spellCard.ValidTargets,
+                        spellCard.TargetRange
+                    );
+                    cardList.Add(data);
                 }
             }
 
             // Check if any CardScriptable objects were found
             if (cardList.Count == 0)
             {
-                Debug.LogWarning("No CardScriptable objects found to serialize");
+                Debug.LogWarning("No CardScriptable objects found to serialize.");
                 return;
             }
 
-            var settings = new JsonSerializerSettings
-            {
-                ContractResolver = new CustomContractResolver(),
-                Formatting = Formatting.Indented
-            };
+
 
             // Serialize the list of CardScriptable objects to JSON
-            string json = JsonConvert.SerializeObject(cardList, settings);
+            string json = JsonConvert.SerializeObject(cardList, _jsonSettings);
 
             // Define the file path for saving the serialized JSON
             string filePath = Path.Combine(cardSerializedPath, _cardJsonName);
@@ -107,7 +124,8 @@ public class DataUtil : MonoBehaviour
         }
         catch (System.Exception ex)
         {
-            Debug.LogError($"Failed to serialize CardScriptable objects: {ex.Message}");
+            // Log detailed error information
+            Debug.LogError($"Failed to serialize CardScriptable objects: {ex.Message}\n{ex.StackTrace}");
         }
     }
 
@@ -118,7 +136,7 @@ public class DataUtil : MonoBehaviour
         string json = File.ReadAllText(jsonPath);
 
         // Using the helper data class to avoid directly constructing scriptable objects
-        List<CardData> cardDatas = JsonConvert.DeserializeObject<List<CardData>>(json);
+        List<CardData> cardDatas = JsonConvert.DeserializeObject<List<CardData>>(json, _jsonSettings);
 
         // Delete all existing scriptable objects in the scriptable directory
         string directory = Path.Combine(_scriptablePath, "Cards");
@@ -138,16 +156,26 @@ public class DataUtil : MonoBehaviour
 
         foreach (var cardData in cardDatas)
         {
-            CardScriptable cardScriptable = ScriptableObject.CreateInstance<CardScriptable>();
-
-            cardScriptable.ID = cardData.ID;
-            cardScriptable.CardName = cardData.CardName;
-            cardScriptable.Products = cardData.Products;
-            cardScriptable.Effects = cardData.Effects;
-            cardScriptable.PlaceableCondition = cardData.PlaceableCondition;
-            cardScriptable.name = $"Card_{cardData.ID}";
-
-            SaveCardAsset(cardScriptable);
+            if (cardData is BuildingCardData buildingCardData)
+            {
+                BuildingCardScriptable card = ScriptableObject.CreateInstance<BuildingCardScriptable>();
+                card.ID = buildingCardData.ID;
+                card.CardName = buildingCardData.CardName;
+                card.Effects = buildingCardData.Effects;
+                card.BuildingTraits = buildingCardData.BuildingTraits;
+                card.name = $"Card_{buildingCardData.ID}";
+                SaveCardAsset(card);
+            }
+            else if (cardData is SpellCardData spellCardData)
+            {
+                SpellCardScriptable card = ScriptableObject.CreateInstance<SpellCardScriptable>();
+                card.ID = spellCardData.ID;
+                card.CardName = spellCardData.CardName;
+                card.Effects = spellCardData.Effects;
+                card.TargetRange = spellCardData.TargetRange;
+                card.name = $"Card_{spellCardData.ID}";
+                SaveCardAsset(card);
+            }
         }
 
         AssetDatabase.SaveAssets();

@@ -8,8 +8,8 @@ public class BuildingCard : Card
 
     public Dictionary<ColorType, int> BUildingOutput { get; set; }
 
-    public List<BuildingCardEffect> OnPlayEffects;
-    public List<BuildingCardEffect> OnTurnEndEffects;
+    // public List<BuildingCardEffect> OnPlayEffects;
+    // public List<BuildingCardEffect> OnTurnEndEffects;
 
     //TODO: Add initializers for additional properties
     public void Initialize(int cardID, string cardName, string cardDescription, ColorType colorType)
