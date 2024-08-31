@@ -7,6 +7,7 @@ using UnityEngine;
 public abstract class CardEffect
 {
     public int Value;
+    public List<CardCondition> Conditions;
 
     public CardEffect(int value)
     {
@@ -16,34 +17,34 @@ public abstract class CardEffect
     /// <summary>
     /// Resolves the effect on the target slots.
     /// </summary>
-    public abstract bool ResolveEffect(List<Slot> targetSlots);
+    public abstract bool ResolveEffect(List<Slot> targets);
 }
 
 /// <summary>
 /// Applies a sequence of card effects in order.
 /// Each effect in the sequence must be successfully resolved for the next effect to be applied.
-/// Example: A SequenceEffect might first consume resources (ConsumeEffect),
-/// followed by producing an output (ProduceEffect).
+/// Example: A SequenceCardEffect might first consume resources (ConsumeCardEffect),
+/// followed by producing an output (ProduceCardEffect).
 /// </summary>
-public class SequenceEffect : CardEffect
+public class SequenceCardEffect : CardEffect
 {
     public List<CardEffect> Effects { get; set; }
 
-    public SequenceEffect(int value) : base(value)
+    public SequenceCardEffect(int value) : base(value)
     {
         Effects = new();
     }
 
-    public SequenceEffect(int value, List<CardEffect> effects) : base(value)
+    public SequenceCardEffect(int value, List<CardEffect> effects) : base(value)
     {
         Effects = effects;
     }
 
-    public override bool ResolveEffect(List<Slot> targetSlots)
+    public override bool ResolveEffect(List<Slot> targets)
     {
         foreach (var effect in Effects)
         {
-            if (!effect.ResolveEffect(targetSlots)) return false;
+            if (!effect.ResolveEffect(targets)) return false;
         }
         return true;
     }
@@ -52,16 +53,16 @@ public class SequenceEffect : CardEffect
 /// <summary>
 /// Produces a specific type of product.
 /// </summary>
-public class ProduceEffect : CardEffect
+public class ProduceCardEffect : CardEffect
 {
     public string ProductType { get; set; }
 
-    public ProduceEffect(int value, string productType) : base(value)
+    public ProduceCardEffect(int value, string productType) : base(value)
     {
         ProductType = productType;
     }
 
-    public override bool ResolveEffect(List<Slot> targetSlots)
+    public override bool ResolveEffect(List<Slot> targets)
     {
         Debug.Log($"Producing {Value} {ProductType}");
         return true;
@@ -71,18 +72,19 @@ public class ProduceEffect : CardEffect
 /// <summary>
 /// Consumes a specific type of product.
 /// </summary>
-public class ConsumeEffect : CardEffect
+public class ConsumeCardEffect : CardEffect
 {
     public string ProductType { get; set; }
 
-    public ConsumeEffect(int value, string productType) : base(value)
+    public ConsumeCardEffect(int value, string productType) : base(value)
     {
         ProductType = productType;
     }
 
-    public override bool ResolveEffect(List<Slot> targetSlots)
+    public override bool ResolveEffect(List<Slot> targets)
     {
         Debug.Log($"Consuming {Value} {ProductType}");
         return true;
     }
 }
+

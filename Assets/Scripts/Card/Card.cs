@@ -11,8 +11,9 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     // TODO: Make some of these variables into private field
     public int CardID;
     public string CardName;
+
     // Effect using resolve trigger as key for quick access
-    public Dictionary<string, List<CardEffect>> Effects = new(); //? Data structure might be changed in the future
+    public Dictionary<CardEffectTriggerType, List<CardCondition>> ConditionsWithEffects = new();
     public List<string> ValidTargets = new(); // TODO: Make this into enum
 
     [HideInInspector] public Slot Slot;
