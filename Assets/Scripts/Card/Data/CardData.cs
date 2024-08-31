@@ -11,18 +11,18 @@ public abstract class CardData
 {
     public int ID;
     public string CardName;
-    public List<CardEffectData> Effects = new();
+    public List<CardConditionData> ConditionsWithEffects = new();
     public List<string> ValidTargets = new();
 
     protected CardData() { }
 
     // Constructor for CardData
-    protected CardData(int id, string cardName, List<CardEffectData> effects, List<string> validTargets)
+    protected CardData(int id, string cardName, List<CardConditionData> conditionsWithEffects, List<string> validTargets)
     {
         ID = id;
         CardName = cardName;
-        Effects = effects ?? new List<CardEffectData>();  // Initialize with an empty list if null
-        ValidTargets = validTargets ?? new List<string>();  // Initialize with an empty list if null
+        ConditionsWithEffects = conditionsWithEffects;  // Initialize with an empty list if null
+        ValidTargets = validTargets;  // Initialize with an empty list if null
     }
 }
 
@@ -34,10 +34,10 @@ public class BuildingCardData : CardData
     public BuildingCardData() { }
 
     // Constructor for BuildingCardData
-    public BuildingCardData(int id, string cardName, List<CardEffectData> effects, List<string> validTargets, List<string> buildingTraits)
-        : base(id, cardName, effects, validTargets)
+    public BuildingCardData(int id, string cardName, List<CardConditionData> conditionsWithEffects, List<string> validTargets, List<string> buildingTraits)
+        : base(id, cardName, conditionsWithEffects, validTargets)
     {
-        BuildingTraits = buildingTraits ?? new List<string>();  // Initialize with an empty list if null
+        BuildingTraits = buildingTraits;  // Initialize with an empty list if null
     }
 }
 
@@ -48,8 +48,8 @@ public class SpellCardData : CardData
     public SpellCardData() { }
 
     // Constructor for SpellCardData
-    public SpellCardData(int id, string cardName, List<CardEffectData> effects, List<string> validTargets, int targetRange)
-        : base(id, cardName, effects, validTargets)
+    public SpellCardData(int id, string cardName, List<CardConditionData> conditionsWithEffects, List<string> validTargets, int targetRange)
+        : base(id, cardName, conditionsWithEffects, validTargets)
     {
         TargetRange = targetRange;
     }
