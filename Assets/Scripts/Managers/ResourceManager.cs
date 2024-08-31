@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ResourceManager : MonoBehaviour
@@ -40,33 +38,33 @@ public class ResourceManager : MonoBehaviour
 
     private void InitializeResources()
     {
-        _energy = new Resource(98, 99); 
+        _energy = new Resource(98, 99);
         _food = new Resource(50, 99);    // Food starts at 50, with a max of 99
-        _morale = new Resource(75, 99);  
+        _morale = new Resource(75, 99);
 
         // Initialize UI display
         _resourceUIDisplay.InitializeUI(_energy.CurrentValue, _food.CurrentValue, _morale.CurrentValue);
     }
 
-    public void ModifyResource(ResourceType type, int amount)
+    public void ModifyResourceCurrentValueByAmount(ResourceType type, int amount)
     {
         switch (type)
         {
             case ResourceType.Energy:
-                _energy.Increase(amount);
+                _energy.CurrentValue += amount;
                 break;
             case ResourceType.Food:
-                _food.Increase(amount);
+                _food.CurrentValue += amount;
                 break;
             case ResourceType.Morale:
-                _morale.Increase(amount);
+                _morale.CurrentValue += amount;
                 break;
         }
 
         _resourceUIDisplay.UpdateResourceUI(type);
     }
 
-    public int GetResourceValue(ResourceType type)
+    public int GetResourceCurrentValue(ResourceType type)
     {
         return type switch
         {

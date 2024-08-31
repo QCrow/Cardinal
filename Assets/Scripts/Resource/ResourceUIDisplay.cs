@@ -39,7 +39,7 @@ public class ResourceUIDisplay : MonoBehaviour
     {
         if (_resourceUIMap.TryGetValue(type, out GameObject resourceUI))
         {
-            int newValue = ResourceManager.Instance.GetResourceValue(type);
+            int newValue = ResourceManager.Instance.GetResourceCurrentValue(type);
             UpdateResourceValueText(resourceUI, newValue);
         }
     }
