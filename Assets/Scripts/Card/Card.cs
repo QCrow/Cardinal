@@ -3,12 +3,26 @@ using UnityEngine.EventSystems;
 using System.Collections;
 using DG.Tweening;
 using UnityEngine.UI;
+using System.Collections.Generic;
+using Sirenix.OdinInspector;
+using System.Runtime.CompilerServices;
 
-public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
+public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
 {
-    [SerializeField] private int _cardID;
-    public int CardID { get => _cardID; protected set => _cardID = value; }
+    #region Logic related variables
+    // TODO: Make some of these variables into private field
+    public int CardID;
+    public string CardName;
 
+    // Effect using resolve trigger as key for quick access
+    public Dictionary<CardEffectTriggerType, List<CardCondition>> ConditionsWithEffects = new();
+    public List<string> ValidTargets = new(); // TODO: Make this into enum
+
+    [HideInInspector] public Slot Slot;
+    #endregion
+
+    // TODO: Might need to refactor visual to make it cleanly separate from logic
+    #region Visual related variables
     [SerializeField] protected CardVisual _cardVisual;
 
     public bool IsHovering;
@@ -18,8 +32,8 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
     private Vector3 _initialPosition;
     private Transform _initialParent;
+    #endregion
 
-    [HideInInspector] public Slot Slot;
 
     private void Start()
     {
@@ -90,6 +104,7 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         {
             //TODO: Change the condition to check if the card is placeable with the tile
             TransformUtil.MoveToAndSetParent(gameObject, Slot.gameObject);
+            EffectResolveManager.Instance.ResolveOnPlayEffects(this);
         }
         GameManager.Instance.SelectedCard = null;
         StartCoroutine(WaitForEndOfFrame());
@@ -111,3 +126,5 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         }
     }
 }
+
+

@@ -1,22 +1,18 @@
 using System.Collections.Generic;
 
-
 public class BuildingCard : Card
 {
-    private ColorType _colorType;
-    public ColorType ColorType { get => _colorType; set => _colorType = value; }
+    public List<string> Traits = new();
+    public Dictionary<CardModifier, int> Modifiers = new();
 
-    public Dictionary<ColorType, int> BUildingOutput { get; set; }
-
-    // public List<BuildingCardEffect> OnPlayEffects;
-    // public List<BuildingCardEffect> OnTurnEndEffects;
-
-    //TODO: Add initializers for additional properties
-    public void Initialize(int cardID, string cardName, string cardDescription, ColorType colorType)
+    public void Initialize(int cardID, string cardName, Dictionary<CardEffectTriggerType, List<CardCondition>> conditionsWithEffects, List<string> validTargets, List<string> traits)
     {
+        _cardVisual.Initialize(cardID, cardName);
         CardID = cardID;
-        _colorType = colorType;
-
-        _cardVisual.Initialize(cardID, cardName, cardDescription, colorType);
+        CardName = cardName;
+        ConditionsWithEffects = conditionsWithEffects;
+        ValidTargets = validTargets;
+        Traits = traits;
+        Modifiers = new();
     }
 }

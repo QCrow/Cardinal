@@ -6,8 +6,6 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.Reflection;
-using System;
-using Newtonsoft.Json.Linq;
 
 public class DataUtil : MonoBehaviour
 {
@@ -80,9 +78,9 @@ public class DataUtil : MonoBehaviour
                     BuildingCardData data = new BuildingCardData(
                         buildingCard.ID,
                         buildingCard.CardName,
-                        buildingCard.Effects,
+                        buildingCard.ConditionsWithEffects,
                         buildingCard.ValidTargets,
-                        buildingCard.BuildingTraits
+                        buildingCard.Traits
                     );
                     cardList.Add(data);
                 }
@@ -91,7 +89,7 @@ public class DataUtil : MonoBehaviour
                     SpellCardData data = new SpellCardData(
                         spellCard.ID,
                         spellCard.CardName,
-                        spellCard.Effects,
+                        spellCard.ConditionsWithEffects,
                         spellCard.ValidTargets,
                         spellCard.TargetRange
                     );
@@ -159,21 +157,21 @@ public class DataUtil : MonoBehaviour
             if (cardData is BuildingCardData buildingCardData)
             {
                 BuildingCardScriptable card = ScriptableObject.CreateInstance<BuildingCardScriptable>();
-                card.ID = buildingCardData.ID;
+                card.ID = buildingCardData.CardID;
                 card.CardName = buildingCardData.CardName;
-                card.Effects = buildingCardData.Effects;
-                card.BuildingTraits = buildingCardData.BuildingTraits;
-                card.name = $"Card_{buildingCardData.ID}";
+                card.ConditionsWithEffects = buildingCardData.ConditionsWithEffects;
+                card.Traits = buildingCardData.Traits;
+                card.name = $"Card_{buildingCardData.CardID}";
                 SaveCardAsset(card);
             }
             else if (cardData is SpellCardData spellCardData)
             {
                 SpellCardScriptable card = ScriptableObject.CreateInstance<SpellCardScriptable>();
-                card.ID = spellCardData.ID;
+                card.ID = spellCardData.CardID;
                 card.CardName = spellCardData.CardName;
-                card.Effects = spellCardData.Effects;
+                card.ConditionsWithEffects = spellCardData.ConditionsWithEffects;
                 card.TargetRange = spellCardData.TargetRange;
-                card.name = $"Card_{spellCardData.ID}";
+                card.name = $"Card_{spellCardData.CardID}";
                 SaveCardAsset(card);
             }
         }

@@ -22,12 +22,16 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   ID: 1
-  CardName: Void Energy Spring
-  Effects:
-  - Keyword: Produce Energy
-    Trigger: End Turn
-    Values: 02000000
+  CardName: Simple Energy Producer
+  ConditionsWithEffects:
+  - Type: Always
+    Trigger: 1
+    Effects:
+    - Keyword: Produce Energy
+      Values: 02000000
+    - Keyword: Produce Food
+      Values: 03000000
+    Value: 0
   ValidTargets: []
-  BuildingTraits:
+  Traits:
   - Production
-  - Nature

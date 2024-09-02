@@ -1,4 +1,3 @@
-
 using System.Collections.Generic;
 
 /// <summary>
@@ -11,6 +10,5 @@ using System.Collections.Generic;
 public class CardEffectData
 {
     public string Keyword;
-    public string Trigger;
     public List<int> Values = new();
 }

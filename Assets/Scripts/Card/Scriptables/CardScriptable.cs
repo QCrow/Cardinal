@@ -13,7 +13,7 @@ public abstract class CardScriptable : SerializedScriptableObject
     public int ID;
 
     public string CardName;
-    public List<CardEffectData> Effects = new();
+    public List<CardConditionData> ConditionsWithEffects = new();
     public List<string> ValidTargets = new();
 
 

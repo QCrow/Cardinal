@@ -1,30 +1,72 @@
 [
   {
     "$type": "BuildingCardData, Assembly-CSharp",
-    "BuildingTraits": ["Production", "Nature"],
-    "ID": 1,
-    "CardName": "Void Energy Spring",
-    "Effects": [
+    "Traits": [
+      "Production"
+    ],
+    "CardID": 1,
+    "CardName": "Simple Energy Producer",
+    "ConditionsWithEffects": [
       {
-        "Keyword": "Produce Energy",
-        "Trigger": "End Turn",
-        "Values": [2]
+        "Type": "Always",
+        "Trigger": 1,
+        "Effects": [
+          {
+            "Keyword": "Produce Energy",
+            "Values": [
+              2
+            ]
+          },
+          {
+            "Keyword": "Produce Food",
+            "Values": [
+              3
+            ]
+          }
+        ],
+        "Value": 0
       }
     ],
     "ValidTargets": []
   },
   {
-    "$type": "SpellCardData, Assembly-CSharp",
-    "TargetRange": 1,
-    "ID": 2,
-    "CardName": "Get To Work!",
-    "Effects": [
+    "$type": "BuildingCardData, Assembly-CSharp",
+    "Traits": [
+      "Production",
+      "Energy"
+    ],
+    "CardID": 101,
+    "CardName": "Countdown Energy Producer",
+    "ConditionsWithEffects": [
       {
-        "Keyword": "Apply Overwork",
-        "Trigger": "On Play",
-        "Values": [1]
+        "Type": "Countdown",
+        "Trigger": 1,
+        "Effects": [
+          {
+            "Keyword": "Produce Energy",
+            "Values": [
+              4
+            ]
+          }
+        ],
+        "Value": 5
+      },
+      {
+        "Type": "Always",
+        "Trigger": 0,
+        "Effects": [
+          {
+            "Keyword": "Consume Pollution",
+            "Values": [
+              1
+            ]
+          }
+        ],
+        "Value": 0
       }
     ],
-    "ValidTargets": []
+    "ValidTargets": [
+      "Empty"
+    ]
   }
 ]
