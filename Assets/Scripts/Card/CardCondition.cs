@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 public abstract class CardCondition
 {
@@ -36,8 +37,10 @@ public class CountdownCondition : CardCondition
     public override bool Validate()
     {
         CurrentValue--;
+        Debug.Log($"Counting down. The count after is {CurrentValue}");
         if (CurrentValue == 0)
         {
+            Debug.Log($"Resetting value to {Value}");
             CurrentValue = Value;
             return true;
         }

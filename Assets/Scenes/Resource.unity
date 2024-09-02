@@ -401,7 +401,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 580985490}
-  - component: {fileID: 580985489}
+  - component: {fileID: 580985491}
   m_Layer: 0
   m_Name: ResourceUIDisplay
   m_TagString: Untagged
@@ -409,22 +409,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &580985489
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 580985488}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a8534753e6d8654e96add540873a6fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _energyUIPrefab: {fileID: 3980114692712251495, guid: 1cc8e73871771f44e87392c58b8638a2, type: 3}
-  _foodUIPrefab: {fileID: 4754308451644696843, guid: 0a0cbb0c4594a324c84f367ae5360c61, type: 3}
-  _moraleUIPrefab: {fileID: 4754308451644696843, guid: 1508860d89bee4740abb0429663f7c05, type: 3}
-  _resourceCanvas: {fileID: 776401812}
 --- !u!4 &580985490
 Transform:
   m_ObjectHideFlags: 0
@@ -440,6 +424,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &580985491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 580985488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a8534753e6d8654e96add540873a6fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _energyUIPrefab: {fileID: 3980114692712251495, guid: 1cc8e73871771f44e87392c58b8638a2, type: 3}
+  _foodUIPrefab: {fileID: 4754308451644696843, guid: 0a0cbb0c4594a324c84f367ae5360c61, type: 3}
+  _moraleUIPrefab: {fileID: 4754308451644696843, guid: 1508860d89bee4740abb0429663f7c05, type: 3}
+  _resourceCanvas: {fileID: 776401812}
 --- !u!1 &770911230
 GameObject:
   m_ObjectHideFlags: 0
@@ -1138,7 +1138,7 @@ MonoBehaviour:
   BuildingCardPrefab: {fileID: 4989164418008828193, guid: 4ca2356f784df4c438e6bc16002e2026, type: 3}
   UICanvas: {fileID: 1830563415}
   Hand: {fileID: 1658228152}
-  Target: {fileID: 0}
+  _initialCards: 
 --- !u!1 &2008038940
 GameObject:
   m_ObjectHideFlags: 0
@@ -1177,7 +1177,7 @@ MonoBehaviour:
   _morale:
     _currentValue: 0
     _maxValue: 0
-  _resourceUIDisplay: {fileID: 580985489}
+  _resourceUIDisplay: {fileID: 580985491}
 --- !u!4 &2008038942
 Transform:
   m_ObjectHideFlags: 0

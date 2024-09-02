@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -42,6 +41,7 @@ public class GameManager : MonoBehaviour
 
     public void EndTurn()
     {
-
+        Debug.Log("END TURN");
+        EffectResolveManager.Instance.ResolveEndTurnEffects();
     }
 }

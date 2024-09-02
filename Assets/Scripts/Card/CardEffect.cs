@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -63,7 +64,21 @@ public class ProduceCardEffect : CardEffect
 
     public override bool ResolveEffect(List<Slot> targets)
     {
-        Debug.Log($"Producing {Value} {ProductType}");
+        // Debug.Log($"Producing {Value} {ProductType}");
+        switch (ProductType)
+        {
+            case "Energy":
+                ResourceManager.Instance.ModifyResourceCurrentValueByAmount(ResourceType.Energy, Value);
+                break;
+            case "Food":
+                ResourceManager.Instance.ModifyResourceCurrentValueByAmount(ResourceType.Food, Value);
+                break;
+            case "Morale":
+                ResourceManager.Instance.ModifyResourceCurrentValueByAmount(ResourceType.Morale, Value);
+                break;
+            default:
+                throw new NotSupportedException($"Resource '{ProductType}' is not supported or implemented yet.");
+        }
         return true;
     }
 }

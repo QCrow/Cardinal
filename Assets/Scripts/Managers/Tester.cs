@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Tester : MonoBehaviour
@@ -8,13 +9,18 @@ public class Tester : MonoBehaviour
 
     private GameObject _card;
 
+    [SerializeField] List<int> _initialCards = new();
+
     void Start()
     {
-        _card = Instantiate(BuildingCardPrefab, Hand.transform);
         CardManager.Instance.LoadCards();
-        CardData cardData = CardManager.Instance.GetCardDataByID(101);
-        CardFactory.CreateCard(_card.GetComponent<BuildingCard>(), cardData);
-        _card.transform.SetParent(Hand.transform);
+        foreach (int cardID in _initialCards)
+        {
+            _card = Instantiate(BuildingCardPrefab, Hand.transform);
+            CardData cardData = CardManager.Instance.GetCardDataByID(cardID);
+            CardFactory.CreateCard(_card.GetComponent<BuildingCard>(), cardData);
+            _card.transform.SetParent(Hand.transform); // TODO: Have a Hand data structure which holds the cards in hand
+        }
     }
 
     private void Update()

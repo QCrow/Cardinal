@@ -5,6 +5,7 @@ using DG.Tweening;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
+using System.Runtime.CompilerServices;
 
 public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
 {
@@ -103,6 +104,7 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
         {
             //TODO: Change the condition to check if the card is placeable with the tile
             TransformUtil.MoveToAndSetParent(gameObject, Slot.gameObject);
+            EffectResolveManager.Instance.ResolveOnPlayEffects(this);
         }
         GameManager.Instance.SelectedCard = null;
         StartCoroutine(WaitForEndOfFrame());
@@ -124,3 +126,5 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
         }
     }
 }
+
+

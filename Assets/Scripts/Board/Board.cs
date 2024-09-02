@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
 
 /// <summary>
@@ -60,6 +61,11 @@ public class Board : MonoBehaviour
         }
     }
 
+    public List<List<Slot>> GetAllSlots()
+    {
+        return _slots;
+    }
+
 #nullable enable
     /// <summary>
     /// Retrieves the slot at the specified row and column position
@@ -82,5 +88,15 @@ public class Board : MonoBehaviour
     public Slot? GetSlotByOffset(int row, int col, int rowOffset, int colOffset)
     {
         return GetSlotAtPosition(row + rowOffset, col + colOffset);
+    }
+
+    public Card? GetCardAtPosition(int row, int col)
+    {
+        if (row < 0 || col < 0 || row >= _unitHeight || col >= _unitWidth)
+        {
+            return null;  // Return null for invalid positions
+        }
+
+        return _slots[row][col].Card;
     }
 }
