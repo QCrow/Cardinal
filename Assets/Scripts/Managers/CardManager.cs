@@ -75,7 +75,7 @@ public class CardManager : MonoBehaviour
         List<CardData> cardDatas = JsonConvert.DeserializeObject<List<CardData>>(json, _jsonSettings);
         foreach (CardData data in cardDatas)
         {
-            _cardDictionary[data.ID] = data;
+            _cardDictionary[data.CardID] = data;
         }
     }
 

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -38,4 +39,9 @@ public class GameManager : MonoBehaviour
     public Card SelectedCard { get => _selectedCard; set => _selectedCard = value; }
 
     public Camera UICamera; //TODO: To be removed and placed elsewhere
+
+    public void EndTurn()
+    {
+
+    }
 }

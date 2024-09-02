@@ -9,7 +9,7 @@ using UnityEngine.Playables;
 [System.Serializable]
 public abstract class CardData
 {
-    public int ID;
+    public int CardID;
     public string CardName;
     public List<CardConditionData> ConditionsWithEffects = new();
     public List<string> ValidTargets = new();
@@ -19,7 +19,7 @@ public abstract class CardData
     // Constructor for CardData
     protected CardData(int id, string cardName, List<CardConditionData> conditionsWithEffects, List<string> validTargets)
     {
-        ID = id;
+        CardID = id;
         CardName = cardName;
         ConditionsWithEffects = conditionsWithEffects;  // Initialize with an empty list if null
         ValidTargets = validTargets;  // Initialize with an empty list if null
@@ -29,15 +29,15 @@ public abstract class CardData
 
 public class BuildingCardData : CardData
 {
-    public List<string> BuildingTraits = new();
+    public List<string> Traits = new();
 
     public BuildingCardData() { }
 
     // Constructor for BuildingCardData
-    public BuildingCardData(int id, string cardName, List<CardConditionData> conditionsWithEffects, List<string> validTargets, List<string> buildingTraits)
+    public BuildingCardData(int id, string cardName, List<CardConditionData> conditionsWithEffects, List<string> validTargets, List<string> traits)
         : base(id, cardName, conditionsWithEffects, validTargets)
     {
-        BuildingTraits = buildingTraits;  // Initialize with an empty list if null
+        Traits = traits;  // Initialize with an empty list if null
     }
 }
 

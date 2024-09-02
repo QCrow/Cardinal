@@ -10,16 +10,18 @@ public class Tester : MonoBehaviour
 
     void Start()
     {
-        // _card = Instantiate(BuildingCardPrefab, Hand.transform);
-        // BuildingCard buildingCard = _card.GetComponent<BuildingCard>();
-        // buildingCard.Initialize(1, "Test Card");
+        _card = Instantiate(BuildingCardPrefab, Hand.transform);
+        CardManager.Instance.LoadCards();
+        CardData cardData = CardManager.Instance.GetCardDataByID(101);
+        CardFactory.CreateCard(_card.GetComponent<BuildingCard>(), cardData);
+        _card.transform.SetParent(Hand.transform);
+    }
 
-        // _card = Instantiate(BuildingCardPrefab, Hand.transform);
-        // buildingCard = _card.GetComponent<BuildingCard>();
-        // buildingCard.Initialize(1, "Test Card");
-
-        // CardManager.Instance.LoadCards();
-        // CardData data = CardManager.Instance.GetCardDataByID(1);
-        // Debug.Log(data.CardName);
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            GameManager.Instance.EndTurn();
+        }
     }
 }

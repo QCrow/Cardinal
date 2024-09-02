@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71f7b167897d6114ebb66a49cfdf2dfd, type: 3}
-  m_Name: Card_2
+  m_Script: {fileID: 11500000, guid: 496600889dec57f4681e0180196138d9, type: 3}
+  m_Name: Card_101
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -21,11 +21,23 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  ID: 2
-  CardName: Get To Work!
-  Effects:
-  - Keyword: Apply Overwork
-    Trigger: On Play
-    Values: 01000000
-  ValidTargets: []
-  TargetRange: 1
+  ID: 101
+  CardName: Countdown Energy Producer
+  ConditionsWithEffects:
+  - Type: Countdown
+    Trigger: 1
+    Effects:
+    - Keyword: Produce Energy
+      Values: 04000000
+    Value: 5
+  - Type: Always
+    Trigger: 0
+    Effects:
+    - Keyword: Consume Pollution
+      Values: 01000000
+    Value: 0
+  ValidTargets:
+  - Empty
+  Traits:
+  - Production
+  - Energy

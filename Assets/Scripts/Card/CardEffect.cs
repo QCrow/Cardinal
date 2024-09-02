@@ -7,7 +7,6 @@ using UnityEngine;
 public abstract class CardEffect
 {
     public int Value;
-    public List<CardCondition> Conditions;
 
     public CardEffect(int value)
     {
@@ -55,7 +54,7 @@ public class SequenceCardEffect : CardEffect
 /// </summary>
 public class ProduceCardEffect : CardEffect
 {
-    public string ProductType { get; set; }
+    public string ProductType;
 
     public ProduceCardEffect(int value, string productType) : base(value)
     {
