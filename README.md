@@ -75,6 +75,7 @@ Feel free to add more by creating `doc/update-readme` branch and update this.
   - `hotfix/hotfix-description` for urgent fixes
   - `doc/update-readme` for documentation updates
   - `chore/task-name` for routine tasks such as updating packages or refactoring
+  - `test/test-feature` for tests on current feature
 
 ## Code Conventions
 
