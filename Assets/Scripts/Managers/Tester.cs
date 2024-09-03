@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class Tester : MonoBehaviour
@@ -11,17 +12,29 @@ public class Tester : MonoBehaviour
 
     [SerializeField] List<int> _initialCards = new();
 
-    void Start()
+#nullable enable
+    async void Start()
     {
-        CardManager.Instance.LoadCards();
+        // Load cards asynchronously and wait for it to complete
+        await CardManager.Instance.LoadCardsAsync();
+
+        // Proceed with card generation after loading is complete
         foreach (int cardID in _initialCards)
         {
             _card = Instantiate(BuildingCardPrefab, Hand.transform);
-            CardData cardData = CardManager.Instance.GetCardDataByID(cardID);
-            CardFactory.CreateCard(_card.GetComponent<BuildingCard>(), cardData);
-            _card.transform.SetParent(Hand.transform); // TODO: Have a Hand data structure which holds the cards in hand
+            CardData? cardData = CardManager.Instance.GetCardDataByID(cardID);
+            if (cardData != null)
+            {
+                CardFactory.CreateCard(_card.GetComponent<BuildingCard>(), cardData);
+                _card.transform.SetParent(Hand.transform); // TODO: Have a Hand data structure which holds the cards in hand
+            }
+            else
+            {
+                Debug.LogWarning($"Card with ID {cardID} could not be found.");
+            }
         }
     }
+#nullable disable
 
     private void Update()
     {

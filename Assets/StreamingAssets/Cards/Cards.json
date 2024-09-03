@@ -1,57 +1,28 @@
 [
   {
     "$type": "BuildingCardData, Assembly-CSharp",
-    "Traits": ["Production"],
+    "Traits": [
+      "Production"
+    ],
     "CardID": 1,
-    "CardName": "Simple Energy Producer",
-    "ConditionsWithEffects": [
+    "CardName": "Small Farm",
+    "ConditionalEffects": [
       {
-        "Type": "Always",
-        "Trigger": "OnTurnEnd",
+        "ConditionType": 0,
+        "TriggerType": 1,
+        "ConditionValue": 1,
         "Effects": [
-          {
-            "Keyword": "Produce Energy",
-            "Values": [2]
-          },
           {
             "Keyword": "Produce Food",
-            "Values": [3]
+            "Values": [
+              3
+            ]
           }
-        ],
-        "Value": 0
+        ]
       }
     ],
-    "ValidTargets": []
-  },
-  {
-    "$type": "BuildingCardData, Assembly-CSharp",
-    "Traits": ["Production", "Energy"],
-    "CardID": 101,
-    "CardName": "Countdown Energy Producer",
-    "ConditionsWithEffects": [
-      {
-        "Type": "Countdown",
-        "Trigger": "OnTurnEnd",
-        "Effects": [
-          {
-            "Keyword": "Produce Energy",
-            "Values": [4]
-          }
-        ],
-        "Value": 5
-      },
-      {
-        "Type": "Always",
-        "Trigger": "OnPlay",
-        "Effects": [
-          {
-            "Keyword": "Consume Pollution",
-            "Values": [1]
-          }
-        ],
-        "Value": 0
-      }
-    ],
-    "ValidTargets": []
+    "ValidTargets": [
+      "Empty"
+    ]
   }
 ]

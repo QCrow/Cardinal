@@ -22,16 +22,15 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   ID: 1
-  CardName: Simple Energy Producer
-  ConditionsWithEffects:
-  - Type: Always
-    Trigger: 1
+  CardName: Small Farm
+  ConditionalEffects:
+  - ConditionType: 0
+    TriggerType: 1
+    ConditionValue: 1
     Effects:
-    - Keyword: Produce Energy
-      Values: 02000000
     - Keyword: Produce Food
       Values: 03000000
-    Value: 0
-  ValidTargets: []
+  ValidTargets:
+  - Empty
   Traits:
   - Production

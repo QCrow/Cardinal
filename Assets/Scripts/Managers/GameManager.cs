@@ -1,5 +1,6 @@
 using UnityEngine;
 
+// TODO: Refector this
 public class GameManager : MonoBehaviour
 {
     private static GameManager _instance;
@@ -36,8 +37,6 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private Card _selectedCard;
     public Card SelectedCard { get => _selectedCard; set => _selectedCard = value; }
-
-    public Camera UICamera; //TODO: To be removed and placed elsewhere
 
     public void EndTurn()
     {

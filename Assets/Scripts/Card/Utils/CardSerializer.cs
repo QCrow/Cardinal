@@ -4,15 +4,12 @@ using System.IO;
 using UnityEditor;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using System.Reflection;
-using Newtonsoft.Json.Converters;
 
 /// <summary>
 /// Utility class for serializing and deserializing CardScriptable objects
 /// to and from JSON files.
 /// </summary>
-public class CardSerializationUtil : SerializedMonoBehaviour
+public class CardSerializer : SerializedMonoBehaviour
 {
     [SerializeField, FolderPath]
     [Tooltip("Path to the folder where Scriptable objects are stored")]
@@ -23,33 +20,6 @@ public class CardSerializationUtil : SerializedMonoBehaviour
     private string _serializedPath = "Assets/Serialized";  // Path for JSON storage
 
     private const string _cardJsonName = "Cards.json";  // Name of the JSON file
-
-    /// <summary>
-    /// Custom contract resolver to exclude unwanted properties during serialization.
-    /// </summary>
-    private class CustomContractResolver : DefaultContractResolver
-    {
-        protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
-        {
-            JsonProperty property = base.CreateProperty(member, memberSerialization);
-
-            // Exclude "name" and "hideFlags" properties from serialization
-            if (property.PropertyName == "name" || property.PropertyName == "hideFlags")
-            {
-                property.ShouldSerialize = instance => false;
-            }
-            return property;
-        }
-    }
-
-    // JSON serializer settings using the custom contract resolver
-    readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings
-    {
-        ContractResolver = new CustomContractResolver(),
-        Formatting = Formatting.Indented,
-        TypeNameHandling = TypeNameHandling.Auto,
-        Converters = new List<JsonConverter> { new StringEnumConverter() }
-    };
 
     #region Cards
     /// <summary>
@@ -91,7 +61,7 @@ public class CardSerializationUtil : SerializedMonoBehaviour
                         BuildingCardData data = new BuildingCardData(
                             buildingCard.ID,
                             buildingCard.CardName,
-                            buildingCard.ConditionsWithEffects,
+                            buildingCard.ConditionalEffects,
                             buildingCard.ValidTargets,
                             buildingCard.Traits
                         );
@@ -102,7 +72,7 @@ public class CardSerializationUtil : SerializedMonoBehaviour
                         SpellCardData data = new SpellCardData(
                             spellCard.ID,
                             spellCard.CardName,
-                            spellCard.ConditionsWithEffects,
+                            spellCard.ConditionalEffects,
                             spellCard.ValidTargets,
                             spellCard.TargetRange
                         );
@@ -117,7 +87,7 @@ public class CardSerializationUtil : SerializedMonoBehaviour
                 }
 
                 // Serialize the list of cards to JSON and save to file
-                string json = JsonConvert.SerializeObject(cardList, _jsonSettings);
+                string json = JsonConvert.SerializeObject(cardList, JsonSettingsProvider.CardJsonSerializerSettings);
                 string filePath = Path.Combine(cardSerializedPath, _cardJsonName);
                 File.WriteAllText(filePath, json);
 
@@ -147,7 +117,7 @@ public class CardSerializationUtil : SerializedMonoBehaviour
             string json = File.ReadAllText(jsonPath);
 
             // Deserialize the JSON data into a list of CardData objects
-            List<CardData> cardDatas = JsonConvert.DeserializeObject<List<CardData>>(json, _jsonSettings);
+            List<CardData> cardDatas = JsonConvert.DeserializeObject<List<CardData>>(json, JsonSettingsProvider.CardJsonSerializerSettings);
 
             // Delete existing ScriptableObjects in the directory
             string directory = Path.Combine(_scriptablePath, "Cards");
@@ -173,7 +143,7 @@ public class CardSerializationUtil : SerializedMonoBehaviour
                     BuildingCardScriptable buildingCard = ScriptableObject.CreateInstance<BuildingCardScriptable>();
                     buildingCard.ID = buildingCardData.CardID;
                     buildingCard.CardName = buildingCardData.CardName;
-                    buildingCard.ConditionsWithEffects = buildingCardData.ConditionsWithEffects;
+                    buildingCard.ConditionalEffects = buildingCardData.ConditionalEffects;
                     buildingCard.Traits = buildingCardData.Traits;
                     buildingCard.name = $"Card_{buildingCardData.CardID}";
                     SaveCardAsset(buildingCard);
@@ -183,7 +153,7 @@ public class CardSerializationUtil : SerializedMonoBehaviour
                     SpellCardScriptable spellCard = ScriptableObject.CreateInstance<SpellCardScriptable>();
                     spellCard.ID = spellCardData.CardID;
                     spellCard.CardName = spellCardData.CardName;
-                    spellCard.ConditionsWithEffects = spellCardData.ConditionsWithEffects;
+                    spellCard.ConditionalEffects = spellCardData.ConditionalEffects;
                     spellCard.TargetRange = spellCardData.TargetRange;
                     spellCard.name = $"Card_{spellCardData.CardID}";
                     SaveCardAsset(spellCard);
@@ -199,7 +169,7 @@ public class CardSerializationUtil : SerializedMonoBehaviour
     /// <summary>
     /// Saves the provided CardScriptable object as an asset in the predefined path.
     /// </summary>
-    /// <param name="card">The card object to save.</param>
+    /// <param name="card">The card scriptable object to save.</param>
     private void SaveCardAsset(CardScriptable card)
     {
         string directory = Path.Combine(_scriptablePath, "Cards");

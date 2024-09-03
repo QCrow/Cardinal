@@ -7,15 +7,28 @@ using System.IO;
 
 public abstract class CardScriptable : SerializedScriptableObject
 {
-    [JsonIgnore]
-    private int _prevID;
     [OnValueChanged("ValidateAndUpdateID")]
+    [Delayed]
+    [Tooltip("Unique identifier for the card. This ID should be unique within the directory.")]
     public int ID;
 
-    public string CardName;
-    public List<CardConditionData> ConditionsWithEffects = new();
-    public List<string> ValidTargets = new();
+    [JsonIgnore]
+    private int _prevID;
 
+    [Tooltip("Name of the card.")]
+    public string CardName;
+
+    [Space(10)]
+    [ListDrawerSettings(DefaultExpandedState = true, ShowIndexLabels = true)]
+    [Tooltip("Effects associated with the card, grouped by condition.")]
+    [ValidateInput("HasConditions", "Conditions With Effects cannot be empty.")]
+    public List<CardConditionData> ConditionalEffects = new();
+
+    [Space(10)]
+    [ListDrawerSettings(DefaultExpandedState = true, ShowIndexLabels = true)]
+    [Tooltip("List of valid targets for the card.")]
+    [ValidateInput("HasValidTargets", "Valid Targets cannot be empty.")]
+    public List<string> ValidTargets = new();
 
     private void OnEnable()
     {
@@ -53,5 +66,17 @@ public abstract class CardScriptable : SerializedScriptableObject
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         Debug.Log($"Card ID updated to {ID} and asset file renamed.");
+    }
+
+    // Validator for ConditionalEffects
+    private bool HasConditions(List<CardConditionData> conditions)
+    {
+        return conditions != null && conditions.Count > 0;
+    }
+
+    // Validator for ValidTargets
+    private bool HasValidTargets(List<string> targets)
+    {
+        return targets != null && targets.Count > 0;
     }
 }

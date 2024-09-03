@@ -23,9 +23,16 @@ public class Board : MonoBehaviour
 
     private void OnEnable()
     {
+        if (_slotPrefab == null)
+        {
+            Debug.LogError("Slot prefab is not assigned in the inspector!");
+            return;
+        }
+
         _rectTransform = GetComponent<RectTransform>();
         Initialize();
     }
+
 
     /// <summary>
     /// Initializes the board's size in pixel and generates slots based on the board's dimensions.
