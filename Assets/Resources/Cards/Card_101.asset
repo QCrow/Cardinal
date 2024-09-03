@@ -36,8 +36,7 @@ MonoBehaviour:
     - Keyword: Consume Pollution
       Values: 01000000
     Value: 0
-  ValidTargets:
-  - Empty
+  ValidTargets: []
   Traits:
   - Production
   - Energy
