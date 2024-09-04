@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -16,6 +15,10 @@ public class Slot : MonoBehaviour, IDropHandler
         {
             GameObject droppedObject = eventData.pointerDrag;
             Card droppedCard = droppedObject.GetComponent<Card>();
+            if (droppedCard.Slot != null)
+            {
+                return;
+            }
             droppedCard.Slot = this;
             Card = droppedCard;
         }

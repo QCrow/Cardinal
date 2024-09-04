@@ -5,7 +5,6 @@ using DG.Tweening;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
-using System.Runtime.CompilerServices;
 
 public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
@@ -15,7 +14,7 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
     public string CardName;
 
     // Effect using resolve trigger as key for quick access
-    public Dictionary<CardEffectTriggerType, List<CardCondition>> ConditionsWithEffects = new();
+    public Dictionary<CardEffectTriggerType, List<CardCondition>> ConditionalEffects = new();
     public List<string> ValidTargets = new(); // TODO: Make this into enum
 
     [HideInInspector] public Slot Slot;
@@ -24,6 +23,7 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
     // TODO: Might need to refactor visual to make it cleanly separate from logic
     #region Visual related variables
     [SerializeField] protected CardVisual _cardVisual;
+    private Camera _uiCamera;
 
     public bool IsHovering;
     public bool IsDragging;
@@ -48,6 +48,7 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
     private void Start()
     {
         _initialParent = transform.parent;
+        _uiCamera = GetComponentInParent<Canvas>().worldCamera;
         _animator = gameObject.GetComponent<Animator>();
     }
 
@@ -59,7 +60,7 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
                 transform.parent as RectTransform,
                 Input.mousePosition,
-                GameManager.Instance.UICamera,
+                _uiCamera,
                 out mousePosition);
 
             Vector2 targetPosition = mousePosition + _offset;
@@ -80,7 +81,7 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
             transform.parent as RectTransform,
             eventData.position,
-            GameManager.Instance.UICamera,
+            _uiCamera,
             out _offset);
 
         _offset = (Vector2)transform.localPosition - _offset;

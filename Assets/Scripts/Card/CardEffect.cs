@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,9 +6,9 @@ using UnityEngine;
 /// </summary>
 public abstract class CardEffect
 {
-    public int Value;
+    public int Value { get; set; }
 
-    public CardEffect(int value)
+    protected CardEffect(int value)
     {
         Value = value;
     }
@@ -17,14 +16,14 @@ public abstract class CardEffect
     /// <summary>
     /// Resolves the effect on the target slots.
     /// </summary>
+    /// <param name="targets">The list of target slots on which to apply the effect.</param>
+    /// <returns>True if the effect was successfully resolved; otherwise, false.</returns>
     public abstract bool ResolveEffect(List<Slot> targets);
 }
 
 /// <summary>
 /// Applies a sequence of card effects in order.
 /// Each effect in the sequence must be successfully resolved for the next effect to be applied.
-/// Example: A SequenceCardEffect might first consume resources (ConsumeCardEffect),
-/// followed by producing an output (ProduceCardEffect).
 /// </summary>
 public class SequenceCardEffect : CardEffect
 {
@@ -32,12 +31,12 @@ public class SequenceCardEffect : CardEffect
 
     public SequenceCardEffect(int value) : base(value)
     {
-        Effects = new();
+        Effects = new List<CardEffect>();
     }
 
     public SequenceCardEffect(int value, List<CardEffect> effects) : base(value)
     {
-        Effects = effects;
+        Effects = effects ?? new List<CardEffect>();
     }
 
     public override bool ResolveEffect(List<Slot> targets)
@@ -51,34 +50,33 @@ public class SequenceCardEffect : CardEffect
 }
 
 /// <summary>
+/// Base class for effects that modify resources.
+/// </summary>
+public abstract class ResourceCardEffect : CardEffect
+{
+    public ResourceType ResourceType { get; set; }
+
+    protected ResourceCardEffect(int value, ResourceType resourceType) : base(value)
+    {
+        ResourceType = resourceType;
+    }
+
+    protected void ModifyResource(int amount)
+    {
+        ResourceManager.Instance.ModifyResourceCurrentValueByAmount(ResourceType, amount);
+    }
+}
+
+/// <summary>
 /// Produces a specific type of product.
 /// </summary>
-public class ProduceCardEffect : CardEffect
+public class ProduceCardEffect : ResourceCardEffect
 {
-    public string ProductType;
-
-    public ProduceCardEffect(int value, string productType) : base(value)
-    {
-        ProductType = productType;
-    }
+    public ProduceCardEffect(int value, ResourceType resourceType) : base(value, resourceType) { }
 
     public override bool ResolveEffect(List<Slot> targets)
     {
-        // Debug.Log($"Producing {Value} {ProductType}");
-        switch (ProductType)
-        {
-            case "Energy":
-                ResourceManager.Instance.ModifyResourceCurrentValueByAmount(ResourceType.Energy, Value);
-                break;
-            case "Food":
-                ResourceManager.Instance.ModifyResourceCurrentValueByAmount(ResourceType.Food, Value);
-                break;
-            case "Morale":
-                ResourceManager.Instance.ModifyResourceCurrentValueByAmount(ResourceType.Morale, Value);
-                break;
-            default:
-                throw new NotSupportedException($"Resource '{ProductType}' is not supported or implemented yet.");
-        }
+        ModifyResource(Value);
         return true;
     }
 }
@@ -86,19 +84,13 @@ public class ProduceCardEffect : CardEffect
 /// <summary>
 /// Consumes a specific type of product.
 /// </summary>
-public class ConsumeCardEffect : CardEffect
+public class ConsumeCardEffect : ResourceCardEffect
 {
-    public string ProductType { get; set; }
-
-    public ConsumeCardEffect(int value, string productType) : base(value)
-    {
-        ProductType = productType;
-    }
+    public ConsumeCardEffect(int value, ResourceType resourceType) : base(value, resourceType) { }
 
     public override bool ResolveEffect(List<Slot> targets)
     {
-        Debug.Log($"Consuming {Value} {ProductType}");
+        ModifyResource(-Value);
         return true;
     }
 }
-

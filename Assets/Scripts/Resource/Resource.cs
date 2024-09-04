@@ -22,7 +22,7 @@ public class Resource
 
     public Resource(int currentValue = 0, int maxValue = int.MaxValue)
     {
-        CurrentValue = Mathf.Clamp(currentValue, 0, maxValue);
         MaxValue = maxValue;
+        CurrentValue = currentValue;
     }
 }

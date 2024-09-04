@@ -1,24 +1,20 @@
+using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Manages the game's resources such as Energy, Food, and Morale. This class is responsible for
+/// initializing, modifying, and retrieving resource values, as well as updating the UI display.
+/// </summary>
 public class ResourceManager : MonoBehaviour
 {
+    // Singleton instance of the ResourceManager
     private static ResourceManager _instance;
-    public static ResourceManager Instance
-    {
-        get => _instance;
-    }
+    public static ResourceManager Instance => _instance;
 
-    [SerializeField]
-    private Resource _energy;
-    [SerializeField]
-    private Resource _food;
-    [SerializeField]
-    private Resource _morale;
+    // Dictionary to store and manage resources by their type
+    private Dictionary<ResourceType, Resource> _resources;
 
-    public Resource Energy => _energy;
-    public Resource Food => _food;
-    public Resource Morale => _morale;
-
+    // Reference to the UI display component for resources
     [SerializeField]
     private ResourceUIDisplay _resourceUIDisplay;
 
@@ -28,7 +24,6 @@ public class ResourceManager : MonoBehaviour
         {
             _instance = this;
             DontDestroyOnLoad(gameObject);
-            InitializeResources();
         }
         else
         {
@@ -36,42 +31,51 @@ public class ResourceManager : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        InitializeResources();
+    }
+
+    /// <summary>
+    /// Initializes the resource values, populates the resource dictionary, and updates the UI.
+    /// </summary>
     private void InitializeResources()
     {
-        _energy = new Resource(98, 99);
-        _food = new Resource(50, 99);    // Food starts at 50, with a max of 99
-        _morale = new Resource(75, 99);
+        _resources = new();
 
-        // Initialize UI display
-        _resourceUIDisplay.InitializeUI(_energy.CurrentValue, _food.CurrentValue, _morale.CurrentValue);
-    }
-
-    public void ModifyResourceCurrentValueByAmount(ResourceType type, int amount)
-    {
-        switch (type)
+        foreach (ResourceType type in System.Enum.GetValues(typeof(ResourceType)))
         {
-            case ResourceType.Energy:
-                _energy.CurrentValue += amount;
-                break;
-            case ResourceType.Food:
-                _food.CurrentValue += amount;
-                break;
-            case ResourceType.Morale:
-                _morale.CurrentValue += amount;
-                break;
+            _resources.Add(type, new(0, 99));
         }
 
-        _resourceUIDisplay.UpdateResourceUI(type);
+        _resourceUIDisplay?.InitializeUI(_resources[ResourceType.Energy].CurrentValue, _resources[ResourceType.Food].CurrentValue, _resources[ResourceType.Morale].CurrentValue);
     }
 
+    /// <summary>
+    /// Modifies the current value of the specified resource by a given amount and updates the UI.
+    /// </summary>
+    /// <param name="type">The type of resource to modify (Energy, Food, Morale).</param>
+    /// <param name="amount">The amount to modify the resource by (can be positive or negative).</param>
+    public void ModifyResourceCurrentValueByAmount(ResourceType type, int amount)
+    {
+        if (_resources.TryGetValue(type, out var resource))
+        {
+            resource.CurrentValue += amount;
+            _resourceUIDisplay?.UpdateResourceUI(type);
+        }
+        else
+        {
+            Debug.LogWarning($"Resource type {type} not found in the dictionary.");
+        }
+    }
+
+    /// <summary>
+    /// Retrieves the current value of the specified resource.
+    /// </summary>
+    /// <param name="type">The type of resource to retrieve (Energy, Food, Morale).</param>
+    /// <returns>The current value of the specified resource, or 0 if the resource type is not found.</returns>
     public int GetResourceCurrentValue(ResourceType type)
     {
-        return type switch
-        {
-            ResourceType.Energy => _energy.CurrentValue,
-            ResourceType.Food => _food.CurrentValue,
-            ResourceType.Morale => _morale.CurrentValue,
-            _ => 0,
-        };
+        return _resources.TryGetValue(type, out var resource) ? resource.CurrentValue : 0;
     }
 }

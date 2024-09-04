@@ -152,7 +152,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectedCard: {fileID: 0}
-  UICamera: {fileID: 770911233}
 --- !u!4 &303117308
 Transform:
   m_ObjectHideFlags: 0
@@ -421,15 +420,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b3b628ff93134d4bb5be35128c89ac9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _energy:
-    _currentValue: 0
-    _maxValue: 0
-  _food:
-    _currentValue: 0
-    _maxValue: 0
-  _morale:
-    _currentValue: 0
-    _maxValue: 0
   _resourceUIDisplay: {fileID: 1610485186}
 --- !u!4 &554340908
 Transform:
@@ -478,7 +468,7 @@ MonoBehaviour:
   BuildingCardPrefab: {fileID: 4989164418008828193, guid: 4ca2356f784df4c438e6bc16002e2026, type: 3}
   UICanvas: {fileID: 1830563415}
   Hand: {fileID: 1658228152}
-  _initialCards: 65000000
+  _initialCards: 0100000001000000
 --- !u!4 &565795665
 Transform:
   m_ObjectHideFlags: 0
@@ -881,6 +871,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec7bf80a78eef2140a64be10cb22d433, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
   _scriptablePath: Assets/Resources
   _serializedPath: Assets/StreamingAssets
 --- !u!4 &1318329067
