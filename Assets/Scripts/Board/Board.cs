@@ -45,8 +45,7 @@ public class Board : MonoBehaviour
         _rectTransform.sizeDelta = new Vector2(pixelWidth, pixelHeight);
 
         // Initialize the list of slots
-        _slots = new List<List<Slot>>(_unitHeight);
-
+        _slots = new ();
         // Populate the board with slots, arranging them in a grid
         for (int row = 0; row < _unitHeight; row++)
         {
