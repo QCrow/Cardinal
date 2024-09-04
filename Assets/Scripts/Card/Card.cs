@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 
-public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
+public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
     #region Logic related variables
     // TODO: Make some of these variables into private field
@@ -32,6 +32,16 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
 
     private Vector3 _initialPosition;
     private Transform _initialParent;
+
+    [SerializeField] public float hoverAmount = 0.1f;
+    private Vector3 zoomVector;
+
+    //Card Animation
+    private Animator _animator;
+    private RuntimeAnimatorController cardAnimatorController;
+    string _currentState;
+    const string CARD_FLOAT = "Card_Float";
+    const string CARD_IDLE = "Card_Idle";
     #endregion
 
 
@@ -39,6 +49,7 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
     {
         _initialParent = transform.parent;
         _uiCamera = GetComponentInParent<Canvas>().worldCamera;
+        _animator = gameObject.GetComponent<Animator>();
     }
 
     private void Update()
@@ -81,10 +92,14 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
 
         IsDragging = true;
         WasDragged = true;
+
     }
 
     public virtual void OnDrag(PointerEventData eventData)
     {
+        //zoom out the card
+        zoomVector = new Vector3(0.7f,0.7f,0.7f);
+        transform.localScale = zoomVector;
     }
 
     public virtual void OnEndDrag(PointerEventData eventData)
@@ -117,6 +132,10 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
             Image i = GetComponent<Image>();
             i.raycastTarget = true;
         }
+
+        //zoom in the card
+        zoomVector = new Vector3(1.0f,1.0f,1.0f);
+        transform.localScale = zoomVector;
     }
 
     public virtual void OnPointerClick(PointerEventData eventData)
@@ -125,6 +144,32 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
         {
             Debug.Log("Right clicked on card");
         }
+    }
+
+    // zoom in the card if the mouse hover on the card
+    public virtual void OnPointerEnter(PointerEventData eventData)
+    {
+        zoomVector = new Vector3(1.0f,1.0f,1.0f);
+        transform.localScale += zoomVector * hoverAmount;
+        ChangeAnimationState(CARD_FLOAT);
+    }
+
+    public virtual void OnPointerExit(PointerEventData eventData)
+    {
+        zoomVector = new Vector3(1.0f,1.0f,1.0f);
+        transform.localScale -= zoomVector * hoverAmount;
+        ChangeAnimationState(CARD_IDLE);
+    }
+
+    //change animation state
+    private void ChangeAnimationState(string newState)
+    {
+        if (newState == _currentState)
+        {
+            return;
+        }
+        _animator.Play(newState);
+        _currentState = newState;
     }
 }
 
