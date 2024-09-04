@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.Security.Cryptography;
+using System.Linq;
 using UnityEngine;
 
 /// <summary>
@@ -20,6 +20,7 @@ public class Board : MonoBehaviour
     private List<List<Slot>> _slots;  // 2D list to store slot references
 
     private RectTransform _rectTransform;  // Used to adjust the size of the board
+
 
     private void OnEnable()
     {
@@ -45,8 +46,7 @@ public class Board : MonoBehaviour
         _rectTransform.sizeDelta = new Vector2(pixelWidth, pixelHeight);
 
         // Initialize the list of slots
-        _slots = new List<List<Slot>>(_unitHeight);
-
+        _slots = new ();
         // Populate the board with slots, arranging them in a grid
         for (int row = 0; row < _unitHeight; row++)
         {
@@ -105,5 +105,58 @@ public class Board : MonoBehaviour
         }
 
         return _slots[row][col].Card;
+    }
+
+    public void SetClusterAtPosition(int row, int col)
+    {
+        if (row < 0 || col < 0 || row >= _unitHeight || col >= _unitWidth)
+        {
+            return;  // Return null for invalid positions
+        }
+    }
+
+    public int GetClusterSize(int row, int col, HashSet<(int, int)> visited)
+    {
+        // Check for out-of-bounds or invalid positions
+        if (row < 0 || col < 0 || row >= _unitHeight || col >= _unitWidth)
+        {
+            return 0;
+        }
+
+        // Check if the slot has already been visited
+        if (visited.Contains((row, col)))
+        {
+            return 0;
+        }
+
+        // Mark the current position as visited
+        visited.Add((row, col));
+
+        Card card = _slots[row][col].Card;
+        if (card == null || !HasCluster(card))
+        {
+            return 0;
+        }
+
+        // Recursively calculate cluster size
+        return 1
+            + GetClusterSize(row + 1, col, visited)
+            + GetClusterSize(row - 1, col, visited)
+            + GetClusterSize(row, col + 1, visited)
+            + GetClusterSize(row, col - 1, visited);
+    }
+
+    private bool HasCluster(Card card)
+    {
+        // Iterate through each list of conditions in the dictionary
+        foreach (var conditionList in card.ConditionalEffects.Values)
+        {
+            // Check if any condition in the list has the ConditionType of Cluster
+            if (conditionList.Any(condition => condition is ClusterCondition))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

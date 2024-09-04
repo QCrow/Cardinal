@@ -21,6 +21,7 @@ public class Slot : MonoBehaviour, IDropHandler
             }
             droppedCard.Slot = this;
             Card = droppedCard;
+            EffectResolveManager.Instance.ResolveOnPlayEffects(droppedCard);
         }
     }
 }
