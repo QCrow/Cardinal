@@ -84,6 +84,9 @@ public static class CardFactory
             case CardConditionType.Countdown:
                 condition = new CountdownCondition(conditionData.ConditionValue);
                 break;
+            case CardConditionType.Cluster:
+                condition = new ClusterCondition(conditionData.ConditionValue);
+                break;
             default:
                 throw new NotSupportedException($"Condition type '{conditionData.ConditionType}' is not supported.");
         }

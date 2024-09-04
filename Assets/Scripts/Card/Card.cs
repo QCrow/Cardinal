@@ -17,7 +17,7 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
     public Dictionary<CardEffectTriggerType, List<CardCondition>> ConditionalEffects = new();
     public List<string> ValidTargets = new(); // TODO: Make this into enum
 
-    [HideInInspector] public Slot Slot;
+    public Slot Slot;
     #endregion
 
     // TODO: Might need to refactor visual to make it cleanly separate from logic
@@ -98,7 +98,7 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
     public virtual void OnDrag(PointerEventData eventData)
     {
         //zoom out the card
-        zoomVector = new Vector3(0.7f,0.7f,0.7f);
+        zoomVector = new Vector3(0.7f, 0.7f, 0.7f);
         transform.localScale = zoomVector;
     }
 
@@ -120,7 +120,6 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
         {
             //TODO: Change the condition to check if the card is placeable with the tile
             TransformUtil.MoveToAndSetParent(gameObject, Slot.gameObject);
-            EffectResolveManager.Instance.ResolveOnPlayEffects(this);
         }
         GameManager.Instance.SelectedCard = null;
         StartCoroutine(WaitForEndOfFrame());
@@ -134,7 +133,7 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
         }
 
         //zoom in the card
-        zoomVector = new Vector3(1.0f,1.0f,1.0f);
+        zoomVector = new Vector3(1.0f, 1.0f, 1.0f);
         transform.localScale = zoomVector;
     }
 
@@ -149,28 +148,28 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
     // zoom in the card if the mouse hover on the card
     public virtual void OnPointerEnter(PointerEventData eventData)
     {
-        zoomVector = new Vector3(1.0f,1.0f,1.0f);
-        transform.localScale += zoomVector * hoverAmount;
-        ChangeAnimationState(CARD_FLOAT);
+        // zoomVector = new Vector3(1.0f, 1.0f, 1.0f);
+        // transform.localScale += zoomVector * hoverAmount;
+        // ChangeAnimationState(CARD_FLOAT);
     }
 
     public virtual void OnPointerExit(PointerEventData eventData)
     {
-        zoomVector = new Vector3(1.0f,1.0f,1.0f);
-        transform.localScale -= zoomVector * hoverAmount;
-        ChangeAnimationState(CARD_IDLE);
+        // zoomVector = new Vector3(1.0f, 1.0f, 1.0f);
+        // transform.localScale -= zoomVector * hoverAmount;
+        // ChangeAnimationState(CARD_IDLE);
     }
 
-    //change animation state
-    private void ChangeAnimationState(string newState)
-    {
-        if (newState == _currentState)
-        {
-            return;
-        }
-        _animator.Play(newState);
-        _currentState = newState;
-    }
+    // //change animation state
+    // private void ChangeAnimationState(string newState)
+    // {
+    //     if (newState == _currentState)
+    //     {
+    //         return;
+    //     }
+    //     _animator.Play(newState);
+    //     _currentState = newState;
+    // }
 }
 
 
