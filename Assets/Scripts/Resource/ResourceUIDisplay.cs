@@ -60,15 +60,11 @@ public class ResourceUIDisplay : MonoBehaviour
     /// Updates the UI element associated with the given resource type.
     /// </summary>
     /// <param name="type">The type of resource to update (Energy, Food, Morale).</param>
-    public void UpdateResourceUI(ResourceType type)
+    /// <param name="newValue">The newValue of resource to update.</param>
+    private void UpdateResourceUI(ResourceType type, int newValue)
     {
-        // Check if the UI element for the resource type exists
         if (_resourceUIMap.TryGetValue(type, out GameObject resourceUI))
         {
-            // Get the current value of the resource from the ResourceManager
-            int newValue = ResourceManager.Instance.GetResourceCurrentValue(type);
-
-            // Update the UI element with the new value
             UpdateResourceValueText(resourceUI, newValue);
         }
         else
@@ -96,5 +92,28 @@ public class ResourceUIDisplay : MonoBehaviour
         {
             Debug.LogWarning("TextMeshProUGUI component not found in resource UI.");
         }
+    }
+
+    /// <summary>
+    /// Called when the UI component is enabled.
+    /// Subscribes to the ResourceManager's OnResourceChanged event to receive updates
+    /// whenever a resource value changes. This ensures the UI stays in sync with the
+    /// resource values.
+    /// </summary>
+    private void OnEnable()
+    {
+        // Subscribe to the event when the UI is enabled
+        ResourceManager.Instance.OnResourceChanged += UpdateResourceUI;
+    }
+
+    /// <summary>
+    /// Called when the UI component is disabled.
+    /// Unsubscribes from the ResourceManager's OnResourceChanged event to prevent memory leaks
+    /// or unintended behavior when the UI component is not active.
+    /// </summary>
+    private void OnDisable()
+    {
+        // Unsubscribe to prevent memory leaks when the UI is disabled
+        ResourceManager.Instance.OnResourceChanged -= UpdateResourceUI;
     }
 }
