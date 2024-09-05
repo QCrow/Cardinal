@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,9 +15,8 @@ public class ResourceManager : MonoBehaviour
     // Dictionary to store and manage resources by their type
     private Dictionary<ResourceType, Resource> _resources;
 
-    // Reference to the UI display component for resources
-    [SerializeField]
-    private ResourceUIDisplay _resourceUIDisplay;
+    // Event triggered whenever a resource's value is changed
+    public event Action<ResourceType, int> OnResourceChanged;
 
     private void Awake()
     {
@@ -48,7 +48,21 @@ public class ResourceManager : MonoBehaviour
             _resources.Add(type, new(0, 99));
         }
 
-        _resourceUIDisplay?.InitializeUI(_resources[ResourceType.Energy].CurrentValue, _resources[ResourceType.Food].CurrentValue, _resources[ResourceType.Morale].CurrentValue);
+        ResourceUIDisplay resourceUIDisplay = FindObjectOfType<ResourceUIDisplay>();
+
+        // Initialize the UI if ResourceUIDisplay is found
+        if (resourceUIDisplay != null)
+        {
+            resourceUIDisplay.InitializeUI(
+                _resources[ResourceType.Energy].CurrentValue,
+                _resources[ResourceType.Food].CurrentValue,
+                _resources[ResourceType.Morale].CurrentValue
+            );
+        }
+        else
+        {
+            Debug.LogWarning("ResourceUIDisplay not found in the scene.");
+        }
     }
 
     /// <summary>
@@ -61,7 +75,8 @@ public class ResourceManager : MonoBehaviour
         if (_resources.TryGetValue(type, out var resource))
         {
             resource.CurrentValue += amount;
-            _resourceUIDisplay?.UpdateResourceUI(type);
+
+            OnResourceChanged?.Invoke(type, resource.CurrentValue);
         }
         else
         {
