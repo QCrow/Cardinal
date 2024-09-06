@@ -85,6 +85,24 @@ public class ResourceManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Sets the current value of the specified resource to a specific amount, ensuring it's within the valid range.
+    /// </summary>
+    /// <param name="type">The type of resource to set (Energy, Food, Morale).</param>
+    /// <param name="value">The new value to set for the resource.</param>
+    public void SetResourceCurrentValue(ResourceType type, int value)
+    {
+        if (_resources.TryGetValue(type, out var resource))
+        {
+            resource.CurrentValue = Mathf.Clamp(value, 0, resource.MaxValue); // Ensuring the value is within the range
+            OnResourceChanged?.Invoke(type, resource.CurrentValue);
+        }
+        else
+        {
+            Debug.LogWarning($"Resource type {type} not found in the dictionary.");
+        }
+    }
+
+    /// <summary>
     /// Retrieves the current value of the specified resource.
     /// </summary>
     /// <param name="type">The type of resource to retrieve (Energy, Food, Morale).</param>
