@@ -44,10 +44,7 @@ public class EffectResolveManager : MonoBehaviour
         {
             Destroy(gameObject); // Destroy duplicate instances
         }
-    }
 
-    private void Start()
-    {
         // Find the Board object in the scene
         Board = FindObjectOfType<Board>();
         if (Board == null)
