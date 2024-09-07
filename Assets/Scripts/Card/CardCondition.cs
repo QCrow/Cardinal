@@ -70,7 +70,7 @@ public class AlwaysCondition : CardCondition
 public class CountdownCondition : CardCondition
 {
     public int Value;  // Initial countdown value
-    int CurrentValue;  // Current countdown state
+    public int CurrentValue;  // Current countdown state
 
     /// <summary>
     /// Initializes the countdown condition with a specific value.
@@ -94,6 +94,31 @@ public class CountdownCondition : CardCondition
         {
             Debug.Log($"Resetting value to {Value}");
             CurrentValue = Value;
+            return true;
+        }
+        return false;
+    }
+}
+
+public class ClusterCondition : CardCondition
+{
+    public int Value;
+    public ClusterCondition(int value)
+    {
+        Value = value;
+    }
+
+    public override bool Validate()
+    {
+        return false;
+    }
+
+    public bool Validate(int row, int col)
+    {
+        int clusterSize = EffectResolveManager.Instance.Board.GetClusterSize(row, col, new HashSet<(int, int)>());
+        Debug.Log($"Cluster size for {row},{col} is {clusterSize}");
+        if (clusterSize >= Value)
+        {
             return true;
         }
         return false;

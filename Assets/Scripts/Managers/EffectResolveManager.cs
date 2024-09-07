@@ -31,7 +31,7 @@ public class EffectResolveManager : MonoBehaviour
     }
 
     // Reference to the Board, which contains all the slots and cards
-    private Board _board;
+    public Board Board;
 
     private void Awake()
     {
@@ -49,8 +49,8 @@ public class EffectResolveManager : MonoBehaviour
     private void Start()
     {
         // Find the Board object in the scene
-        _board = FindObjectOfType<Board>();
-        if (_board == null)
+        Board = FindObjectOfType<Board>();
+        if (Board == null)
         {
             Debug.LogError("Board object not found in the scene."); // Log an error if the Board is not found
         }
@@ -79,14 +79,14 @@ public class EffectResolveManager : MonoBehaviour
     /// <param name="triggerType">The type of trigger that initiates the effect resolution (e.g., OnTurnEnd, OnPlay).</param>
     private void ResolveEffects(CardEffectTriggerType triggerType)
     {
-        if (_board == null)
+        if (Board == null)
         {
             Debug.LogError("Board is not initialized."); // Log an error if the Board is not initialized
             return;
         }
 
         // Get all slots on the board
-        List<List<Slot>> slots = _board.GetAllSlots();
+        List<List<Slot>> slots = Board.GetAllSlots();
         foreach (var row in slots)
         {
             foreach (var slot in row)
@@ -112,10 +112,20 @@ public class EffectResolveManager : MonoBehaviour
         {
             foreach (var condition in conditions)
             {
-                // Validate the condition and trigger its effects if valid
-                if (condition.Validate())
+                if (condition is ClusterCondition clusterCondition)
                 {
-                    condition.TriggerEffects(new()); // Assuming this triggers effects on appropriate targets
+                    if (clusterCondition.Validate(card.Slot.Row, card.Slot.Col))
+                    {
+                        clusterCondition.TriggerEffects(new()); // Assuming this triggers effects on appropriate targets
+                    }
+                }
+                else
+                {
+                    // Validate the condition and trigger its effects if valid
+                    if (condition.Validate())
+                    {
+                        condition.TriggerEffects(new()); // Assuming this triggers effects on appropriate targets
+                    }
                 }
             }
         }

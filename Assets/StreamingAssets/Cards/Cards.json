@@ -24,5 +24,31 @@
     "ValidTargets": [
       "Empty"
     ]
+  },
+  {
+    "$type": "BuildingCardData, Assembly-CSharp",
+    "Traits": [
+      "Production"
+    ],
+    "CardID": 2,
+    "CardName": "Cluster Tester",
+    "ConditionalEffects": [
+      {
+        "ConditionType": 2,
+        "TriggerType": 1,
+        "ConditionValue": 3,
+        "Effects": [
+          {
+            "Keyword": "Produce Energy",
+            "Values": [
+              2
+            ]
+          }
+        ]
+      }
+    ],
+    "ValidTargets": [
+      "Empty"
+    ]
   }
 ]
