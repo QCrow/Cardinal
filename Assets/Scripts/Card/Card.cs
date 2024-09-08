@@ -130,7 +130,6 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
             WasDragged = false;
             Image i = GetComponent<Image>();
             i.raycastTarget = true;
-            EffectResolveManager.Instance.ResolveOnPlayEffects(this);
         }
 
         //zoom in the card
@@ -149,28 +148,28 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
     // zoom in the card if the mouse hover on the card
     public virtual void OnPointerEnter(PointerEventData eventData)
     {
-        zoomVector = new Vector3(1.0f, 1.0f, 1.0f);
-        transform.localScale += zoomVector * hoverAmount;
-        ChangeAnimationState(CARD_FLOAT);
+        // zoomVector = new Vector3(1.0f, 1.0f, 1.0f);
+        // transform.localScale += zoomVector * hoverAmount;
+        // ChangeAnimationState(CARD_FLOAT);
     }
 
     public virtual void OnPointerExit(PointerEventData eventData)
     {
-        zoomVector = new Vector3(1.0f, 1.0f, 1.0f);
-        transform.localScale -= zoomVector * hoverAmount;
-        ChangeAnimationState(CARD_IDLE);
+        // zoomVector = new Vector3(1.0f, 1.0f, 1.0f);
+        // transform.localScale -= zoomVector * hoverAmount;
+        // ChangeAnimationState(CARD_IDLE);
     }
 
-    //change animation state
-    private void ChangeAnimationState(string newState)
-    {
-        if (newState == _currentState)
-        {
-            return;
-        }
-        _animator.Play(newState);
-        _currentState = newState;
-    }
+    // //change animation state
+    // private void ChangeAnimationState(string newState)
+    // {
+    //     if (newState == _currentState)
+    //     {
+    //         return;
+    //     }
+    //     _animator.Play(newState);
+    //     _currentState = newState;
+    // }
 }
 
 
