@@ -50,5 +50,31 @@
     "ValidTargets": [
       "Empty"
     ]
+  },
+  {
+    "$type": "BuildingCardData, Assembly-CSharp",
+    "Traits": [
+      "Production"
+    ],
+    "CardID": 3,
+    "CardName": "On Play Cluster",
+    "ConditionalEffects": [
+      {
+        "ConditionType": 2,
+        "TriggerType": 0,
+        "ConditionValue": 2,
+        "Effects": [
+          {
+            "Keyword": "Produce Energy",
+            "Values": [
+              2
+            ]
+          }
+        ]
+      }
+    ],
+    "ValidTargets": [
+      "Empty"
+    ]
   }
 ]
