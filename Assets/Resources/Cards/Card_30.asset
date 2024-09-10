@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 496600889dec57f4681e0180196138d9, type: 3}
-  m_Name: Card_1
+  m_Name: Card_30
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -21,15 +21,21 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  ID: 1
-  CardName: Destroyable Building
+  ID: 30
+  CardName: Burnout Producer
   ConditionalEffects:
   - ConditionType: 0
-    TriggerType: 3
+    TriggerType: 1
     ConditionValue: 0
     Effects:
-    - Keyword: Produce Food
-      Values: 05000000
+    - Keyword: Produce Energy
+      Values: 02000000
+  - ConditionType: 1
+    TriggerType: 1
+    ConditionValue: 5
+    Effects:
+    - Keyword: DestroySelf
+      Values: 00000000
   ValidTargets:
   - Empty
   Traits:

@@ -8,6 +8,23 @@ using UnityEngine;
 /// </summary>
 public class Board : MonoBehaviour
 {
+    private static Board _instance;
+    public static Board Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = FindObjectOfType<Board>();
+                if (_instance == null)
+                {
+                    Debug.LogError("Board object not found in the scene.");
+                }
+            }
+            return _instance;
+        }
+    }
+
     [SerializeField] private int _unitHeight;  // The number of rows on the board
     [SerializeField] private int _unitWidth;   // The number of columns on the board
 
@@ -21,6 +38,18 @@ public class Board : MonoBehaviour
 
     private RectTransform _rectTransform;  // Used to adjust the size of the board
 
+    private void OnAwake()
+    {
+        if (_instance == null)
+        {
+            _instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else if (_instance != this)
+        {
+            Destroy(gameObject);
+        }
+    }
 
     private void OnEnable()
     {
@@ -46,7 +75,7 @@ public class Board : MonoBehaviour
         _rectTransform.sizeDelta = new Vector2(pixelWidth, pixelHeight);
 
         // Initialize the list of slots
-        _slots = new ();
+        _slots = new();
         // Populate the board with slots, arranging them in a grid
         for (int row = 0; row < _unitHeight; row++)
         {
@@ -105,6 +134,29 @@ public class Board : MonoBehaviour
         }
 
         return _slots[row][col].Card;
+    }
+
+    public List<Slot> GetNeighbors(Slot slot)
+    {
+        List<Slot> neighbors = new();
+
+        // Define the row and column offsets for the 4 directions
+        int[] rowOffsets = { -1, 1, 0, 0 };
+        int[] colOffsets = { 0, 0, -1, 1 };
+
+        for (int i = 0; i < rowOffsets.Length; i++)
+        {
+            int rowOffset = rowOffsets[i];
+            int colOffset = colOffsets[i];
+
+            Slot? neighbor = GetSlotByOffset(slot.Row, slot.Col, rowOffset, colOffset);
+            if (neighbor != null)
+            {
+                neighbors.Add(neighbor);
+            }
+        }
+
+        return neighbors;
     }
 
     public void SetClusterAtPosition(int row, int col)

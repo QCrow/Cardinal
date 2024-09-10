@@ -18,6 +18,7 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
     public List<string> ValidTargets = new(); // TODO: Make this into enum
 
     public Slot Slot;
+    public Dictionary<ModifierType, Modifier> Modifiers = new();
     #endregion
 
     // TODO: Might need to refactor visual to make it cleanly separate from logic
@@ -141,7 +142,9 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
     {
         if (eventData.button == PointerEventData.InputButton.Right)
         {
-            Debug.Log("Right clicked on card");
+            // EffectResolveManager.Instance.ResolveOnRemoveEffects(this);
+            if (Slot) Slot.Card = null;
+            Destroy(gameObject);
         }
     }
 
@@ -170,6 +173,42 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
     //     _animator.Play(newState);
     //     _currentState = newState;
     // }
+
+    public void Remove()
+    {
+        if (Modifiers.ContainsKey(ModifierType.Everlasting) || Slot.Modifiers.ContainsKey(ModifierType.Everlasting)) return;
+        EffectResolveManager.Instance.ResolveOnRemoveEffects(this);
+        if (Slot) Slot.Card = null;
+        Destroy(gameObject);
+    }
+
+    public void AddConditionalEffect(CardEffectTriggerType triggerType, CardCondition condition)
+    {
+        if (!ConditionalEffects.ContainsKey(triggerType))
+        {
+            ConditionalEffects[triggerType] = new List<CardCondition>();
+        }
+        ConditionalEffects[triggerType].Add(condition);
+    }
+
+    public void AddModifier(ModifierType modifierType, int amount)
+    {
+        if (!Modifiers.ContainsKey(modifierType))
+        {
+            Modifiers[modifierType] = ModifierFactory.CreateModifier(modifierType, amount);
+        }
+        Modifiers[modifierType].Amount += amount;
+    }
+
+    public void RemoveModifier(ModifierType modifierType, int amount)
+    {
+        if (Modifiers.ContainsKey(modifierType))
+        {
+            Modifiers[modifierType].Amount += amount;
+            if (Modifiers[modifierType].Amount <= 0)
+            {
+                Modifiers.Remove(modifierType);
+            }
+        }
+    }
 }
-
-

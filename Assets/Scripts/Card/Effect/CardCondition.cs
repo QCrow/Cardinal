@@ -6,6 +6,8 @@ using UnityEngine;
 /// </summary>
 public abstract class CardCondition
 {
+    public Card Card;  // Reference to the card that owns this condition
+
     // List of effects that will be triggered when the condition is validated
     private List<CardEffect> _effects = new();
 
@@ -32,6 +34,22 @@ public abstract class CardCondition
         foreach (CardEffect effect in _effects)
         {
             effect.ResolveEffect(targets);
+        }
+    }
+
+    public void TriggerCounterEffects(List<Slot> targets)
+    {
+        if (_effects == null || _effects.Count == 0)
+        {
+            Debug.LogWarning("No effects to trigger. The Effects list is either null or empty.");
+            return;
+        }
+
+        Debug.Log("Triggering counter effects");
+        foreach (CardEffect cardEffect in _effects)
+        {
+            CardEffect counterEffect = CardFactory.CreateCounterEffect(cardEffect);
+            counterEffect.ResolveEffect(targets);
         }
     }
 
@@ -115,7 +133,7 @@ public class ClusterCondition : CardCondition
 
     public bool Validate(int row, int col)
     {
-        int clusterSize = EffectResolveManager.Instance.Board.GetClusterSize(row, col, new HashSet<(int, int)>());
+        int clusterSize = Board.Instance.GetClusterSize(row, col, new HashSet<(int, int)>());
         Debug.Log($"Cluster size for {row},{col} is {clusterSize}");
         if (clusterSize >= Value)
         {

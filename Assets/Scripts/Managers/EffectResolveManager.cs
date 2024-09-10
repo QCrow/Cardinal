@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 /// <summary>
@@ -30,9 +32,6 @@ public class EffectResolveManager : MonoBehaviour
         }
     }
 
-    // Reference to the Board, which contains all the slots and cards
-    public Board Board;
-
     private void Awake()
     {
         if (_instance == null)
@@ -43,13 +42,6 @@ public class EffectResolveManager : MonoBehaviour
         else if (_instance != this)
         {
             Destroy(gameObject); // Destroy duplicate instances
-        }
-
-        // Find the Board object in the scene
-        Board = FindObjectOfType<Board>();
-        if (Board == null)
-        {
-            Debug.LogError("Board object not found in the scene."); // Log an error if the Board is not found
         }
     }
 
@@ -68,6 +60,17 @@ public class EffectResolveManager : MonoBehaviour
     public void ResolveOnPlayEffects(Card card)
     {
         ResolveEffects(card, CardEffectTriggerType.OnPlay);
+        ResolveWhileInPlayEffects(card, true);
+    }
+
+    /// <summary>
+    /// Resolves all effects that are triggered when a card is drawn.
+    /// </summary>
+    /// <param name="card">The card that was removed from game, triggering the effects.</param>
+    public void ResolveOnRemoveEffects(Card card)
+    {
+        ResolveEffects(card, CardEffectTriggerType.OnRemove);
+        ResolveWhileInPlayEffects(card, false);
     }
 
     /// <summary>
@@ -76,14 +79,8 @@ public class EffectResolveManager : MonoBehaviour
     /// <param name="triggerType">The type of trigger that initiates the effect resolution (e.g., OnTurnEnd, OnPlay).</param>
     private void ResolveEffects(CardEffectTriggerType triggerType)
     {
-        if (Board == null)
-        {
-            Debug.LogError("Board is not initialized."); // Log an error if the Board is not initialized
-            return;
-        }
-
         // Get all slots on the board
-        List<List<Slot>> slots = Board.GetAllSlots();
+        List<List<Slot>> slots = Board.Instance.GetAllSlots();
         foreach (var row in slots)
         {
             foreach (var slot in row)
@@ -122,6 +119,47 @@ public class EffectResolveManager : MonoBehaviour
                     if (condition.Validate())
                     {
                         condition.TriggerEffects(new()); // Assuming this triggers effects on appropriate targets
+                    }
+                }
+            }
+        }
+    }
+
+    private void ResolveWhileInPlayEffects(Card card, bool inPlay)
+    {
+
+        // Check if the card has any conditions with effects that match the trigger type
+        if (card.ConditionalEffects.TryGetValue(CardEffectTriggerType.WhileInPlay, out var conditions))
+        {
+            foreach (var condition in conditions)
+            {
+                if (condition is ClusterCondition clusterCondition)
+                {
+                    if (clusterCondition.Validate(card.Slot.Row, card.Slot.Col))
+                    {
+                        if (inPlay)
+                        {
+                            clusterCondition.TriggerEffects(new()); // Assuming this triggers effects on appropriate targets
+                        }
+                        else
+                        {
+                            clusterCondition.TriggerCounterEffects(new()); // Assuming this triggers effects on appropriate targets
+                        }
+                    }
+                }
+                else
+                {
+                    // Validate the condition and trigger its effects if valid
+                    if (condition.Validate())
+                    {
+                        if (inPlay)
+                        {
+                            condition.TriggerEffects(new()); // Assuming this triggers effects on appropriate targets
+                        }
+                        else
+                        {
+                            condition.TriggerCounterEffects(new()); // Assuming this triggers effects on appropriate targets
+                        }
                     }
                 }
             }

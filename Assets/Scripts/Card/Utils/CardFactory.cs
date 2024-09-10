@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 /// <summary>
@@ -46,7 +48,7 @@ public static class CardFactory
 
         foreach (var conditionData in data.ConditionalEffects)
         {
-            CardCondition condition = CreateCondition(conditionData);
+            CardCondition condition = CreateCondition(conditionData, card);
 
             // Add the condition to the corresponding trigger in the dictionary
             if (!conditions.ContainsKey(conditionData.TriggerType))
@@ -72,7 +74,7 @@ public static class CardFactory
     /// </summary>
     /// <param name="conditionData">The data defining the condition.</param>
     /// <returns>The created CardCondition object.</returns>
-    public static CardCondition CreateCondition(CardConditionData conditionData)
+    public static CardCondition CreateCondition(CardConditionData conditionData, Card card)
     {
         CardCondition condition;
 
@@ -90,22 +92,23 @@ public static class CardFactory
             default:
                 throw new NotSupportedException($"Condition type '{conditionData.ConditionType}' is not supported.");
         }
-
+        condition.Card = card;
         // Add effects to the condition
         foreach (CardEffectData effectData in conditionData.Effects)
         {
-            condition.AddEffect(CreateEffect(effectData));
+            condition.AddEffect(CreateEffect(effectData, condition));
         }
 
         return condition;
     }
+
 
     /// <summary>
     /// Creates a card effect based on the provided data.
     /// </summary>
     /// <param name="effectData">The data defining the effect.</param>
     /// <returns>The created CardEffect object.</returns>
-    public static CardEffect CreateEffect(CardEffectData effectData)
+    public static CardEffect CreateEffect(CardEffectData effectData, CardCondition condition)
     {
         // Split the effect keyword into tokens to determine the effect type and parameters
         List<string> tokens = new(effectData.Keyword.Split(' '));
@@ -121,14 +124,30 @@ public static class CardFactory
         // Handle different cases based on the effect type
         return effectType switch
         {
-            "Produce" => HandleResourceEffect(tokens, effectData),
-            "Consume" => HandleResourceEffect(tokens, effectData),
+            "Produce" => HandleResourceEffect(tokens, effectData, condition),
+            "Consume" => HandleResourceEffect(tokens, effectData, condition),
+            "DestroySurroundingToGain" => HandleDestroySurroundingToGainEffect(tokens, effectData, condition),
+            "DestroySelf" => new DestroySelfCardEffect(effectData.Values[0], condition),
+            "Apply" => HandleModifierEffect(tokens, effectData, condition),
+            "Remove" => HandleModifierEffect(tokens, effectData, condition),
             _ => throw new NotSupportedException($"Effect keyword '{effectType}' is not supported or implemented yet.")
         };
     }
 
+    public static CardEffect CreateCounterEffect(CardEffect effect)
+    {
+        switch (effect)
+        {
+            case ApplyModifierCardEffect applyModifierEffect:
+                return new RemoveModifierCardEffect(applyModifierEffect.Value, applyModifierEffect.Condition, applyModifierEffect._modifierType, applyModifierEffect._targetType);
+            default:
+                throw new NotSupportedException($"Counter effect for '{effect.GetType().Name}' is not supported or implemented yet.");
+        }
+    }
+
+
     // Helper method to handle resource-based effects (Produce, Consume, etc.)
-    private static CardEffect HandleResourceEffect(List<string> tokens, CardEffectData effectData)
+    private static CardEffect HandleResourceEffect(List<string> tokens, CardEffectData effectData, CardCondition condition)
     {
         if (tokens.Count < 2)
         {
@@ -144,10 +163,56 @@ public static class CardFactory
 
         return tokens[0] switch
         {
-            "Produce" => new ProduceCardEffect(effectData.Values[0], resourceType),
-            "Consume" => new ConsumeCardEffect(effectData.Values[0], resourceType),
+            "Produce" => new ProduceCardEffect(effectData.Values[0], condition, resourceType),
+            "Consume" => new ConsumeCardEffect(effectData.Values[0], condition, resourceType),
             _ => throw new NotSupportedException($"Resource-based effect type '{tokens[0]}' is not supported or implemented yet.")
         };
+    }
+
+    private static CardEffect HandleDestroySurroundingToGainEffect(List<string> tokens, CardEffectData effectData, CardCondition condition)
+    {
+        if (tokens.Count < 3)
+        {
+            throw new ArgumentException("DestroySurroundingToGain effect requires a gain type and resource type.");
+        }
+
+        if (!Enum.TryParse(tokens[1], out DestroySurroundingCardsToGainPerCardDestroyedEffect.GainType gainType))
+        {
+            throw new InvalidCastException($"Failed to parse GainType from '{tokens[1]}'");
+        }
+
+        if (!Enum.TryParse(tokens[2], out ResourceType resourceType))
+        {
+            throw new InvalidCastException($"Failed to parse ResourceType from '{tokens[2]}'");
+        }
+
+        return new DestroySurroundingCardsToGainPerCardDestroyedEffect(effectData.Values[0], condition, gainType, resourceType);
+    }
+
+    private static CardEffect HandleModifierEffect(List<string> tokens, CardEffectData effectData, CardCondition condition)
+    {
+        if (tokens.Count < 3)
+        {
+            throw new ArgumentException("Modifier effect requires a modifier type and target type.");
+        }
+
+        if (!Enum.TryParse(tokens[1], out ModifierType modifierType))
+        {
+            throw new InvalidCastException($"Failed to parse ModifierType from '{tokens[1]}'");
+        }
+
+        if (!Enum.TryParse(tokens[2], out ModifierCardEffect.TargetType targetType))
+        {
+            throw new InvalidCastException($"Failed to parse ModifierTargetType from '{tokens[2]}'");
+        }
+
+        return
+            tokens[0] switch
+            {
+                "Apply" => new ApplyModifierCardEffect(effectData.Values[0], condition, modifierType, targetType),
+                "Remove" => new RemoveModifierCardEffect(effectData.Values[0], condition, modifierType, targetType),
+                _ => throw new NotSupportedException($"Modifier effect type '{tokens[0]}' is not supported or implemented yet.")
+            };
     }
 }
 

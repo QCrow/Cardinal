@@ -6,8 +6,7 @@ public enum CardEffectTriggerType
     OnPlay,
     OnTurnEnd,
     OnDraw,
-    OnDiscard,
-    OnDestroy,
+    OnRemove,
     WhileInHand,
     WhileInPlay
 }

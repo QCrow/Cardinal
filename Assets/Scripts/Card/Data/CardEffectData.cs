@@ -10,4 +10,10 @@ public class CardEffectData
 {
     public string Keyword;  // The keyword identifying the effect (e.g., "Produce", "Consume")
     public List<int> Values = new();  // A list of values associated with the effect (e.g., amount of resources)
+
+    public CardEffectData(string keyword, List<int> values)
+    {
+        Keyword = keyword;
+        Values = values;
+    }
 }

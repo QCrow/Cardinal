@@ -3,8 +3,7 @@ using System.Collections.Generic;
 public class BuildingCard : Card
 {
     public List<string> Traits = new();
-    public Dictionary<CardModifier, int> Modifiers = new();
-
+    // public Dictionary<ModifierType, Modifier> Modifiers = new();  // TODO: Take modifier from parent to this child
     public void Initialize(int cardID, string cardName, Dictionary<CardEffectTriggerType, List<CardCondition>> conditionalEffects, List<string> validTargets, List<string> traits)
     {
         _cardVisual.Initialize(cardID, cardName);
