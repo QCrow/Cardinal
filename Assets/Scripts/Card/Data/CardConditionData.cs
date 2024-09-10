@@ -15,5 +15,11 @@ public class CardConditionData
     public List<CardEffectData> Effects = new();  // The list of effects that are triggered when this condition is met
 
     // Default constructor
-    public CardConditionData() { }
+    public CardConditionData(CardConditionType conditionType, CardEffectTriggerType triggerType, int conditionValue, List<CardEffectData> effects)
+    {
+        ConditionType = conditionType;
+        TriggerType = triggerType;
+        ConditionValue = conditionValue;
+        Effects = effects;
+    }
 }

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 496600889dec57f4681e0180196138d9, type: 3}
-  m_Name: Card_3
+  m_Name: Card_20
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -21,16 +21,16 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  ID: 3
-  CardName: On Play Cluster
+  ID: 20
+  CardName: Everlasting Protector
   ConditionalEffects:
-  - ConditionType: 2
-    TriggerType: 0
-    ConditionValue: 2
+  - ConditionType: 0
+    TriggerType: 5
+    ConditionValue: 0
     Effects:
-    - Keyword: Produce Energy
-      Values: 02000000
+    - Keyword: Apply Everlasting Slot
+      Values: 01000000
   ValidTargets:
   - Empty
   Traits:
-  - Production
+  - Landmark
