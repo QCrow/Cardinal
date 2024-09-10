@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 496600889dec57f4681e0180196138d9, type: 3}
-  m_Name: Card_2
+  m_Name: Card_10
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -21,14 +21,14 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  ID: 2
-  CardName: Cluster Tester
+  ID: 10
+  CardName: Destroy Surr
   ConditionalEffects:
-  - ConditionType: 2
-    TriggerType: 1
-    ConditionValue: 3
+  - ConditionType: 0
+    TriggerType: 0
+    ConditionValue: 0
     Effects:
-    - Keyword: Produce Energy
+    - Keyword: DestroySurroundingToGain PerTurn Energy
       Values: 02000000
   ValidTargets:
   - Empty

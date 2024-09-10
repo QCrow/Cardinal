@@ -468,7 +468,7 @@ MonoBehaviour:
   BuildingCardPrefab: {fileID: 4989164418008828193, guid: 4ca2356f784df4c438e6bc16002e2026, type: 3}
   UICanvas: {fileID: 1830563415}
   Hand: {fileID: 1658228152}
-  _initialCards: 0200000002000000020000000300000003000000
+  _initialCards: 0100000001000000010000000a0000000a0000000a0000000a00000014000000140000001e0000001e000000
 --- !u!4 &565795665
 Transform:
   m_ObjectHideFlags: 0
@@ -1195,7 +1195,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbe842175b1df4b4f94a97e1ca469940, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Board: {fileID: 0}
 --- !u!4 &1684153196
 Transform:
   m_ObjectHideFlags: 0

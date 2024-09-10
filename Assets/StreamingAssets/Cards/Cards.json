@@ -5,17 +5,17 @@
       "Production"
     ],
     "CardID": 1,
-    "CardName": "Small Farm",
+    "CardName": "Destroyable Building",
     "ConditionalEffects": [
       {
         "ConditionType": 0,
-        "TriggerType": 1,
-        "ConditionValue": 1,
+        "TriggerType": 3,
+        "ConditionValue": 0,
         "Effects": [
           {
             "Keyword": "Produce Food",
             "Values": [
-              3
+              5
             ]
           }
         ]
@@ -30,44 +30,109 @@
     "Traits": [
       "Production"
     ],
-    "CardID": 2,
-    "CardName": "Cluster Tester",
+    "CardID": 10,
+    "CardName": "Destroy Surr",
     "ConditionalEffects": [
       {
-        "ConditionType": 2,
-        "TriggerType": 1,
-        "ConditionValue": 3,
-        "Effects": [
-          {
-            "Keyword": "Produce Energy",
-            "Values": [
-              2
-            ]
-          }
-        ]
-      }
-    ],
-    "ValidTargets": [
-      "Empty"
-    ]
-  },
-  {
-    "$type": "BuildingCardData, Assembly-CSharp",
-    "Traits": [
-      "Production"
-    ],
-    "CardID": 3,
-    "CardName": "On Play Cluster",
-    "ConditionalEffects": [
-      {
-        "ConditionType": 2,
+        "ConditionType": 0,
         "TriggerType": 0,
-        "ConditionValue": 2,
+        "ConditionValue": 0,
+        "Effects": [
+          {
+            "Keyword": "DestroySurroundingToGain PerTurn Energy",
+            "Values": [
+              2
+            ]
+          }
+        ]
+      }
+    ],
+    "ValidTargets": [
+      "Empty"
+    ]
+  },
+  {
+    "$type": "BuildingCardData, Assembly-CSharp",
+    "Traits": [
+      "Production"
+    ],
+    "CardID": 11,
+    "CardName": "Destroy Surr Instant",
+    "ConditionalEffects": [
+      {
+        "ConditionType": 0,
+        "TriggerType": 0,
+        "ConditionValue": 0,
+        "Effects": [
+          {
+            "Keyword": "DestroySurroundingToGain Instant Energy",
+            "Values": [
+              2
+            ]
+          }
+        ]
+      }
+    ],
+    "ValidTargets": [
+      "Empty"
+    ]
+  },
+  {
+    "$type": "BuildingCardData, Assembly-CSharp",
+    "Traits": [
+      "Landmark"
+    ],
+    "CardID": 20,
+    "CardName": "Everlasting Protector",
+    "ConditionalEffects": [
+      {
+        "ConditionType": 0,
+        "TriggerType": 5,
+        "ConditionValue": 0,
+        "Effects": [
+          {
+            "Keyword": "Apply Everlasting Slot",
+            "Values": [
+              1
+            ]
+          }
+        ]
+      }
+    ],
+    "ValidTargets": [
+      "Empty"
+    ]
+  },
+  {
+    "$type": "BuildingCardData, Assembly-CSharp",
+    "Traits": [
+      "Production"
+    ],
+    "CardID": 30,
+    "CardName": "Burnout Producer",
+    "ConditionalEffects": [
+      {
+        "ConditionType": 0,
+        "TriggerType": 1,
+        "ConditionValue": 0,
         "Effects": [
           {
             "Keyword": "Produce Energy",
             "Values": [
               2
+            ]
+          }
+        ]
+      },
+      {
+        "ConditionType": 1,
+        "TriggerType": 1,
+        "ConditionValue": 5,
+        "Effects": [
+          {
+            "Keyword": "DestroySelf",
+            "Values": [
+              0
             ]
           }
         ]
