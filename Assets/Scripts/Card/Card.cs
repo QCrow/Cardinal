@@ -55,6 +55,11 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
 
     private void Update()
     {
+        if (!InputManager.Instance.CanProcessGameInput())
+        {
+            return;
+        }
+
         if (IsDragging)
         {
             Vector2 mousePosition;
@@ -73,6 +78,10 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
 
     public virtual void OnBeginDrag(PointerEventData eventData)
     {
+        if (!InputManager.Instance.CanProcessGameInput())
+        {
+            return;
+        }
         //? Might be changed in the future
         if (Slot) return;
 
@@ -98,6 +107,10 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
 
     public virtual void OnDrag(PointerEventData eventData)
     {
+        if (!InputManager.Instance.CanProcessGameInput())
+        {
+            return;
+        }
         //zoom out the card
         zoomVector = new Vector3(0.7f, 0.7f, 0.7f);
         transform.localScale = zoomVector;
@@ -105,6 +118,11 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
 
     public virtual void OnEndDrag(PointerEventData eventData)
     {
+        if (!InputManager.Instance.CanProcessGameInput())
+        {
+            return;
+        }
+
         IsDragging = false;
         if (!Slot)
         {
@@ -142,6 +160,11 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
 
     public virtual void OnPointerClick(PointerEventData eventData)
     {
+        if (!InputManager.Instance.CanProcessGameInput())
+        {
+            return;
+        }
+        
         if (eventData.button == PointerEventData.InputButton.Right)
         {
             // EffectResolveManager.Instance.ResolveOnRemoveEffects(this);

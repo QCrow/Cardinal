@@ -43,6 +43,7 @@ public class DevTerminal : MonoBehaviour
         {
             isTerminalOpen = !isTerminalOpen;
             terminalCanvas.gameObject.SetActive(isTerminalOpen);
+            InputManager.Instance.IsTerminalOpen = isTerminalOpen;
             return;
         }
 
