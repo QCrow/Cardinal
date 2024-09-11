@@ -21,6 +21,9 @@ public class DevTerminal : MonoBehaviour
     private string promptSymbol = "> ";             // Prompt symbol
     private bool contentChanged = false;            // Flag to track if the content has changed
 
+    private List<string> commandHistory = new List<string>();
+    private int historyIndex = -1;  // Used to track the current position in history
+
     private void Awake()
     {
         if (Instance == null)
@@ -46,6 +49,15 @@ public class DevTerminal : MonoBehaviour
 
         if (isTerminalOpen)
         {
+            // Handle arrow key navigation through command history
+            if (Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                NavigateHistoryUp();
+            }
+            else if (Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                NavigateHistoryDown();
+            }
             // Handle character input
             foreach (char c in Input.inputString)
             {
@@ -89,6 +101,40 @@ public class DevTerminal : MonoBehaviour
         }
     }
 
+    private void NavigateHistoryUp()
+    {
+        // Move up in history but skip consecutive duplicates
+        if (historyIndex > 0)
+        {
+            do
+            {
+                historyIndex--;
+            } while (historyIndex > 0 && commandHistory[historyIndex -1] == commandHistory[historyIndex]);
+
+            currentInput = commandHistory[historyIndex];
+        }
+    }
+
+
+    private void NavigateHistoryDown()
+    {
+        // Move down in history but stop at the most recent command
+        if (historyIndex < commandHistory.Count - 1)
+        {
+            do
+            {
+                historyIndex++;
+            } while (historyIndex < commandHistory.Count - 1 && commandHistory[historyIndex] == commandHistory[historyIndex - 1]);
+
+            currentInput = commandHistory[historyIndex];
+        }
+        else
+        {
+            historyIndex = commandHistory.Count;
+            currentInput = string.Empty;
+        }
+    }
+
     /// <summary>
     /// Adjusts the content size of the terminal based on the height of the text.
     /// </summary>
@@ -107,6 +153,11 @@ public class DevTerminal : MonoBehaviour
     /// <param name="input">The command input by the user.</param>
     private void ProcessInput(string input)
     {
+        if (!string.IsNullOrEmpty(input))
+        {
+            commandHistory.Add(input);
+            historyIndex = commandHistory.Count; // Reset history index to point to the end of the list
+        }
         // Store the input command in the output before processing
         allOutput += "\n" + promptSymbol + input;
 
@@ -355,6 +406,9 @@ public class DevTerminal : MonoBehaviour
     private void ClearTerminal()
     {
         allOutput = string.Empty;
+        commandHistory.Clear();  // Clear all command history
+        historyIndex = -1;       // Reset the history index
+
         AdjustContentHeight();  // Ensure the content size is updated after clearing
 
         // Scroll to the top after clearing the terminal
