@@ -24,6 +24,10 @@ public class BoardCamera : MonoBehaviour
 
     void Update()
     {
+        if (!InputManager.Instance.CanProcessGameInput())
+        {
+            return;
+        }
         // Handle zooming with mouse scroll, clamping the field of view to the defined limits
         float fov = _camera.fieldOfView;
         fov -= Input.GetAxis("Mouse ScrollWheel") * _zoomSpeed;

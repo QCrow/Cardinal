@@ -215,7 +215,11 @@ public class ApplyModifierCardEffect : ModifierCardEffect
 
     public override bool ResolveEffect(List<Slot> targets)
     {
-        ChangeModifier(Value);
+        if (Condition.Card.Slot)
+        {
+            ChangeModifier(Value);
+        }
+            
         return true;
     }
 }
@@ -227,7 +231,11 @@ public class RemoveModifierCardEffect : ModifierCardEffect
     public override bool ResolveEffect(List<Slot> targets)
     {
         Debug.Log("Removing modifier with effect" + Value);
-        ChangeModifier(-Value);
+
+        if (Condition.Card.Slot)
+        {
+            ChangeModifier(-Value);
+        }
         return true;
     }
 }
