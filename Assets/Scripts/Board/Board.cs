@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 /// <summary>
@@ -210,5 +211,28 @@ public class Board : MonoBehaviour
             }
         }
         return false;
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (_slots == null) return;  // Return if the slots haven't been initialized yet
+
+        Gizmos.color = Color.green;  // Set gizmo color
+
+        for (int row = 0; row < _unitHeight; row++)
+        {
+            for (int col = 0; col < _unitWidth; col++)
+            {
+                Slot slot = _slots[row][col];
+                Vector3 slotPosition = slot.transform.position;  // Get the world position of the slot
+#if UNITY_EDITOR
+                GUIStyle style = new GUIStyle();
+                style.normal.textColor = Color.black;  // Set the label color to black
+
+                // Display the row and column as text at the slot's position with the custom style
+                Handles.Label(slotPosition, $"({row}, {col})", style);
+#endif
+            }
+        }
     }
 }

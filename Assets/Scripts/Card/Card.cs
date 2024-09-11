@@ -121,6 +121,8 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
         {
             //TODO: Change the condition to check if the card is placeable with the tile
             TransformUtil.MoveToAndSetParent(gameObject, Slot.gameObject);
+
+            Hand.Instance.RemoveCard(gameObject);
         }
         GameManager.Instance.SelectedCard = null;
         StartCoroutine(WaitForEndOfFrame());
@@ -177,6 +179,14 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
     public void Remove()
     {
         if (Modifiers.ContainsKey(ModifierType.Everlasting) || Slot.Modifiers.ContainsKey(ModifierType.Everlasting)) return;
+        EffectResolveManager.Instance.ResolveOnRemoveEffects(this);
+        if (Slot) Slot.Card = null;
+        Destroy(gameObject);
+    }
+
+    //Forcefully remove the card without checking its modifier type, shall only be use for development purpose
+    public void ForceRemove()
+    {
         EffectResolveManager.Instance.ResolveOnRemoveEffects(this);
         if (Slot) Slot.Card = null;
         Destroy(gameObject);

@@ -8,6 +8,8 @@ using TMPro;
 
 public class DevTerminal : MonoBehaviour
 {
+    public static DevTerminal Instance { get; private set; }
+
     [SerializeField] private Canvas terminalCanvas; // The canvas to toggle
     [SerializeField] private TMP_Text terminalDisplay;  // The text area that simulates the terminal
     [SerializeField] private ScrollRect scrollRect; // ScrollRect to allow scrolling
@@ -18,6 +20,19 @@ public class DevTerminal : MonoBehaviour
     private string allOutput = string.Empty;        // Store all terminal output for display
     private string promptSymbol = "> ";             // Prompt symbol
     private bool contentChanged = false;            // Flag to track if the content has changed
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject); // Optional, depending on your needs
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     private void Update()
     {
@@ -59,8 +74,8 @@ public class DevTerminal : MonoBehaviour
                 AdjustContentHeight();
                 Canvas.ForceUpdateCanvases();
 
-                Debug.Log("terminal display" + terminalDisplay.rectTransform.sizeDelta.y);
-                Debug.Log("terminal canvas" + terminalCanvas.GetComponent<RectTransform>().rect.height);
+                //Debug.Log("terminal display" + terminalDisplay.rectTransform.sizeDelta.y);
+                //Debug.Log("terminal canvas" + terminalCanvas.GetComponent<RectTransform>().rect.height);
                 if (terminalDisplay.rectTransform.sizeDelta.y > terminalCanvas.GetComponent<RectTransform>().rect.height)
                 {
                     scrollRect.verticalNormalizedPosition = 0f;  // Scroll to bottom
@@ -167,29 +182,111 @@ public class DevTerminal : MonoBehaviour
     private bool TryInvokeMethod(MethodInfo method, string[] arguments, string[] flags)
     {
         var methodParams = method.GetParameters();
-        object[] parsedParams = new object[methodParams.Length];
+        int paramLength = methodParams.Length;
 
-        // Ensure the exact number of arguments is provided
-        if (arguments.Length != methodParams.Length)
+        var attribute = method.GetCustomAttribute<DevCommandAttribute>();
+        string[] validFlags = attribute?.ValidFlags ?? Array.Empty<string>();
+
+        // Validate flags against the valid flags defined in the attribute
+        foreach (var flag in flags)
         {
-            allOutput += $"\nError: The command '{method.Name}' expects {methodParams.Length} arguments, but {arguments.Length} were provided.";
-            return false;
+            if (!validFlags.Contains(flag, StringComparer.OrdinalIgnoreCase))
+            {
+                allOutput += $"\nError: Invalid flag '{flag}' for command '{method.Name}'. Valid flags: {string.Join(", ", validFlags)}";
+                return false;
+            }
         }
 
-        // Parse and assign arguments
-        for (int i = 0; i < methodParams.Length; i++)
-        {
-            var paramInfo = methodParams[i];
+        // Check if the method accepts flags (as an array of TerminalFlag objects)
+        bool methodAcceptsFlags = paramLength > 0 && methodParams[paramLength - 1].ParameterType == typeof(TerminalFlag[]);
 
-            try
+        object[] parsedParams;
+
+        // If the method accepts flags, we need to process both arguments and flags
+        if (methodAcceptsFlags)
+        {
+            parsedParams = new object[paramLength];
+
+            // Check if the first parameter is a string[] (arguments array)
+            if (methodParams[0].ParameterType == typeof(string[]))
             {
-                // Convert the argument to the appropriate type
-                parsedParams[i] = ConvertArgument(paramInfo.ParameterType, arguments[i]);
+                // Pass the arguments array directly
+                parsedParams[0] = arguments;
             }
-            catch (Exception ex)
+            else
             {
-                allOutput += $"\nError: {ex.Message}";
+                // Process each argument and check for optional parameters
+                for (int i = 0; i < paramLength - 1; i++)  // Exclude the last parameter (flags)
+                {
+                    var paramInfo = methodParams[i];
+                    if (i < arguments.Length)
+                    {
+                        // Convert provided arguments
+                        try
+                        {
+                            parsedParams[i] = ConvertArgument(paramInfo.ParameterType, arguments[i]);
+                        }
+                        catch (Exception ex)
+                        {
+                            allOutput += $"\nError: {ex.Message}";
+                            return false;
+                        }
+                    }
+                    else if (paramInfo.IsOptional)
+                    {
+                        // Use default value for optional arguments
+                        parsedParams[i] = paramInfo.DefaultValue;
+                    }
+                    else
+                    {
+                        allOutput += $"\nError: Missing required argument '{paramInfo.Name}' for command '{method.Name}'.";
+                        return false;
+                    }
+                }
+            }
+
+            // Convert string flags to TerminalFlag objects and pass them as the last argument
+            parsedParams[paramLength - 1] = flags.Select(f => new TerminalFlag(f)).ToArray();
+        }
+        else
+        {
+            // Ensure that the number of arguments is valid, considering optional parameters
+            int requiredArgsCount = methodParams.Count(p => !p.IsOptional);
+            if (arguments.Length < requiredArgsCount || arguments.Length > paramLength)
+            {
+                allOutput += $"\nError: The command '{method.Name}' expects between {requiredArgsCount} and {paramLength} arguments, but {arguments.Length} were provided.";
                 return false;
+            }
+
+            parsedParams = new object[paramLength];
+
+            // Convert each argument to its expected type or use the default value if it's optional
+            for (int i = 0; i < methodParams.Length; i++)
+            {
+                var paramInfo = methodParams[i];
+                if (i < arguments.Length)
+                {
+                    // Convert provided arguments
+                    try
+                    {
+                        parsedParams[i] = ConvertArgument(paramInfo.ParameterType, arguments[i]);
+                    }
+                    catch (Exception ex)
+                    {
+                        allOutput += $"\nError: {ex.Message}";
+                        return false;
+                    }
+                }
+                else if (paramInfo.IsOptional)
+                {
+                    // Use default value for optional arguments
+                    parsedParams[i] = paramInfo.DefaultValue;
+                }
+                else
+                {
+                    allOutput += $"\nError: Missing required argument '{paramInfo.Name}' for command '{method.Name}'.";
+                    return false;
+                }
             }
         }
 
@@ -222,6 +319,7 @@ public class DevTerminal : MonoBehaviour
         }
     }
 
+
     private object ConvertArgument(Type targetType, string argument)
     {
         if (targetType.IsEnum)
@@ -232,6 +330,12 @@ public class DevTerminal : MonoBehaviour
                 return enumValue;
             }
             throw new ArgumentException($"Invalid value '{argument}' for enum type {targetType.Name}.");
+        }
+
+        if (targetType == typeof(TerminalFlag))
+        {
+            // Handle flag conversion
+            return new TerminalFlag(argument);
         }
 
         try
@@ -266,14 +370,37 @@ public class DevTerminal : MonoBehaviour
     {
         allOutput += "\nAvailable Commands:";
 
+        // Get all methods with the DevCommand attribute
         var methods = Assembly.GetExecutingAssembly().GetTypes()
             .SelectMany(t => t.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance))
             .Where(m => m.GetCustomAttributes(typeof(DevCommandAttribute), false).Length > 0);
 
+        // Padding values for alignment
+        //int commandPadding = 8;  // Padding for command alignment
+        int descriptionPadding = 80;  // Padding for description alignment
+
         foreach (var method in methods)
         {
             var attribute = method.GetCustomAttribute<DevCommandAttribute>();
-            allOutput += $"{attribute.Description}";
+
+            // Ensure the alias and description are padded for alignment
+            //string commandAlias = attribute.Aliases.First().PadRight(commandPadding);  // Pad alias
+            string description = attribute.Description.PadRight(descriptionPadding);  // Pad description
+            string usage = attribute.Usage;  // Get usage from attribute
+
+            // Add the formatted command to the terminal output
+            allOutput += $"{description}Usage: {usage}";
         }
+    }
+
+
+
+    /// <summary>
+    /// Logs a message to the terminal display.
+    /// </summary>
+    public void LogToTerminal(string message)
+    {
+        allOutput += "\n" + message;
+        contentChanged = true;
     }
 }

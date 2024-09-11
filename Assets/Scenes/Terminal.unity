@@ -654,7 +654,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BuildingCardPrefab: {fileID: 4989164418008828193, guid: 4ca2356f784df4c438e6bc16002e2026, type: 3}
   UICanvas: {fileID: 1830563415}
-  Hand: {fileID: 1658228152}
+  HandCanvas: {fileID: 1658228152}
   _initialCards: 0100000001000000
 --- !u!4 &565795665
 Transform:
@@ -1310,6 +1310,7 @@ GameObject:
   - component: {fileID: 1658228155}
   - component: {fileID: 1658228154}
   - component: {fileID: 1658228156}
+  - component: {fileID: 1658228157}
   m_Layer: 5
   m_Name: Hand
   m_TagString: Untagged
@@ -1400,6 +1401,20 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &1658228157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1658228152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0924c5a105866248b04eecb70d843bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxCapacity: 7
+  _buildingCardPrefab: {fileID: 4989164418008828193, guid: 4ca2356f784df4c438e6bc16002e2026, type: 3}
 --- !u!1 &1830563412
 GameObject:
   m_ObjectHideFlags: 0
@@ -1588,8 +1603,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 24
+  m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
