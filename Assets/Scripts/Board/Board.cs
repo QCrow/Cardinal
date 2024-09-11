@@ -228,6 +228,8 @@ public class Board : MonoBehaviour
 #if UNITY_EDITOR
                 GUIStyle style = new GUIStyle();
                 style.normal.textColor = Color.black;  // Set the label color to black
+                style.fontStyle = FontStyle.Bold;      // Make the font bold
+                style.fontSize = 16;                   // Increase the font size
 
                 // Display the row and column as text at the slot's position with the custom style
                 Handles.Label(slotPosition, $"({row}, {col})", style);
