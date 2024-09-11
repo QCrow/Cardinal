@@ -39,7 +39,7 @@ public class DevTerminal : MonoBehaviour
     private void Update()
     {
         // Toggle the terminal with the ` key
-        if (Input.GetKeyDown(KeyCode.BackQuote)) // ` is the backtick/tilde key
+        if (Input.GetKeyDown(KeyCode.F1)) 
         {
             isTerminalOpen = !isTerminalOpen;
             terminalCanvas.gameObject.SetActive(isTerminalOpen);
