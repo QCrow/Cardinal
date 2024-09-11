@@ -13,7 +13,6 @@ public class DevTerminal : MonoBehaviour
     [SerializeField] private Canvas terminalCanvas; // The canvas to toggle
     [SerializeField] private TMP_Text terminalDisplay;  // The text area that simulates the terminal
     [SerializeField] private ScrollRect scrollRect; // ScrollRect to allow scrolling
-    //[SerializeField] private RectTransform contentRect; // The content RectTransform inside ScrollRect that expands with text
 
     private bool isTerminalOpen = false;
     private string currentInput = string.Empty;     // Current command being typed
@@ -29,7 +28,7 @@ public class DevTerminal : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // Optional, depending on your needs
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -438,7 +437,6 @@ public class DevTerminal : MonoBehaviour
             var attribute = method.GetCustomAttribute<DevCommandAttribute>();
 
             // Ensure the alias and description are padded for alignment
-            //string commandAlias = attribute.Aliases.First().PadRight(commandPadding);  // Pad alias
             string description = attribute.Description.PadRight(descriptionPadding);  // Pad description
             string usage = attribute.Usage;  // Get usage from attribute
 

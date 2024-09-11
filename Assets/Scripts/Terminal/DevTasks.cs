@@ -6,6 +6,8 @@ public class DevTasks
 {
     /// <summary>
     /// Sets the resource value for the specified resource type to the given value.
+    /// Usage: sr <type> <amt> 
+    /// Allowed flags: none
     /// Alias: sr
     /// </summary>
     /// <param name="resourceType">The type of the resource (Energy, Food, Morale).</param>
@@ -25,10 +27,13 @@ public class DevTasks
     }
 
     /// <summary>
-    /// Adds a card to the hand by ID.
+    /// Adds certain amount of cards to the hand by CardID, if no amount is provided, add one
     /// Alias: ac
-    /// Usage: ac <cardID>
+    /// Allowed flags: none
+    /// Usage: ac <id> [<amt>]
     /// </summary>
+    /// <param name="cardID">The CardID.</param>
+    /// <param name="amount">The amount of card to add.</param>
     [DevCommand("\nac\tAdd a card by ID","Usage: ac <id> [<amt>]", new string[] {}, "ac")]
     public static void AddCardToHand(int cardID, int amount = 1)
     {
@@ -43,11 +48,13 @@ public class DevTasks
     }
 
     /// <summary>
-    /// Destroys a card from the hand by index.
+    /// Destroys a card from the hand by position (index), if flag -a is provided, destroy all cards in hand.
     /// Alias: rmh
-    /// Usage: rmh <index>
+    /// Allowed flags: -a
+    /// Usage: rmh <index> [-a]
     /// </summary>
-    //[DevCommand("\nREMOVECARD\tRemove a card from hand by index\tUsage: rmh <i> [-a]", "rmh")]
+    /// <param name="arguments">Array containing only the position index.</param>
+    /// <param name="flags">Array containing flags, such as `-a` to destroy all cards in hand.</param>
     [DevCommand("\nrmh\tRemove a card from hand by index or with flags","Usage: rmh <index> [-a]", new string[] { "-a" }, "rmh")]
     public static void DestroyCardFromHand(string[] arguments, TerminalFlag[] flags)
     {
@@ -89,6 +96,14 @@ public class DevTasks
         }
     }
 
+    /// <summary>
+    /// Destroy a card in board given its row and column, if flag -a is provided, destroy all cards in board
+    /// Alias: rmb
+    /// Allowed flags: -a
+    /// Usage: rmb <row> <col> [-a]
+    /// </summary>
+    /// <param name="arguments">Array containing the row and column values as strings.</param>
+    /// <param name="flags">Array containing flags, such as `-a` to remove all cards.</param>
     [DevCommand("\nrmb\tRemove a card from the board at a specific row and column", "Usage: rmb <row> <col> [-a]", new string[] { "-a" }, "rmb")]
     public static void RemoveCardFromBoard(string[] arguments, TerminalFlag[] flags)
     {
