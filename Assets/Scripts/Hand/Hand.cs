@@ -32,7 +32,6 @@ public class Hand : MonoBehaviour
             return;
         }
         _instance = this;
-        DontDestroyOnLoad(this.gameObject); // Optional: persist across scenes
 
         _cards = new List<GameObject>();
     }

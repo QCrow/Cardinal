@@ -179,6 +179,7 @@ GameObject:
   - component: {fileID: 2028016746350805812}
   - component: {fileID: -7385242803057603707}
   - component: {fileID: -6222308955800920401}
+  - component: {fileID: -5012214435019725944}
   m_Layer: 5
   m_Name: Building Card
   m_TagString: Untagged
@@ -256,13 +257,98 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2aea20c884b252b479f386f21e40604c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cardID: 0
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: ConditionalEffects
+      Entry: 7
+      Data: 0|System.Collections.Generic.Dictionary`2[[CardEffectTriggerType, Assembly-CSharp],[System.Collections.Generic.List`1[[CardCondition,
+        Assembly-CSharp]], mscorlib]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 1|System.Collections.Generic.EnumEqualityComparer`1[[CardEffectTriggerType,
+        Assembly-CSharp]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: Modifiers
+      Entry: 7
+      Data: 2|System.Collections.Generic.Dictionary`2[[ModifierType, Assembly-CSharp],[Modifier,
+        Assembly-CSharp]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 3|System.Collections.Generic.EnumEqualityComparer`1[[ModifierType, Assembly-CSharp]],
+        mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: HoverAmount
+      Entry: 4
+      Data: 0.1
+    - Name: HoverDuration
+      Entry: 4
+      Data: 0.5
+    - Name: ZoomVector
+      Entry: 7
+      Data: UnityEngine.Vector3, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+  CardID: 0
+  CardName: 
+  ValidTargets: []
+  Slot: {fileID: 0}
   _cardVisual: {fileID: 2372146044049743986}
-  IsHovering: 0
-  IsDragging: 0
-  WasDragged: 0
-  _offset: {x: 0, y: 0}
-  Tile: {fileID: 0}
+  UICamera: {fileID: 0}
+  OriginalPosition: {x: 0, y: 0, z: 0}
+  TargetPosition: {x: 0, y: 0}
+  IsMovingBack: 0
+  Traits: []
 --- !u!114 &-6222308955800920401
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -304,6 +390,26 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 2028016746350805812}
+--- !u!114 &-5012214435019725944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4989164418008828193}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: -1
+  m_PreferredHeight: -1
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!1 &5949882816046892811
 GameObject:
   m_ObjectHideFlags: 0

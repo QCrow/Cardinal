@@ -9,7 +9,6 @@ using Sirenix.OdinInspector;
 public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
     #region Logic related variables
-    // TODO: Make some of these variables into private field
     public int CardID;
     public string CardName;
 
@@ -21,150 +20,105 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
     public Dictionary<ModifierType, Modifier> Modifiers = new();
     #endregion
 
-    // TODO: Might need to refactor visual to make it cleanly separate from logic
-    #region Visual related variables
+
+    #region Movement/Animation related variables
+    protected CardState _currentState;
+
     [SerializeField] protected CardVisual _cardVisual;
-    private Camera _uiCamera;
+    public Camera UICamera;
 
-    public bool IsHovering;
-    public bool IsDragging;
-    public bool WasDragged;
-    [SerializeField] private Vector2 _offset;
+    protected LayoutElement _layoutElement;
+    protected int _layoutOrder;
 
-    private Vector3 _initialPosition;
-    private Transform _initialParent;
+    //Hover Variable
+    public readonly float HoverAmount = 0.1f;
+    public readonly float HoverDuration = 0.5f;
+    public readonly Vector3 ZoomVector = new Vector3(1.0f, 1.0f, 1.0f);
 
-    public float hoverAmount = 0.1f;
-    private Vector3 zoomVector;
-    private Vector3 OriginalY;
+    public Vector3 OriginalPosition;
+    public Vector2 TargetPosition;
 
-    //cardHover Variable
-    private Vector3 _originalPosition;
-    public float hoverDuration = 0.5f;
-    private Tween hoverTween;
+    public bool IsMovingBack = false;
 
+    protected bool _canInteract => InputManager.Instance.CanProcessGameInput() && !IsMovingBack;
     #endregion
 
+    public void ChangeState(CardState newState)
+    {
+        _currentState?.OnExit(this);
+
+        _currentState = newState;
+
+        _currentState?.OnEnter(this);
+    }
 
     private void Start()
     {
-        _initialParent = transform.parent;
-        _uiCamera = GetComponentInParent<Canvas>().worldCamera;
-        _originalPosition = transform.position;
-    }
+        UICamera = GetComponentInParent<Canvas>().worldCamera;
+        _layoutElement = GetComponent<LayoutElement>();
 
-    private void Update()
-    {
-        if (!InputManager.Instance.CanProcessGameInput())
-        {
-            return;
-        }
-
-        if (IsDragging)
-        {
-            Vector2 mousePosition;
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                transform.parent as RectTransform,
-                Input.mousePosition,
-                _uiCamera,
-                out mousePosition);
-
-            Vector2 targetPosition = mousePosition + _offset;
-
-            transform.localPosition = targetPosition;
-        }
-    }
-
-
-    public virtual void OnBeginDrag(PointerEventData eventData)
-    {
-        if (!InputManager.Instance.CanProcessGameInput())
-        {
-            return;
-        }
-        //? Might be changed in the future
-        if (Slot) return;
-
-        GameManager.Instance.SelectedCard = this;
-        _initialPosition = transform.localPosition;
-
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            transform.parent as RectTransform,
-            eventData.position,
-            _uiCamera,
-            out _offset);
-
-        _offset = (Vector2)transform.localPosition - _offset;
-
-        // //? Test to see if it works
-        Image i = GetComponent<Image>();
-        i.raycastTarget = false;
-
-        IsDragging = true;
-        WasDragged = true;
-
-    }
-
-    public virtual void OnDrag(PointerEventData eventData)
-    {
-        if (!InputManager.Instance.CanProcessGameInput())
-        {
-            return;
-        }
-        //zoom out the card
-        zoomVector = new Vector3(0.7f, 0.7f, 0.7f);
-        transform.localScale = zoomVector;
-    }
-
-    public virtual void OnEndDrag(PointerEventData eventData)
-    {
-        if (!InputManager.Instance.CanProcessGameInput())
-        {
-            return;
-        }
-
-        IsDragging = false;
-        if (!Slot)
-        {
-            //TODO: Refactor this into TransformUtil
-            transform.DOMove(_initialParent.TransformPoint(_initialPosition), 0.5f)
-                     .SetEase(Ease.OutQuad)
-                     .OnComplete(() =>
-                     {
-                         transform.SetParent(_initialParent);
-                         transform.localPosition = _initialPosition; // Ensure the final position is accurate
-                     });
-        }
-        else
-        {
-            //TODO: Change the condition to check if the card is placeable with the tile
-            TransformUtil.MoveToAndSetParent(gameObject, Slot.gameObject);
-
-            Hand.Instance.RemoveCard(gameObject);
-        }
-        GameManager.Instance.SelectedCard = null;
         StartCoroutine(WaitForEndOfFrame());
 
         IEnumerator WaitForEndOfFrame()
         {
             yield return new WaitForEndOfFrame();
-            WasDragged = false;
-            Image i = GetComponent<Image>();
-            i.raycastTarget = true;
+            OriginalPosition = transform.position;
+            ChangeState(new CardIdleState());
+        }
+    }
+
+    private void Update()
+    {
+        if (!_canInteract) return;
+
+        _currentState?.OnUpdate(this);
+    }
+
+    public virtual void OnBeginDrag(PointerEventData eventData)
+    {
+        if (!_canInteract) return;
+        if (_currentState is not CardHoverState) return;
+        GameManager.Instance.SelectedCard = this;
+        ChangeState(new CardDraggedState());
+    }
+
+    public virtual void OnDrag(PointerEventData eventData)
+    {
+        if (!_canInteract) return;
+
+        RectTransformUtility.ScreenPointToWorldPointInRectangle(
+            transform.parent as RectTransform,
+            Input.mousePosition,
+            UICamera,
+            out Vector3 worldMousePosition);
+
+        TargetPosition = worldMousePosition;
+    }
+
+    public virtual void OnEndDrag(PointerEventData eventData)
+    {
+        if (!_canInteract) return;
+
+        //TODO: Change the condition to check if the card is placeable with the tile
+        if (!Slot)
+        {
+            ChangeState(new CardIdleState());
+        }
+        else
+        {
+            TransformUtil.MoveToAndSetParent(gameObject, Slot.gameObject);
+
+            Hand.Instance.RemoveCard(gameObject);
+            ChangeState(new CardInSlotState());
         }
 
-        //zoom in the card
-        zoomVector = new Vector3(1.0f, 1.0f, 1.0f);
-        transform.localScale = zoomVector;
+        GameManager.Instance.SelectedCard = null;
     }
 
     public virtual void OnPointerClick(PointerEventData eventData)
     {
-        if (!InputManager.Instance.CanProcessGameInput())
-        {
-            return;
-        }
-        
+        if (!_canInteract) return;
+
         if (eventData.button == PointerEventData.InputButton.Right)
         {
             // EffectResolveManager.Instance.ResolveOnRemoveEffects(this);
@@ -176,28 +130,19 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
     // zoom in the card if the mouse hover on the card
     public virtual void OnPointerEnter(PointerEventData eventData)
     {
-        if (IsHovering) return;  
-        IsHovering = true;
-        transform.DOKill();
+        if (!_canInteract) return;
 
-        zoomVector = new Vector3(1.0f, 1.0f, 1.0f);
-        transform.localScale += zoomVector * hoverAmount;
-        // Infinite loop that alternates between up and down
-        hoverTween = transform.DOMoveY(_originalPosition.y + hoverAmount, hoverDuration)
-            .SetLoops(-1, LoopType.Yoyo) 
-            .SetEase(Ease.InOutSine);
+        if (_currentState == null || _currentState is not CardIdleState) return;
+        OriginalPosition = transform.position;
+        ChangeState(new CardHoverState());
     }
 
     public virtual void OnPointerExit(PointerEventData eventData)
     {
-        if (!IsHovering) return;
-        IsHovering = false;
-        // Stop the hover animation
-        hoverTween.Kill();
+        if (!_canInteract) return;
 
-        zoomVector = new Vector3(1.0f, 1.0f, 1.0f);
-        transform.localScale -= zoomVector * hoverAmount;
-        transform.DOMoveY(_originalPosition.y, hoverDuration).SetEase(Ease.OutQuad);
+        if (_currentState == null || _currentState is not CardHoverState) return;
+        ChangeState(new CardIdleState());
     }
 
 
@@ -245,5 +190,24 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
                 Modifiers.Remove(modifierType);
             }
         }
+    }
+
+    public void SetRaycastTargetActive(bool isActive)
+    {
+        Image i = GetComponent<Image>();
+        i.raycastTarget = isActive;
+    }
+
+    public void SendToFront()
+    {
+        _layoutOrder = transform.GetSiblingIndex();
+        _layoutElement.ignoreLayout = true;
+        transform.SetAsLastSibling();
+    }
+
+    public void ResetLayout()
+    {
+        transform.SetSiblingIndex(_layoutOrder);
+        _layoutElement.ignoreLayout = false;
     }
 }

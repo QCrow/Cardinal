@@ -12,7 +12,7 @@ public class DevTasks
     /// </summary>
     /// <param name="resourceType">The type of the resource (Energy, Food, Morale).</param>
     /// <param name="value">The value to set for the resource.</param>
-    [DevCommand("\nsr\tSet a resouce to certain value", "Usage: sr <type> <amt>", new string[] {}, "sr")]
+    [DevCommand("\nsr\tSet a resouce to certain value", "Usage: sr <type> <amt>", new string[] { }, "sr")]
     public static void SetResourceValue(ResourceType resourceType, int value)
     {
         if (ResourceManager.Instance != null)
@@ -34,7 +34,7 @@ public class DevTasks
     /// </summary>
     /// <param name="cardID">The CardID.</param>
     /// <param name="amount">The amount of card to add.</param>
-    [DevCommand("\nac\tAdd a card by ID","Usage: ac <id> [<amt>]", new string[] {}, "ac")]
+    [DevCommand("\nac\tAdd a card by ID", "Usage: ac <id> [<amt>]", new string[] { }, "ac")]
     public static void AddCardToHand(int cardID, int amount = 1)
     {
         if (Hand.Instance.AddCardByID(cardID, amount, true))
@@ -55,7 +55,7 @@ public class DevTasks
     /// </summary>
     /// <param name="arguments">Array containing only the position index.</param>
     /// <param name="flags">Array containing flags, such as `-a` to destroy all cards in hand.</param>
-    [DevCommand("\nrmh\tRemove a card from hand by index or with flags","Usage: rmh <index> [-a]", new string[] { "-a" }, "rmh")]
+    [DevCommand("\nrmh\tRemove a card from hand by index or with flags", "Usage: rmh <index> [-a]", new string[] { "-a" }, "rmh")]
     public static void DestroyCardFromHand(string[] arguments, TerminalFlag[] flags)
     {
         bool destroyAll = flags.Any(f => f.Is("-a"));
