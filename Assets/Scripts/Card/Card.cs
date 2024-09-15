@@ -34,15 +34,15 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
     private Vector3 _initialPosition;
     private Transform _initialParent;
 
-    [SerializeField] public float hoverAmount = 0.1f;
+    public float hoverAmount = 0.1f;
     private Vector3 zoomVector;
+    private Vector3 OriginalY;
 
-    //Card Animation
-    private Animator _animator;
-    private RuntimeAnimatorController cardAnimatorController;
-    string _currentState;
-    const string CARD_FLOAT = "Card_Float";
-    const string CARD_IDLE = "Card_Idle";
+    //cardHover Variable
+    private Vector3 _originalPosition;
+    public float hoverDuration = 0.5f;
+    private Tween hoverTween;
+
     #endregion
 
 
@@ -50,7 +50,7 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
     {
         _initialParent = transform.parent;
         _uiCamera = GetComponentInParent<Canvas>().worldCamera;
-        _animator = gameObject.GetComponent<Animator>();
+        _originalPosition = transform.position;
     }
 
     private void Update()
@@ -176,28 +176,30 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
     // zoom in the card if the mouse hover on the card
     public virtual void OnPointerEnter(PointerEventData eventData)
     {
-        // zoomVector = new Vector3(1.0f, 1.0f, 1.0f);
-        // transform.localScale += zoomVector * hoverAmount;
-        // ChangeAnimationState(CARD_FLOAT);
+        if (IsHovering) return;  
+        IsHovering = true;
+        transform.DOKill();
+
+        zoomVector = new Vector3(1.0f, 1.0f, 1.0f);
+        transform.localScale += zoomVector * hoverAmount;
+        // Infinite loop that alternates between up and down
+        hoverTween = transform.DOMoveY(_originalPosition.y + hoverAmount, hoverDuration)
+            .SetLoops(-1, LoopType.Yoyo) 
+            .SetEase(Ease.InOutSine);
     }
 
     public virtual void OnPointerExit(PointerEventData eventData)
     {
-        // zoomVector = new Vector3(1.0f, 1.0f, 1.0f);
-        // transform.localScale -= zoomVector * hoverAmount;
-        // ChangeAnimationState(CARD_IDLE);
+        if (!IsHovering) return;
+        IsHovering = false;
+        // Stop the hover animation
+        hoverTween.Kill();
+
+        zoomVector = new Vector3(1.0f, 1.0f, 1.0f);
+        transform.localScale -= zoomVector * hoverAmount;
+        transform.DOMoveY(_originalPosition.y, hoverDuration).SetEase(Ease.OutQuad);
     }
 
-    // //change animation state
-    // private void ChangeAnimationState(string newState)
-    // {
-    //     if (newState == _currentState)
-    //     {
-    //         return;
-    //     }
-    //     _animator.Play(newState);
-    //     _currentState = newState;
-    // }
 
     public void Remove()
     {
