@@ -21,19 +21,13 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
 
 
     #region Movement/Animation related variables
-    protected CardState _currentState;
+    public CardState CurrentState { get; private set; }
 
-    [SerializeField] protected CardVisual _cardVisual;
+    [HideInInspector] public CardVisual CardVisual;
     public Camera UICamera;
     public GameObject AnchorContainer;
 
-    //Hover Variable
-    public readonly float HoverAmount = 0.1f;
-    public readonly float HoverDuration = 0.5f;
-    public readonly Vector3 ZoomVector = new(1.0f, 1.0f, 1.0f);
-
     public Vector3 OriginalPosition;
-    public Vector2 TargetPosition;
 
     public bool IsMovingBack = false;
 
@@ -42,11 +36,11 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
 
     public void ChangeState(CardState newState)
     {
-        _currentState?.OnExit(this);
+        CurrentState?.OnExit(this);
 
-        _currentState = newState;
+        CurrentState = newState;
 
-        _currentState?.OnEnter(this);
+        CurrentState?.OnEnter(this);
     }
 
     private void Start()
@@ -68,13 +62,13 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
     {
         if (!_canInteract) return;
 
-        _currentState?.OnUpdate(this);
+        CurrentState?.OnUpdate(this);
     }
 
     public virtual void OnBeginDrag(PointerEventData eventData)
     {
         if (!_canInteract) return;
-        if (_currentState is not CardHoverState) return;
+        if (CurrentState is not CardHoverState) return;
         GameManager.Instance.SelectedCard = this;
         ChangeState(new CardDraggedState());
     }
@@ -89,7 +83,7 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
             UICamera,
             out Vector3 worldMousePosition);
 
-        TargetPosition = worldMousePosition;
+        transform.position = worldMousePosition;
     }
 
     public virtual void OnEndDrag(PointerEventData eventData)
@@ -105,6 +99,7 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
         {
             ChangeState(new CardInSlotState());
             TransformUtil.MoveToAndSetParent(gameObject, Slot.gameObject);
+            TransformUtil.MoveToAndSetParent(CardVisual.gameObject, Slot.gameObject);
             Hand.Instance.RemoveCard(gameObject);
         }
 
@@ -128,7 +123,7 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
         if (!_canInteract) return;
         if (GameManager.Instance.SelectedCard) return;
 
-        if (_currentState == null || _currentState is not CardIdleState) return;
+        if (CurrentState == null || CurrentState is not CardIdleState) return;
         OriginalPosition = transform.position;
         ChangeState(new CardHoverState());
     }
@@ -138,7 +133,7 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
         if (!_canInteract) return;
         if (GameManager.Instance.SelectedCard) return;
 
-        if (_currentState == null || _currentState is not CardHoverState) return;
+        if (CurrentState == null || CurrentState is not CardHoverState) return;
         ChangeState(new CardIdleState());
     }
 
@@ -148,6 +143,7 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
         if (Modifiers.ContainsKey(ModifierType.Everlasting) || Slot.Modifiers.ContainsKey(ModifierType.Everlasting)) return;
         EffectResolveManager.Instance.ResolveOnRemoveEffects(this);
         if (Slot) Slot.Card = null;
+        Destroy(CardVisual.gameObject);
         Destroy(gameObject);
     }
 
@@ -156,6 +152,7 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
     {
         EffectResolveManager.Instance.ResolveOnRemoveEffects(this);
         if (Slot) Slot.Card = null;
+        Destroy(CardVisual.gameObject);
         Destroy(gameObject);
     }
 
@@ -197,12 +194,6 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
 
     public void SendToFront()
     {
-        Transform hand = transform.parent.parent.parent;
-        transform.SetParent(hand);
-    }
-
-    public void ResetLayout()
-    {
-        transform.SetParent(AnchorContainer.transform);
+        CardVisual.transform.SetAsLastSibling();
     }
 }

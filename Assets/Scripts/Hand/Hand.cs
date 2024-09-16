@@ -23,15 +23,19 @@ public class Hand : MonoBehaviour
     private int _maxCapacity = 7;
 
     [SerializeField]
-    private GameObject _buildingCardPrefab;
+    private GameObject _cardPrefab;
+    [SerializeField]
+    private GameObject _buildingCardVisualPrefab;
     [SerializeField]
     private GameObject _anchorContainer;
+    [SerializeField]
+    private GameObject _visualContainer;
 
     private void Awake()
     {
         if (_instance != null && _instance != this)
         {
-            Destroy(this.gameObject); // Prevent duplicate instances of Hand
+            Destroy(gameObject); // Prevent duplicate instances of Hand
             return;
         }
         _instance = this;
@@ -84,7 +88,13 @@ public class Hand : MonoBehaviour
 
             GameObject container = Instantiate(_anchorContainer, gameObject.transform);
             // Instantiate the card prefab
-            GameObject card = Instantiate(_buildingCardPrefab, container.transform);
+            GameObject card = Instantiate(_cardPrefab, container.transform);
+            GameObject cardVisual = Instantiate(_buildingCardVisualPrefab, _visualContainer.transform);
+
+            CardVisual cardVisualScript = cardVisual.GetComponent<CardVisual>();
+
+            cardVisualScript.Card = card;
+            card.GetComponent<Card>().CardVisual = cardVisualScript;
 
             // Use CardFactory to apply data to the card
             CardFactory.CreateCard(card.GetComponent<BuildingCard>(), cardData);
