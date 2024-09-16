@@ -1359,7 +1359,7 @@ MonoBehaviour:
   m_ChildAlignment: 4
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 120, y: 180}
+  m_CellSize: {x: 120, y: 120}
   m_Spacing: {x: 20, y: 20}
   m_Constraint: 0
   m_ConstraintCount: 2
@@ -1416,7 +1416,7 @@ MonoBehaviour:
   _unitHeight: 5
   _unitWidth: 8
   _slotPrefab: {fileID: 4541995192434895280, guid: c2b4c87e64a48294db80c861b3645d31, type: 3}
-  _slotHeight: 180
+  _slotHeight: 120
   _slotWidth: 120
   _slotGap: 20
 --- !u!1 &1610485185

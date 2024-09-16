@@ -4,6 +4,7 @@ using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
+using System;
 
 public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
@@ -60,6 +61,12 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
 
     private void Update()
     {
+        if (CurrentState is not CardDraggedState)
+        {
+            RectTransform rect = GetComponent<RectTransform>();
+            rect.offsetMin = Vector2.zero;  // This sets the left and bottom to 0
+            rect.offsetMax = Vector2.zero;  // This sets the right and top to 0
+        }
         if (!_canInteract) return;
 
         CurrentState?.OnUpdate(this);
@@ -77,13 +84,27 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
     {
         if (!_canInteract) return;
 
+        RectTransform rectTransform = transform as RectTransform;
+        RectTransform parentRectTransform = transform.parent as RectTransform;
+
+        // Get the current mouse position in world space
         RectTransformUtility.ScreenPointToWorldPointInRectangle(
-            transform.parent as RectTransform,
+            parentRectTransform,
             Input.mousePosition,
             UICamera,
             out Vector3 worldMousePosition);
 
-        transform.position = worldMousePosition;
+        // Calculate the offset in local space (pivot offset from the center of the RectTransform)
+        Vector2 localPivotOffset = new Vector2(
+            rectTransform.rect.width * (rectTransform.pivot.x - 0.5f),
+            rectTransform.rect.height * (0.5f - rectTransform.pivot.y) //! The y calculation might be wrong, but is not used for now
+        );
+
+        // Convert local space pivot offset to world space
+        Vector3 worldPivotOffset = parentRectTransform.TransformPoint(localPivotOffset) - parentRectTransform.TransformPoint(Vector2.zero);
+
+        // Adjust the world position to account for the pivot offset
+        transform.position = worldMousePosition + worldPivotOffset;
     }
 
     public virtual void OnEndDrag(PointerEventData eventData)

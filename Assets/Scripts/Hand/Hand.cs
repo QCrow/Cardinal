@@ -93,7 +93,7 @@ public class Hand : MonoBehaviour
 
             CardVisual cardVisualScript = cardVisual.GetComponent<CardVisual>();
 
-            cardVisualScript.Card = card;
+            cardVisualScript.Card = card.GetComponent<Card>();
             card.GetComponent<Card>().CardVisual = cardVisualScript;
 
             // Use CardFactory to apply data to the card

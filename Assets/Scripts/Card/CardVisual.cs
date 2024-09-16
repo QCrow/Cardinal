@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using DG.Tweening;
+using System;
 
 public class CardVisual : MonoBehaviour
 {
@@ -16,13 +18,19 @@ public class CardVisual : MonoBehaviour
     // [SerializeField] private GameObject _cardDescriptionContainer;
     // [SerializeField] private GameObject _cardDescriptionComponentPrefab;
 
-    public GameObject Card;
+    public Card Card;
     private Vector3 rotationDelta;
     private Vector3 movementDelta;
 
     [SerializeField] private float _followSpeed = 30;
     [SerializeField] private float rotationAmount = 40;
     [SerializeField] private float rotationSpeed = 20;
+
+    [SerializeField] private float _descriptionExpandWidth = 360;
+    private Vector2 _originalCardSize;
+    private Vector2 _originalVisualSize;
+    [SerializeField] private GameObject _descriptionContainer;
+
     private void Update()
     {
         SmoothFollow();
@@ -36,6 +44,7 @@ public class CardVisual : MonoBehaviour
 
     private void FollowRotation()
     {
+        if (Card.CurrentState is not CardDraggedState) return;
         // Calculate movement difference between the card and its visual
         Vector3 movement = transform.position - Card.transform.position;
 
@@ -74,4 +83,57 @@ public class CardVisual : MonoBehaviour
     //     cardDescriptionText.text = cardDescription;
     // }
 
+    public void OnHoverEnter()
+    {
+        RectTransform cardRectTransform = Card.transform.parent.GetComponent<RectTransform>();
+        RectTransform visualRectTransform = transform.GetChild(0).GetComponent<RectTransform>();
+
+        // Store the original sizes
+        _originalCardSize = cardRectTransform.sizeDelta;
+        _originalVisualSize = visualRectTransform.sizeDelta;
+
+        Vector2 targetSize = new Vector2(_descriptionExpandWidth, cardRectTransform.sizeDelta.y);
+
+        cardRectTransform.DOSizeDelta(targetSize, 0.2f);
+
+        targetSize = new Vector2(_descriptionExpandWidth, visualRectTransform.sizeDelta.y);
+        visualRectTransform.DOSizeDelta(targetSize, 0.2f).OnStart(() =>
+        {
+            _descriptionContainer.SetActive(true);
+        });
+    }
+
+
+
+    public void OnHoverExit()
+    {
+        RectTransform visualRectTransform = transform.GetChild(0).GetComponent<RectTransform>();
+        visualRectTransform.DOSizeDelta(_originalVisualSize, 0.2f)
+            .OnComplete(() =>
+            {
+                _descriptionContainer.SetActive(false);
+            });
+
+        RectTransform cardRectTransform = Card.transform.parent.GetComponent<RectTransform>();
+        cardRectTransform.DOSizeDelta(_originalCardSize, 0.2f);
+
+    }
+
+    // ! Version with shake and overshoot
+    // public void OnHoverEnter()
+    // {
+    //     // Quick overshoot on scaling for a punchy feel
+    //     transform.DOScale(new Vector3(1.25f, 1.25f, 1.25f), 0.1f)
+    //         .SetEase(Ease.OutBack)
+    //         .OnComplete(() =>
+    //             transform.DOScale(new Vector3(1.2f, 1.2f, 1.2f), 0.1f)
+    //         );
+
+    //     // Adding a slight shake effect for position and rotation
+    //     transform.DOShakePosition(0.1f, new Vector3(10f, 10f, 0), 10, 90, false, true)
+    //         .SetEase(Ease.InOutSine);
+
+    //     transform.DOShakeRotation(0.1f, new Vector3(0, 0, 15f), 10, 90)
+    //         .SetEase(Ease.InOutSine);
+    // }
 }
