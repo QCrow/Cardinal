@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// Represents the board in the game, responsible for initializing slots
@@ -74,6 +75,10 @@ public class Board : MonoBehaviour
         int pixelWidth = _unitWidth * _slotWidth + (_unitWidth - 1) * _slotGap;
         int pixelHeight = _unitHeight * _slotHeight + (_unitHeight - 1) * _slotGap;
         _rectTransform.sizeDelta = new Vector2(pixelWidth, pixelHeight);
+
+        GridLayoutGroup gridLayout = GetComponent<GridLayoutGroup>();
+        gridLayout.cellSize = new Vector2(_slotWidth, _slotHeight);
+        gridLayout.spacing = new Vector2(_slotGap, _slotGap);
 
         // Initialize the list of slots
         _slots = new();

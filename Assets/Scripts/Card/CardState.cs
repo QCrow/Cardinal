@@ -33,6 +33,7 @@ public class CardIdleState : CardState
 
     public override void OnUpdate(Card card)
     {
+
     }
 }
 
@@ -40,33 +41,19 @@ public class CardHoverState : CardState
 {
     public override void OnEnter(Card card)
     {
-        // Quick overshoot on scaling for a punchy feel
-        card.CardVisual.transform.DOScale(new Vector3(1.25f, 1.25f, 1.25f), 0.1f)
-            .SetEase(Ease.OutBack)
-            .OnComplete(() =>
-                card.CardVisual.transform.DOScale(new Vector3(1.2f, 1.2f, 1.2f), 0.1f)
-            );
+        card.CardVisual.OnHoverEnter();
 
-        // Adding a slight shake effect for position and rotation
-        card.CardVisual.transform.DOShakePosition(0.1f, new Vector3(10f, 10f, 0), 10, 90, false, true)
-            .SetEase(Ease.InOutSine);
-
-        card.CardVisual.transform.DOShakeRotation(0.1f, new Vector3(0, 0, 15f), 10, 90)
-            .SetEase(Ease.InOutSine);
     }
 
     public override void OnExit(Card card)
     {
-        card.CardVisual.transform.DOScale(new Vector3(1.0f, 1.0f, 1.0f), 0.2f);
+        card.CardVisual.OnHoverExit();
     }
 
     public override void OnUpdate(Card card)
     {
     }
 }
-
-
-
 
 public class CardDraggedState : CardState
 {
