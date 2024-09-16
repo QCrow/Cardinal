@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections;
-using DG.Tweening;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
@@ -26,14 +25,12 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
 
     [SerializeField] protected CardVisual _cardVisual;
     public Camera UICamera;
-
-    protected LayoutElement _layoutElement;
-    protected int _layoutOrder;
+    public GameObject AnchorContainer;
 
     //Hover Variable
     public readonly float HoverAmount = 0.1f;
     public readonly float HoverDuration = 0.5f;
-    public readonly Vector3 ZoomVector = new Vector3(1.0f, 1.0f, 1.0f);
+    public readonly Vector3 ZoomVector = new(1.0f, 1.0f, 1.0f);
 
     public Vector3 OriginalPosition;
     public Vector2 TargetPosition;
@@ -55,7 +52,7 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
     private void Start()
     {
         UICamera = GetComponentInParent<Canvas>().worldCamera;
-        _layoutElement = GetComponent<LayoutElement>();
+        // _layoutElement = GetComponent<LayoutElement>();
 
         StartCoroutine(WaitForEndOfFrame());
 
@@ -106,10 +103,9 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
         }
         else
         {
-            TransformUtil.MoveToAndSetParent(gameObject, Slot.gameObject);
-
-            Hand.Instance.RemoveCard(gameObject);
             ChangeState(new CardInSlotState());
+            TransformUtil.MoveToAndSetParent(gameObject, Slot.gameObject);
+            Hand.Instance.RemoveCard(gameObject);
         }
 
         GameManager.Instance.SelectedCard = null;
@@ -121,9 +117,8 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
 
         if (eventData.button == PointerEventData.InputButton.Right)
         {
-            // EffectResolveManager.Instance.ResolveOnRemoveEffects(this);
             if (Slot) Slot.Card = null;
-            Destroy(gameObject);
+            ForceRemove();
         }
     }
 
@@ -131,6 +126,7 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
     public virtual void OnPointerEnter(PointerEventData eventData)
     {
         if (!_canInteract) return;
+        if (GameManager.Instance.SelectedCard) return;
 
         if (_currentState == null || _currentState is not CardIdleState) return;
         OriginalPosition = transform.position;
@@ -140,6 +136,7 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
     public virtual void OnPointerExit(PointerEventData eventData)
     {
         if (!_canInteract) return;
+        if (GameManager.Instance.SelectedCard) return;
 
         if (_currentState == null || _currentState is not CardHoverState) return;
         ChangeState(new CardIdleState());
@@ -200,14 +197,12 @@ public abstract class Card : SerializedMonoBehaviour, IBeginDragHandler, IDragHa
 
     public void SendToFront()
     {
-        _layoutOrder = transform.GetSiblingIndex();
-        _layoutElement.ignoreLayout = true;
-        transform.SetAsLastSibling();
+        Transform hand = transform.parent.parent.parent;
+        transform.SetParent(hand);
     }
 
     public void ResetLayout()
     {
-        transform.SetSiblingIndex(_layoutOrder);
-        _layoutElement.ignoreLayout = false;
+        transform.SetParent(AnchorContainer.transform);
     }
 }
