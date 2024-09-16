@@ -16,13 +16,16 @@ public class Hand : MonoBehaviour
         }
     }
 
-    private List<GameObject> _cards;
+    private List<GameObject> _cards = new();
+    private List<GameObject> _containers = new();
 
     [SerializeField]
     private int _maxCapacity = 7;
 
     [SerializeField]
     private GameObject _buildingCardPrefab;
+    [SerializeField]
+    private GameObject _anchorContainer;
 
     private void Awake()
     {
@@ -32,10 +35,9 @@ public class Hand : MonoBehaviour
             return;
         }
         _instance = this;
-
-        _cards = new List<GameObject>();
     }
 
+#nullable enable
     // Method to add a specified amount of cards by ID with optional terminal logging
     public bool AddCardByID(int cardID, int amount = 1, bool logToTerminal = false)
     {
@@ -80,14 +82,17 @@ public class Hand : MonoBehaviour
                 return false;
             }
 
+            GameObject container = Instantiate(_anchorContainer, gameObject.transform);
             // Instantiate the card prefab
-            GameObject card = Instantiate(_buildingCardPrefab, gameObject.transform);
+            GameObject card = Instantiate(_buildingCardPrefab, container.transform);
 
             // Use CardFactory to apply data to the card
             CardFactory.CreateCard(card.GetComponent<BuildingCard>(), cardData);
+            card.GetComponent<Card>().AnchorContainer = container;
 
             // Add the card to the hand
             _cards.Add(card);
+            _containers.Add(container);
 
             if (logToTerminal)
             {
@@ -117,6 +122,7 @@ public class Hand : MonoBehaviour
 
         GameObject cardToRemove = _cards[index];
         _cards.RemoveAt(index);
+        RemoveContainer(cardToRemove);
         cardToRemove.GetComponent<Card>().ForceRemove();
 
         string successMessage = $"Card at index {index} removed.";
@@ -136,6 +142,7 @@ public class Hand : MonoBehaviour
         for (int i = _cards.Count - 1; i >= 0; i--) // Iterate backwards to avoid index issues
         {
             GameObject card = _cards[i];
+            RemoveContainer(card);
             card.GetComponent<Card>().ForceRemove();
         }
 
@@ -152,8 +159,6 @@ public class Hand : MonoBehaviour
     }
 
 
-
-
     //Move a card from hand to other place, i.e. to the board.
     public bool RemoveCard(GameObject card)
     {
@@ -164,7 +169,17 @@ public class Hand : MonoBehaviour
         }
 
         _cards.Remove(card);
+
+        RemoveContainer(card);
         return true;
+    }
+
+    private void RemoveContainer(GameObject card)
+    {
+        Card cardScript = card.GetComponent<Card>();
+
+        _containers.Remove(card.GetComponent<Card>().AnchorContainer);
+        Destroy(cardScript.AnchorContainer);
     }
 
     public int GetCardCount()

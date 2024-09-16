@@ -21,7 +21,8 @@ public class Tester : MonoBehaviour
         // Proceed with card generation after loading is complete
         foreach (int cardID in _initialCards)
         {
-            if(!Hand.Instance.AddCardByID(cardID)){
+            if (!Hand.Instance.AddCardByID(cardID))
+            {
                 Debug.Log("Cannot add card to hand");
             }
         }
@@ -34,7 +35,7 @@ public class Tester : MonoBehaviour
         {
             return;
         }
-        
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             GameManager.Instance.EndTurn();
