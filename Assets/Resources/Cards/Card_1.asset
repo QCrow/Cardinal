@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 496600889dec57f4681e0180196138d9, type: 3}
+  m_Script: {fileID: 11500000, guid: a2ed6f30d06c6db4398b5fcbe1f7838a, type: 3}
   m_Name: Card_1
   m_EditorClassIdentifier: 
   serializationData:
@@ -22,15 +22,23 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   ID: 1
-  CardName: Destroyable Building
-  ConditionalEffects:
-  - ConditionType: 0
-    TriggerType: 3
-    ConditionValue: 0
-    Effects:
-    - Keyword: Produce Food
-      Values: 05000000
-  ValidTargets:
-  - Empty
-  Traits:
-  - Production
+  Name: Recruit
+  Rarity: 0
+  Class: 1
+  Type: 2
+  BaseAttack: 1
+  HasEffect: 1
+  Trigger: 3
+  Condition: 4
+  Position: 0
+  NextTo:
+    Type: 1
+    ID: 1
+    Name: 
+    Trait: 0
+  Keyword: 2
+  Modifier: 0
+  Value: 1
+  IsTargeted: 0
+  TargetRange: 0
+  TargetTrait: 0

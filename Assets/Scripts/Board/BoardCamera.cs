@@ -49,7 +49,7 @@ public class BoardCamera : MonoBehaviour
         {
             // Calculate the movement based on mouse position change since the drag started
             Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - _dragOrigin);
-            Vector3 move = new Vector3(pos.x * adjustedPanSpeed, pos.y * adjustedPanSpeed, 0);
+            Vector3 move = new(pos.x * adjustedPanSpeed, pos.y * adjustedPanSpeed, 0);
 
             // Apply the movement to the camera's position
             transform.Translate(-move, Space.World);

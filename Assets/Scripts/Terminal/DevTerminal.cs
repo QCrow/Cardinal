@@ -20,7 +20,7 @@ public class DevTerminal : MonoBehaviour
     private string promptSymbol = "> ";             // Prompt symbol
     private bool contentChanged = false;            // Flag to track if the content has changed
 
-    private List<string> commandHistory = new List<string>();
+    private List<string> commandHistory = new();
     private int historyIndex = -1;  // Used to track the current position in history
 
     private void Awake()
@@ -39,7 +39,7 @@ public class DevTerminal : MonoBehaviour
     private void Update()
     {
         // Toggle the terminal with the ` key
-        if (Input.GetKeyDown(KeyCode.F1)) 
+        if (Input.GetKeyDown(KeyCode.F1))
         {
             isTerminalOpen = !isTerminalOpen;
             terminalCanvas.gameObject.SetActive(isTerminalOpen);
@@ -109,7 +109,7 @@ public class DevTerminal : MonoBehaviour
             do
             {
                 historyIndex--;
-            } while (historyIndex > 0 && commandHistory[historyIndex -1] == commandHistory[historyIndex]);
+            } while (historyIndex > 0 && commandHistory[historyIndex - 1] == commandHistory[historyIndex]);
 
             currentInput = commandHistory[historyIndex];
         }

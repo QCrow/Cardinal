@@ -1,26 +1,11 @@
 using UnityEngine;
+using UnityEngine.Events;
 
-// TODO: Refector this
 public class GameManager : MonoBehaviour
 {
+    #region Singleton
     private static GameManager _instance;
-    public static GameManager Instance
-    {
-        get
-        {
-            if (_instance == null)
-            {
-                _instance = FindObjectOfType<GameManager>();
-                if (_instance == null)
-                {
-                    GameObject singletonObject = new GameObject(typeof(GameManager).Name);
-                    _instance = singletonObject.AddComponent<GameManager>();
-                    DontDestroyOnLoad(singletonObject);
-                }
-            }
-            return _instance;
-        }
-    }
+    public static GameManager Instance => _instance;
 
     private void Awake()
     {
@@ -29,18 +14,51 @@ public class GameManager : MonoBehaviour
             _instance = this;
             DontDestroyOnLoad(gameObject);
         }
-        else if (_instance != this)
+        else
         {
             Destroy(gameObject);
         }
     }
+    #endregion
 
-    [SerializeField] private Card _selectedCard;
-    public Card SelectedCard { get => _selectedCard; set => _selectedCard = value; }
+    #region Game State
+    public IGameState CurrentState { get; private set; }
+    public UnityEvent<IGameState, IGameState> OnStateChange;
 
-    public void EndTurn()
+    private void OnEnable()
     {
-        Debug.Log("END TURN");
-        EffectResolveManager.Instance.ResolveEndTurnEffects();
+        if (OnStateChange == null)
+        {
+            OnStateChange = new UnityEvent<IGameState, IGameState>();
+        }
     }
+
+    public void ChangeState(IGameState newState)
+    {
+        IGameState previousState = CurrentState;
+        CurrentState?.OnExit(this);
+
+        CurrentState = newState;
+
+        CurrentState?.OnEnter(this);
+
+        OnStateChange?.Invoke(previousState, CurrentState);
+    }
+    #endregion
+
+    #region Game Loop
+    private void Start()
+    {
+        ChangeState(new WaitState());
+    }
+    #endregion
+
+    #region Game Logic
+    private int _monsterHP = 100;
+
+    public void AttackMonster(int damage)
+    {
+        _monsterHP -= damage;
+    }
+    #endregion
 }
