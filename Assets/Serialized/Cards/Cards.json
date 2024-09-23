@@ -1,0 +1,25 @@
+[
+  {
+    "ID": 0,
+    "Name": "Swordsman",
+    "Rarity": "Common",
+    "Class": "Melee",
+    "Type": "Soldier",
+    "BaseAttack": 0,
+    "HasEffect": true,
+    "Condition": "Position",
+    "Position": "Front",
+    "Keyword": "AttackUp",
+    "Duration": 1,
+    "Value": 1
+  },
+  {
+    "ID": 1,
+    "Name": "Recruit",
+    "Rarity": "Common",
+    "Class": "Melee",
+    "Type": "Soldier",
+    "BaseAttack": 1,
+    "HasEffect": false
+  }
+]
