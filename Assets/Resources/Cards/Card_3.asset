@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a2ed6f30d06c6db4398b5fcbe1f7838a, type: 3}
-  m_Name: Card_1
+  m_Name: Card_3
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -21,27 +21,26 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  ID: 1
-  Name: Recruit
+  ID: 3
+  Name: Archer
   Rarity: 0
-  Class: 1
+  Class: 2
   Trait: 2
   BaseAttack: 1
   HasEffect: 1
   Trigger: 3
-  Condition: 4
-  Position: 0
+  Condition: 3
+  Position: 3
   NextTo:
-    Type: 2
+    Type: 0
     Check: 0
     Minimum: 0
-    ID: 1
-    Name: Recruit
+    ID: 0
+    Name: 
     Trait: 0
   Keyword: 2
   Modifier: 0
   Value: 1
   IsTargeted: 0
-  Target:
-    TargetRange: 0
-    TargetTrait: 0
+  TargetRange: 3
+  TargetTrait: 0

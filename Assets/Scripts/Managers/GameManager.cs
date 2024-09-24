@@ -21,17 +21,13 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
+    #region Object References
+    [SerializeField] private HealthBar _healthBar;
+    public Transform FrontDisplay;
+    #endregion
+
     #region Game State
     public IGameState CurrentState { get; private set; }
-    public UnityEvent<IGameState, IGameState> OnStateChange;
-
-    private void OnEnable()
-    {
-        if (OnStateChange == null)
-        {
-            OnStateChange = new UnityEvent<IGameState, IGameState>();
-        }
-    }
 
     public void ChangeState(IGameState newState)
     {
@@ -41,24 +37,36 @@ public class GameManager : MonoBehaviour
         CurrentState = newState;
 
         CurrentState?.OnEnter(this);
+    }
+    #endregion
 
-        OnStateChange?.Invoke(previousState, CurrentState);
+    #region Game Logic
+    [SerializeField] private int _monsterMaxHealth = 100;
+    [SerializeField] private int _monsterCurrentHealth = 100;
+
+    public void AttackMonster(int damage)
+    {
+        _monsterCurrentHealth -= damage;
+        _healthBar.SetHealth(_monsterCurrentHealth, _monsterMaxHealth);
+
+        // if (_monsterCurrentHealth <= 0)
+        // {
+        //     ChangeState(new GameOverState());
+        // }
     }
     #endregion
 
     #region Game Loop
     private void Start()
     {
+        // Initialize the board and start the game
+        Board.Instance.Initialize();
+        CardManager.Instance.InitializeDeck();
+        _monsterCurrentHealth = _monsterMaxHealth;
+        _healthBar.SetHealth(_monsterCurrentHealth, _monsterMaxHealth);
+
+        // After the board is initialized, start the game
         ChangeState(new WaitState());
-    }
-    #endregion
-
-    #region Game Logic
-    private int _monsterHP = 100;
-
-    public void AttackMonster(int damage)
-    {
-        _monsterHP -= damage;
     }
     #endregion
 }
