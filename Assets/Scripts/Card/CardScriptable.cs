@@ -18,7 +18,7 @@ public class CardScriptable : SerializedScriptableObject
     public string Name;
     public RarityType Rarity;
     public ClassType Class;
-    public TraitType Type;
+    public TraitType Trait;
 
     public int BaseAttack;
 
@@ -46,7 +46,7 @@ public class CardScriptable : SerializedScriptableObject
     public ModifierType Modifier;
 
     [BoxGroup("Effect")]
-    [ShowIf("@HasEffect && (Keyword == EffectKeyword.Apply || Keyword == EffectKeyword.Damage)")]
+    [ShowIf("@HasEffect && (Keyword == EffectKeyword.Apply || Keyword == EffectKeyword.DamageUp)")]
     [Tooltip("Amount of the applied modifier.")]
     public int Value = 1;
 
@@ -54,11 +54,8 @@ public class CardScriptable : SerializedScriptableObject
     [ShowIf("@HasEffect && (Keyword == EffectKeyword.Apply)")]
     public bool IsTargeted = false;
     [BoxGroup("Effect/Targeting")]
-    [ShowIf("@HasEffect && IsTargeted")]
-    public TargetRangeType TargetRange = TargetRangeType.None;
-    [BoxGroup("Effect/Targeting")]
-    [ShowIf("@HasEffect && IsTargeted")]
-    public TraitType TargetTrait = TraitType.None;
+    [ShowIf("@HasEffect && IsTargeted && Keyword == EffectKeyword.Apply")]
+    public Target Target;
 
     #region Validation
     private void OnEnable()

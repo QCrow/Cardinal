@@ -1,113 +1,126 @@
-// using System.Collections.Generic;
-// using System.IO;
-// using Newtonsoft.Json;
-// using UnityEngine;
-// using System.Threading.Tasks;
+using System.Collections.Generic;
+using Sirenix.OdinInspector;
+using UnityEngine;
 
-// /// <summary>
-// /// Manages the loading and retrieval of card data from a JSON file.
-// /// Implements a singleton pattern to ensure a single instance across the application.
-// /// </summary>
-// public class CardManager : MonoBehaviour
-// {
-//     // Singleton instance of the CardManager
-//     private static CardManager _instance;
-//     public static CardManager Instance
-//     {
-//         get
-//         {
-//             if (_instance == null)
-//             {
-//                 _instance = FindObjectOfType<CardManager>();
+public class CardManager : SerializedMonoBehaviour
+{
+    #region Singleton
+    private static CardManager _instance;
+    public static CardManager Instance => _instance;
 
-//                 if (_instance == null)
-//                 {
-//                     GameObject singletonObject = new(nameof(CardManager));
-//                     _instance = singletonObject.AddComponent<CardManager>();
-//                     DontDestroyOnLoad(singletonObject); // Make sure the singleton object persists across scenes
-//                 }
-//             }
-//             return _instance;
-//         }
-//     }
+    private void Awake()
+    {
+        if (_instance == null)
+        {
+            _instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+    #endregion
 
-//     // Dictionary to store card data with the card ID as the key
-//     private Dictionary<int, CardData> _cardDictionary = new();
+    private System.Random _random = new();
+    [SerializeField] private Dictionary<int, int> _startingDeck = new();
+    private List<Card> _deck = new();
+    private List<Card> _availableCards = new();
+    public Transform Graveyard;
 
-//     /// <summary>
-//     /// Ensures that only one instance of the CardManager exists.
-//     /// Destroys any additional instances found during initialization.
-//     /// </summary>
-//     private void Awake()
-//     {
-//         if (_instance == null)
-//         {
-//             _instance = this;
-//             DontDestroyOnLoad(gameObject); // Persist the CardManager across scenes
-//         }
-//         else if (_instance != this)
-//         {
-//             Destroy(gameObject); // Destroy duplicate instances
-//         }
-//     }
+    [SerializeField] private GameObject _cardPrefab;
 
-// #nullable enable
-//     /// <summary>
-//     /// Asynchronously loads card data from a JSON file into a dictionary for quick lookup.
-//     /// </summary>
-//     public async Task LoadCardsAsync()
-//     {
-//         // Construct the path to the JSON file
-//         string jsonPath = Path.Combine(Application.streamingAssetsPath, "Cards", "Cards.json");
+    private void LogDeck()
+    {
+        string deck = "Deck: ";
+        foreach (Card card in _deck)
+        {
+            deck += card.ID + " ";
+        }
+        Debug.Log(deck);
+    }
 
-//         // Check if the file exists before attempting to read
-//         if (!File.Exists(jsonPath))
-//         {
-//             Debug.LogError($"Card data file not found at path: {jsonPath}");
-//             return;
-//         }
+    public void InitializeDeck()
+    {
+        foreach (KeyValuePair<int, int> card in _startingDeck)
+        {
+            for (int i = 0; i < card.Value; i++)
+            {
+                Card cardInstance = InstantiateCard(card.Key);
+                _deck.Add(cardInstance);
+            }
+        }
+        LogDeck();
+    }
 
-//         // Read the JSON file asynchronously
-//         string json = await Task.Run(() => File.ReadAllText(jsonPath));
+    public void Reshuffle()
+    {
 
-//         // Deserialize the JSON data into a list of CardData objects
-//         List<CardData>? cardDatas = JsonConvert.DeserializeObject<List<CardData>>(json, JsonSettingsProvider.CardJsonSerializerSettings);
+        _availableCards.Clear();
+        _availableCards.AddRange(_deck);
 
-//         if (cardDatas == null)
-//         {
-//             Debug.LogError("Failed to deserialize card data.");
-//             return;
-//         }
+        for (int i = _availableCards.Count - 1; i > 0; i--)
+        {
+            int j = _random.Next(0, i + 1);
+            (_availableCards[j], _availableCards[i]) = (_availableCards[i], _availableCards[j]);
+        }
+    }
 
-//         // Populate the dictionary with card data
-//         foreach (CardData data in cardDatas)
-//         {
-//             if (!_cardDictionary.ContainsKey(data.CardID))
-//             {
-//                 _cardDictionary[data.CardID] = data;
-//             }
-//             else
-//             {
-//                 Debug.LogWarning($"Duplicate card ID {data.CardID} found. Skipping this entry.");
-//             }
-//         }
-//     }
+    public Card DrawCard()
+    {
+        if (_availableCards.Count == 0)
+        {
+            return null;
+        }
 
-//     /// <summary>
-//     /// Retrieves the card data associated with the specified ID.
-//     /// </summary>
-//     /// <param name="id">The ID of the card to retrieve.</param>
-//     /// <returns>
-//     /// The <see cref="CardData"/> associated with the specified ID, or <c>null</c> if the ID is not found.
-//     /// </returns>
-//     public CardData? GetCardDataByID(int id)
-//     {
-//         if (_cardDictionary.TryGetValue(id, out CardData? data))
-//         {
-//             return data;
-//         }
+        Card card = _availableCards[0];
+        _availableCards.RemoveAt(0);
 
-//         Debug.LogError($"Card with ID {id} not found.");
-//         return null;
-//     }
-// }
+        return card;
+    }
+
+    public void AddCard(int cardID)
+    {
+        Card card = InstantiateCard(cardID);
+        _deck.Add(card);
+        _availableCards.Add(card);
+    }
+
+    public void RemoveCard(Card card)
+    {
+        _deck.Remove(card);
+        _availableCards.Remove(card);
+    }
+
+    public void ClearDeck()
+    {
+        _deck.Clear();
+    }
+
+    public CardScriptable GetCardScriptableByID(int cardID)
+    {
+        return Resources.Load<CardScriptable>($"Cards/Card_{cardID}");
+    }
+
+    public Card InstantiateCard(int cardID)
+    {
+        CardScriptable scriptable = GetCardScriptableByID(cardID);
+        if (scriptable == null)
+        {
+            Debug.LogError($"Card with ID {cardID} not found.");
+            return null;
+        }
+
+        GameObject cardObject = Instantiate(_cardPrefab);
+        Card card = CardFactory.CreateCard(cardObject, scriptable);
+
+        return card;
+    }
+
+    public Card InstantiateCard(int cardID, Transform parent)
+    {
+        Card card = InstantiateCard(cardID);
+        card.transform.SetParent(parent, false);
+
+        return card;
+    }
+}
