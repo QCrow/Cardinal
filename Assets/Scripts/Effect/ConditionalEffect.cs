@@ -13,6 +13,7 @@ public abstract class ConditionalEffect
     }
 
     public abstract void ApplyEffect();
+    public abstract void RevertEffect();
     public abstract string GenerateDescription();
 }
 
@@ -21,6 +22,7 @@ public class ConstantEffect : ConditionalEffect
     public ConstantEffect(Card card, Effect effect) : base(card, effect) { }
 
     public override void ApplyEffect() { _effect.Apply(); }
+    public override void RevertEffect() { _effect.Revert(); }
     public override string GenerateDescription() { return _effect.GenerateDescription(); }
 }
 
@@ -40,6 +42,15 @@ public class PositionEffect : ConditionalEffect
             _effect.Apply();
         }
     }
+
+    public override void RevertEffect()
+    {
+        if (Card.Slot.IsPosition(Position))
+        {
+            _effect.Revert();
+        }
+    }
+
     public override string GenerateDescription()
     {
         string description = "";
@@ -75,7 +86,6 @@ public class NextToEffect : ConditionalEffect
             case SelectorCheckType.Exists:
                 if (Card.Slot.Neighbors.Exists(slot => slot != null && slot.Card != null && NextTo.IsMatch(slot.Card)))
                 {
-                    Debug.Log($"Applying Effect for {Card.Name}");
                     _effect.Apply();
                 }
                 break;
@@ -88,6 +98,29 @@ public class NextToEffect : ConditionalEffect
             case SelectorCheckType.Count:
                 int count = Card.Slot.Neighbors.Count(slot => slot != null && slot.Card != null && NextTo.IsMatch(slot.Card));
                 _effect.Apply(count);
+                break;
+        }
+    }
+
+    public override void RevertEffect()
+    {
+        switch (NextTo.Check)
+        {
+            case SelectorCheckType.Exists:
+                if (Card.Slot.Neighbors.Exists(slot => slot != null && slot.Card != null && NextTo.IsMatch(slot.Card)))
+                {
+                    _effect.Revert();
+                }
+                break;
+            case SelectorCheckType.Minimum:
+                if (Card.Slot.Neighbors.Count(slot => slot != null && slot.Card != null && NextTo.IsMatch(slot.Card)) >= NextTo.Minimum)
+                {
+                    _effect.Revert();
+                }
+                break;
+            case SelectorCheckType.Count:
+                int count = Card.Slot.Neighbors.Count(slot => slot != null && slot.Card != null && NextTo.IsMatch(slot.Card));
+                _effect.Revert(count);
                 break;
         }
     }

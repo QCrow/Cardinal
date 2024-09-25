@@ -13,16 +13,24 @@ public class Board : MonoBehaviour
     private static Board _instance;
     public static Board Instance => _instance;
 
+    #region Board Dimensions
     [SerializeField] private int _unitHeight;  // The number of rows on the board
     [SerializeField] private int _unitWidth;   // The number of columns on the board
 
     [SerializeField] private GameObject _slotPrefab;  // Prefab for creating slot objects
-
     [SerializeField] private int _slotHeight;  // Height of each slot in pixels
     [SerializeField] private int _slotWidth;   // Width of each slot in pixels
     [SerializeField] private int _slotGap;     // Gap between slots in pixels
+    #endregion
 
     private List<List<Slot>> _slots;  // 2D list to store slot references
+
+    private List<Card> _deployedCards;  // List of cards currently deployed on the board
+    public List<Card> DeployedCards
+    {
+        get { return _deployedCards; }
+        set { SetDeployedCards(value); }
+    }
 
     private RectTransform _rectTransform;  // Used to adjust the size of the board
 
@@ -42,7 +50,6 @@ public class Board : MonoBehaviour
     {
         _rectTransform = GetComponent<RectTransform>();
     }
-
 
     /// <summary>
     /// Initializes the board's size in pixel and generates slots based on the board's dimensions.
@@ -80,6 +87,7 @@ public class Board : MonoBehaviour
         }
     }
 
+    #region Slot Management
     public List<List<Slot>> GetAllSlots()
     {
         return _slots;
@@ -140,16 +148,6 @@ public class Board : MonoBehaviour
         return emptySlots[randomIndex];
     }
 
-    public Card? GetCardAtPosition(int row, int col)
-    {
-        if (row < 0 || col < 0 || row >= _unitHeight || col >= _unitWidth)
-        {
-            return null;  // Return null for invalid positions
-        }
-
-        return _slots[row][col].Card;
-    }
-
     public List<Slot> GetNeighbors(Slot slot)
     {
         List<Slot> neighbors = new();
@@ -172,6 +170,37 @@ public class Board : MonoBehaviour
 
         return neighbors;
     }
+    #endregion
+
+    #region Card Management
+    private void SetDeployedCards(List<Card> cards)
+    {
+        _deployedCards = cards;
+        SortDeployedCards();
+    }
+
+    private void SortDeployedCards()
+    {
+        _deployedCards.Sort((card1, card2) =>
+        {
+            int rowComparison = card1.Slot.Row.CompareTo(card2.Slot.Row);
+            if (rowComparison == 0)
+            {
+                return card1.Slot.Col.CompareTo(card2.Slot.Col);
+            }
+            return rowComparison;
+        });
+    }
+
+    public Card? GetCardAtPosition(int row, int col)
+    {
+        if (row < 0 || col < 0 || row >= _unitHeight || col >= _unitWidth)
+        {
+            return null;  // Return null for invalid positions
+        }
+
+        return _slots[row][col].Card;
+    }
 
     /// <summary>
     /// Clears the board by unbinding all cards from their slots
@@ -184,12 +213,147 @@ public class Board : MonoBehaviour
             {
                 if (slot.Card != null)
                 {
+                    slot.Card.ResetTemporaryState();
                     slot.Card.UnbindFromSlot();
                 }
             }
         }
     }
 
+    public void ShiftCardsOnRow(int row, int shiftMagnitude)
+    {
+        Card?[] tempRow = new Card?[3];  // Temporary storage for cards in the row
+
+        // First pass: store the new positions of the cards in the tempRow
+        List<Card> cards = GetRow(row).Select(slot => slot.Card).Where(card => card != null).ToList();
+        foreach (Card card in cards)
+        {
+            int col = card.Slot.Col;
+            int newCol = (col + shiftMagnitude + 3) % 3;
+
+            // Store the card in its new position in the tempRow
+            tempRow[newCol] = card;
+            card.UnbindFromSlot();  // Unbind from the current slot
+        }
+
+        // Second pass: Unbind and reattach the cards to their new slots
+        for (int col = 0; col < 3; col++)
+        {
+            Slot? newSlot = GetSlotAtPosition(row, col);
+            Card? card = tempRow[col];
+
+            if (card != null && newSlot != null)
+            {
+                card.BindToSlot(newSlot);  // Bind to the new slot
+            }
+        }
+    }
+
+    public void ShiftCardsOnColumn(int col, int shiftMagnitude)
+    {
+        Card?[] tempCol = new Card?[3];  // Temporary storage for cards in the column
+
+        // First pass: store the new positions of the cards in the tempCol
+        List<Card> cards = GetColumn(col).Select(slot => slot.Card).Where(card => card != null).ToList();
+        foreach (Card card in cards)
+        {
+            int row = card.Slot.Row;
+            int newRow = (row + shiftMagnitude + 3) % 3;
+
+            // Store the card in its new position in the tempCol
+            tempCol[newRow] = card;
+            card.UnbindFromSlot();  // Unbind from the current slot
+        }
+
+        // Second pass: Unbind and reattach the cards to their new slots
+        for (int row = 0; row < 3; row++)
+        {
+            Slot? newSlot = GetSlotAtPosition(row, col);
+            Card? card = tempCol[row];
+
+            if (card != null && newSlot != null)
+            {
+                card.BindToSlot(newSlot);  // Bind to the new slot
+            }
+        }
+    }
+
+    public void RotateCardsClockwise()
+    {
+        Card?[,] tempGrid = new Card?[3, 3];  // Temporary storage for cards
+
+        // First pass: store the new positions of the cards in the tempGrid
+        List<Card> cards = _slots.SelectMany(row => row).Select(slot => slot.Card).Where(card => card != null).ToList();
+        foreach (Card card in cards)
+        {
+            int currentRow = card.Slot.Row;
+            int currentCol = card.Slot.Col;
+
+            // Calculate the new position after 90-degree clockwise rotation
+            int newRow = currentCol;
+            int newCol = 2 - currentRow;
+
+            // Store the card in its new position in the tempGrid
+            tempGrid[newRow, newCol] = card;
+            card.UnbindFromSlot();  // Unbind from the current slot
+        }
+
+        // Second pass: Unbind and reattach the cards to their new slots
+        for (int row = 0; row < 3; row++)
+        {
+            for (int col = 0; col < 3; col++)
+            {
+                Slot? newSlot = GetSlotAtPosition(row, col);
+                Card? card = tempGrid[row, col];
+
+                if (card != null && newSlot != null)
+                {
+                    card.BindToSlot(newSlot);  // Bind to the new slot
+                }
+            }
+        }
+    }
+
+    public void RotateCardsCounterClockwise()
+    {
+        Card?[,] tempGrid = new Card?[3, 3];  // Temporary storage for cards
+
+        // First pass: store the new positions of the cards in the tempGrid
+        List<Card> cards = _slots.SelectMany(row => row).Select(slot => slot.Card).Where(card => card != null).ToList();
+        foreach (Card card in cards)
+        {
+            int currentRow = card.Slot.Row;
+            int currentCol = card.Slot.Col;
+
+            // Calculate the new position after 90-degree counterclockwise rotation
+            int newRow = 2 - currentCol;
+            int newCol = currentRow;
+
+            // Store the card in its new position in the tempGrid
+            tempGrid[newRow, newCol] = card;
+            card.UnbindFromSlot();  // Unbind from the current slot
+        }
+
+        // Second pass: Unbind and reattach the cards to their new slots
+        for (int row = 0; row < 3; row++)
+        {
+            for (int col = 0; col < 3; col++)
+            {
+                Slot? newSlot = GetSlotAtPosition(row, col);
+                Card? card = tempGrid[row, col];
+
+                if (card != null && newSlot != null)
+                {
+                    card.BindToSlot(newSlot);  // Bind to the new slot
+                }
+            }
+        }
+    }
+
+
+    #endregion
+
+    #region Archive
     // public void SetClusterAtPosition(int row, int col)
     // {
     //     if (row < 0 || col < 0 || row >= _unitHeight || col >= _unitWidth)
@@ -242,7 +406,9 @@ public class Board : MonoBehaviour
     //     }
     //     return false;
     // }
+    #endregion
 
+    #region Debugging
     private void OnDrawGizmos()
     {
         if (_slots == null) return;  // Return if the slots haven't been initialized yet
@@ -267,5 +433,5 @@ public class Board : MonoBehaviour
             }
         }
     }
-
+    #endregion
 }

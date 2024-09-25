@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using UnityEngine;
 public abstract class Effect
 {
     protected Card _card;
@@ -18,6 +16,13 @@ public abstract class Effect
         }
     }
     public abstract void Revert();
+    public virtual void Revert(int amount)
+    {
+        for (int i = 0; i < amount; i++)
+        {
+            Revert();
+        }
+    }
     public virtual void ModifyPotency(int amount) { }
     public abstract string GenerateDescription();
 }
@@ -72,10 +77,7 @@ public class AddModifierEffect : Effect
     {
         if (_isTargeted)
         {
-            Debug.Log("Applying targeted modifier");
-            List<Card> cards = _target.GetAvailableTargets(_card);
-            Debug.Log(cards.Count);
-            cards.ForEach(target => target.AddModifier(_modifierType, _amount));
+            _target.GetAvailableTargets(_card).ForEach(target => target.AddModifier(_modifierType, _amount));
         }
         else
         {

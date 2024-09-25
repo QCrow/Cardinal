@@ -25,15 +25,24 @@ MonoBehaviour:
   Name: Swordsman
   Rarity: 0
   Class: 1
-  Type: 2
+  Trait: 2
   BaseAttack: 1
   HasEffect: 1
-  Trigger: 3
+  Trigger: 2
   Condition: 3
   Position: 1
+  NextTo:
+    Type: 0
+    Check: 0
+    Minimum: 0
+    ID: 0
+    Name: 
+    Trait: 0
+    Rarity: 0
   Keyword: 2
   Modifier: 0
   Value: 1
   IsTargeted: 0
-  TargetRange: 0
-  TargetTrait: 0
+  Target:
+    TargetRange: 0
+    TargetTrait: 0

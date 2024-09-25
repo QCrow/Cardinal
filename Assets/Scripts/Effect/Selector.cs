@@ -8,6 +8,7 @@ public enum SelectorType
     ID,
     Name,
     Trait,
+    Rarity
 }
 
 public enum SelectorCheckType
@@ -31,7 +32,8 @@ public class Selector
     public string Name;
     [ShowIf("Type", SelectorType.Trait)]
     public TraitType Trait;
-
+    [ShowIf("Type", SelectorType.Rarity)]
+    public RarityType Rarity;
 
     public bool IsMatch(Card card)
     {
@@ -43,6 +45,8 @@ public class Selector
                 return card.Name == Name;
             case SelectorType.Trait:
                 return card.Trait == Trait;
+            case SelectorType.Rarity:
+                return card.Rarity == Rarity;
             default:
                 return false;
         }
