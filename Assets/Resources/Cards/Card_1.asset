@@ -28,18 +28,19 @@ MonoBehaviour:
   Trait: 2
   BaseAttack: 1
   HasEffect: 1
-  Trigger: 3
+  Trigger: 2
   Condition: 4
   Position: 0
   NextTo:
     Type: 2
-    Check: 0
+    Check: 2
     Minimum: 0
     ID: 1
     Name: Recruit
     Trait: 0
+    Rarity: 0
   Keyword: 2
-  Modifier: 0
+  Modifier: 1
   Value: 1
   IsTargeted: 0
   Target:

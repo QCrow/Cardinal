@@ -25,12 +25,12 @@ MonoBehaviour:
   Name: Tester
   Rarity: 0
   Class: 0
-  Trait: 0
-  BaseAttack: 1
-  HasEffect: 0
-  Trigger: 1
-  Condition: 0
-  Position: 0
+  Trait: 2
+  BaseAttack: 0
+  HasEffect: 1
+  Trigger: 3
+  Condition: 3
+  Position: 2
   NextTo:
     Type: 0
     Check: 0
@@ -38,9 +38,9 @@ MonoBehaviour:
     ID: 0
     Name: 
     Trait: 0
-  Keyword: 0
+  Keyword: 2
   Modifier: 0
-  Value: 1
+  Value: 2
   IsTargeted: 0
   Target:
     TargetRange: 0

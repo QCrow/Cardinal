@@ -21,7 +21,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public Slot Slot = null;
     private Dictionary<ModifierType, int> _modifiers = new();
 
-    private int _tempDamage = 0;
+    [SerializeField] private int _tempDamage = 0;
     public int TempDamage
     {
         get { return _tempDamage; }
@@ -32,7 +32,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         }
     }
     // The total attack of the card, including base attack, temporary damage, and modifiers
-    public int TotalAttack => BaseAttack + _tempDamage + (_modifiers.TryGetValue(ModifierType.Strength, out int attack) ? attack : 0) - (_modifiers.TryGetValue(ModifierType.Weakness, out int weakness) ? weakness : 0);
+    public int TotalAttack => BaseAttack + _tempDamage + (_modifiers.TryGetValue(ModifierType.Strength, out int strength) ? strength : 0) - (_modifiers.TryGetValue(ModifierType.Weakness, out int weakness) ? weakness : 0);
     #endregion
 
     #region Game Object References
@@ -92,6 +92,12 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         ConditionalEffect.ApplyEffect();
     }
 
+    public void RevertEffect()
+    {
+        if (ConditionalEffect == null) return;
+        ConditionalEffect.RevertEffect();
+    }
+
     public void BindToSlot(Slot slot)
     {
         Slot = slot;
@@ -116,7 +122,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         transform.SetParent(CardManager.Instance.Graveyard.transform);
     }
 
-    public void Reset()
+    public void ResetTemporaryState()
     {
         TempDamage = 0;
     }

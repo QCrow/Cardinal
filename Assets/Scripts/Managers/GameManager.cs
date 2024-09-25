@@ -3,15 +3,17 @@ using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour
 {
+    public UnityEvent<IGameState, IGameState> OnStateChanged = new();
+    public UnityEvent<int> OnHealthChanged = new();
+
     #region Singleton
-    private static GameManager _instance;
-    public static GameManager Instance => _instance;
+    public static GameManager Instance { get; private set; }
 
     private void Awake()
     {
-        if (_instance == null)
+        if (Instance == null)
         {
-            _instance = this;
+            Instance = this;
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -22,7 +24,6 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Object References
-    [SerializeField] private HealthBar _healthBar;
     public Transform FrontDisplay;
     #endregion
 
@@ -37,22 +38,19 @@ public class GameManager : MonoBehaviour
         CurrentState = newState;
 
         CurrentState?.OnEnter(this);
+        OnStateChanged.Invoke(previousState, CurrentState);
     }
     #endregion
 
     #region Game Logic
-    [SerializeField] private int _monsterMaxHealth = 100;
-    [SerializeField] private int _monsterCurrentHealth = 100;
+    [SerializeField] int _maxHealth = 100;
+    public int MaxHealth => _maxHealth;
+    [SerializeField] private int _currHealth = 100;
 
-    public void AttackMonster(int damage)
+    public void InflictDamage(int damage)
     {
-        _monsterCurrentHealth -= damage;
-        _healthBar.SetHealth(_monsterCurrentHealth, _monsterMaxHealth);
-
-        // if (_monsterCurrentHealth <= 0)
-        // {
-        //     ChangeState(new GameOverState());
-        // }
+        _currHealth -= damage;
+        OnHealthChanged.Invoke(_currHealth);
     }
     #endregion
 
@@ -62,8 +60,10 @@ public class GameManager : MonoBehaviour
         // Initialize the board and start the game
         Board.Instance.Initialize();
         CardManager.Instance.InitializeDeck();
-        _monsterCurrentHealth = _monsterMaxHealth;
-        _healthBar.SetHealth(_monsterCurrentHealth, _monsterMaxHealth);
+
+        // Initialize the boss HP
+        _currHealth = _maxHealth;
+        OnHealthChanged.Invoke(_currHealth);
 
         // After the board is initialized, start the game
         ChangeState(new WaitState());

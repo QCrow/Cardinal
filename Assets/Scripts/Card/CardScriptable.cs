@@ -38,23 +38,23 @@ public class CardScriptable : SerializedScriptableObject
     public Selector NextTo;
 
     [ShowIf("HasEffect", true)]
-    public EffectKeyword Keyword;
+    public EffectType Keyword;
 
     [BoxGroup("Effect")]
-    [ShowIf("@HasEffect && (Keyword == EffectKeyword.Apply)")]
+    [ShowIf("@HasEffect && (Keyword == EffectType.Apply)")]
     [Tooltip("Type of the applied modifier.")]
     public ModifierType Modifier;
 
     [BoxGroup("Effect")]
-    [ShowIf("@HasEffect && (Keyword == EffectKeyword.Apply || Keyword == EffectKeyword.DamageUp)")]
+    [ShowIf("@HasEffect && (Keyword == EffectType.Apply || Keyword == EffectType.TempDamageUp)")]
     [Tooltip("Amount of the applied modifier.")]
     public int Value = 1;
 
     [BoxGroup("Effect/Targeting")]
-    [ShowIf("@HasEffect && (Keyword == EffectKeyword.Apply)")]
+    [ShowIf("@HasEffect && (Keyword == EffectType.Apply)")]
     public bool IsTargeted = false;
     [BoxGroup("Effect/Targeting")]
-    [ShowIf("@HasEffect && IsTargeted && Keyword == EffectKeyword.Apply")]
+    [ShowIf("@HasEffect && IsTargeted && Keyword == EffectType.Apply")]
     public Target Target;
 
     #region Validation

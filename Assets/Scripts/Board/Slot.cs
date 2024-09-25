@@ -22,31 +22,6 @@ public class Slot : SerializedMonoBehaviour
     [SerializeField] private Card _card;
     public Card Card { get => _card; set => _card = value; }
 
-    // public void AddModifier(ModifierType modifierType, int amount)
-    // {
-    //     // Debug.Log($"Adding modifier {amount}");
-    //     if (!Modifiers.ContainsKey(modifierType))
-    //     {
-    //         Modifiers[modifierType] = ModifierFactory.CreateModifier(modifierType, amount);
-    //     }
-    //     else
-    //     {
-    //         Modifiers[modifierType].Amount += amount;
-    //     }
-    // }
-
-    // public void RemoveModifier(ModifierType modifierType, int amount)
-    // {
-    //     if (Modifiers.ContainsKey(modifierType))
-    //     {
-    //         Modifiers[modifierType].Amount += amount;
-    //         if (Modifiers[modifierType].Amount <= 0)
-    //         {
-    //             Modifiers.Remove(modifierType);
-    //         }
-    //     }
-    // }
-
     public bool IsPosition(PositionType position)
     {
         return position switch
