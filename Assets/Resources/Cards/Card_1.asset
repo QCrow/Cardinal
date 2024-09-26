@@ -27,13 +27,14 @@ MonoBehaviour:
   Class: 1
   Trait: 2
   BaseAttack: 1
+  Description: 'If next to another Recruit: +1 Temp DMG'
   HasEffect: 1
   Trigger: 2
   Condition: 4
   Position: 0
   NextTo:
     Type: 2
-    Check: 2
+    Check: 0
     Minimum: 0
     ID: 1
     Name: Recruit

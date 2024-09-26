@@ -22,6 +22,8 @@ public class CardScriptable : SerializedScriptableObject
 
     public int BaseAttack;
 
+    public string Description;
+
     [Space(10)]
     [Title("Card Effect")]
     public bool HasEffect = false;

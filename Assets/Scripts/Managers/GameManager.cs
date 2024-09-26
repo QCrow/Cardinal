@@ -63,7 +63,6 @@ public class GameManager : MonoBehaviour
 
         // Initialize the boss HP
         _currHealth = _maxHealth;
-        OnHealthChanged.Invoke(_currHealth);
 
         // After the board is initialized, start the game
         ChangeState(new WaitState());

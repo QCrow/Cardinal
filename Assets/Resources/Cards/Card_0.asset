@@ -27,8 +27,9 @@ MonoBehaviour:
   Class: 0
   Trait: 2
   BaseAttack: 0
+  Description: 'Midrange: +2 Temp DMG'
   HasEffect: 1
-  Trigger: 3
+  Trigger: 2
   Condition: 3
   Position: 2
   NextTo:
@@ -38,6 +39,7 @@ MonoBehaviour:
     ID: 0
     Name: 
     Trait: 0
+    Rarity: 0
   Keyword: 2
   Modifier: 0
   Value: 2

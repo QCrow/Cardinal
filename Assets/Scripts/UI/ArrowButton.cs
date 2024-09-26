@@ -17,6 +17,15 @@ public class ArrowButton : MonoBehaviour
     [SerializeField] private int _index = 0;
     [SerializeField] private int _magnitude = 1;
 
+    private void Awake()
+    {
+        Button button = GetComponent<Button>();
+        Debug.Assert(button != null, "Button component not found on ArrowButton object.");
+
+        button.onClick.RemoveListener(OnClick);
+        button.onClick.AddListener(OnClick);
+    }
+
     private void Start()
     {
         UIManager.Instance.AddArrowButton(GetComponent<Button>());

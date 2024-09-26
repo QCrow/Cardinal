@@ -6,7 +6,7 @@ public class AttackState : IGameState
     {
         Debug.Log("Entering Attack State...");
         Attack();
-        GameManager.Instance.ChangeState(new WaitState());
+        GameManager.Instance.ChangeState(new RewardState());
     }
 
     public void OnExit(GameManager gameManager)

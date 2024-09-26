@@ -54,10 +54,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         ConditionalEffect = effect;
 
         _cardNameText.text = Name;
-        if (ConditionalEffect != null)
-        {
-            _descriptionText.text = ConditionalEffect.GenerateDescription();
-        }
+        _descriptionText.text = cardScriptable.Description;
         _attackValueText.text = TotalAttack.ToString();
     }
 
