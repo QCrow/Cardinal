@@ -148,9 +148,9 @@ public class Board : MonoBehaviour
         return emptySlots[randomIndex];
     }
 
-    public List<Slot> GetNeighbors(Slot slot)
+    public List<Slot> GetAdjacentSlots(Slot slot)
     {
-        List<Slot> neighbors = new();
+        List<Slot> orthogonalSlots = new();
 
         // Define the row and column offsets for the 4 directions
         int[] rowOffsets = { -1, 1, 0, 0 };
@@ -164,11 +164,11 @@ public class Board : MonoBehaviour
             Slot? neighbor = GetSlotByOffset(slot.Row, slot.Col, rowOffset, colOffset);
             if (neighbor != null)
             {
-                neighbors.Add(neighbor);
+                orthogonalSlots.Add(neighbor);
             }
         }
 
-        return neighbors;
+        return orthogonalSlots;
     }
     #endregion
 

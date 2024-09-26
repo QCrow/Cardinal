@@ -5,8 +5,7 @@ using System.Collections.Generic;
 public enum TargetRangeType
 {
     None, // Only used for default value
-    Orthogonal,
-    Surrounding,
+    Adjacent,
     Row,
     Column,
     Front,
@@ -24,12 +23,12 @@ public enum TargetRangeType
 public class Target
 {
     public TargetRangeType TargetRange;
-    public TraitType TargetTrait;
+    public Selector TargetProperty;
 
-    public Target(TargetRangeType targetRange, TraitType targetTrait)
+    public Target(TargetRangeType targetRange, Selector targetProperty)
     {
         TargetRange = targetRange;
-        TargetTrait = targetTrait;
+        TargetProperty = targetProperty;
     }
 
     private List<Card> TargetSlotsToCards(List<Slot> slots)
@@ -43,6 +42,9 @@ public class Target
         List<Slot> slots = new();
         switch (TargetRange)
         {
+            case TargetRangeType.Adjacent:
+                slots = src.Slot.Neighbors;
+                break;
             case TargetRangeType.Row:
                 slots = Board.Instance.GetRow(src.Slot.Row);
                 break;
@@ -58,21 +60,19 @@ public class Target
             case TargetRangeType.Back:
                 slots = Board.Instance.GetRow(2);
                 break;
+            case TargetRangeType.Center:
+                slots = Board.Instance.GetRow(1).FindAll(slot => slot.Col == 1);
+                break;
             default:
                 break;
         }
         targets = TargetSlotsToCards(slots);
 
-        switch (TargetTrait)
+        if (TargetProperty != null)
         {
-            case TraitType.None:
-                return new(); // Return an empty list
-            case TraitType.All:
-                break;
-            default:
-                targets.RemoveAll(card => card.Trait != TargetTrait);
-                break;
+            targets = targets.FindAll(card => TargetProperty.IsMatch(card));
         }
+
         return targets;
     }
 }

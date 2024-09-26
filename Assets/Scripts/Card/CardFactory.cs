@@ -52,10 +52,10 @@ public static class CardFactory
                 conditionalEffect = new ConstantEffect(card, effect);
                 break;
             case ConditionType.Position:
-                conditionalEffect = new PositionEffect(card, effect, cardScriptable.Position);
+                conditionalEffect = new PositionCondition(card, effect, cardScriptable.Position);
                 break;
-            case ConditionType.NextTo:
-                conditionalEffect = new NextToEffect(card, effect, cardScriptable.NextTo);
+            case ConditionType.TargetWithProperty:
+                conditionalEffect = new TargetWithPropertyCondition(card, effect, cardScriptable.TargetWithProperty);
                 break;
             default:
                 throw new System.NotSupportedException($"Condition type '{cardScriptable.Condition}' is not supported or implemented yet.");

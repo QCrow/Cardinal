@@ -4,5 +4,5 @@ public enum ConditionType
     Constant,
     Cycle,
     Position,
-    NextTo
+    TargetWithProperty
 }
