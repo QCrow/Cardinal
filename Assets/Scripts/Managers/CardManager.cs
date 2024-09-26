@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -64,40 +65,49 @@ public class CardManager : SerializedMonoBehaviour
     public List<Reward> GenerateRewardChoices()
     {
         List<Reward> rewards = new();
+        HashSet<int> selectedCardIDs = new();  // Use a HashSet to track selected card IDs
+        Dictionary<RarityType, List<int>> remainingCards = new();
 
+        // Copy available cards from each rarity to a new dictionary to track remaining cards
+        foreach (var rarity in _rarityCards)
+        {
+            remainingCards[rarity.Key] = new List<int>(rarity.Value);
+        }
+
+        // Generate 3 rewards
         for (int i = 0; i < 3; i++)
         {
             RarityType rarity = GetRandomRarity();
 
-            // Check if the rarity key exists in the dictionary
-            if (!_rarityCards.ContainsKey(rarity) || _rarityCards[rarity].Count == 0)
+            // Keep looping until we find a valid rarity with available cards
+            while (!remainingCards.ContainsKey(rarity) || remainingCards[rarity].Count == 0)
             {
-                // If no cards are available for this rarity, handle the error
-                Debug.LogWarning($"No cards available for rarity {rarity}. Falling back to common cards.");
+                Debug.LogWarning($"No cards left for rarity {rarity}. Trying a different rarity.");
+                rarity = GetRandomRarity();
 
-                // Fallback: You can choose to default to common rarity or some other behavior
-                rarity = RarityType.Common;
-
-                // Ensure fallback rarity exists and has cards
-                if (!_rarityCards.ContainsKey(rarity) || _rarityCards[rarity].Count == 0)
+                // If no rarities have cards left, break out of the loop
+                if (remainingCards.All(r => r.Value.Count == 0))
                 {
-                    // If even the fallback has no cards, handle the case (e.g., skip this reward)
-                    Debug.LogError($"No cards available for fallback rarity {rarity}. Skipping reward generation.");
-                    continue;
+                    Debug.LogError("No cards left in any rarity. Stopping reward generation.");
+                    return rewards;
                 }
             }
-            Debug.Log($"Reward {i} has {rarity}");
-            // Now that we have a valid rarity, select a random card from it
-            int randomIndex = _random.Next(0, _rarityCards[rarity].Count);
-            int cardID = _rarityCards[rarity][randomIndex];
-            CardScriptable cardScriptable = GetCardScriptableByID(cardID);
 
-            // Add the reward
+            // Select a random card from the remaining cards of the selected rarity
+            int randomIndex = _random.Next(0, remainingCards[rarity].Count);
+            int cardID = remainingCards[rarity][randomIndex];
+            remainingCards[rarity].RemoveAt(randomIndex);  // Remove selected card from the pool
+
+            // Ensure no duplicates
+            selectedCardIDs.Add(cardID);
+
+            CardScriptable cardScriptable = GetCardScriptableByID(cardID);
             rewards.Add(new Reward(cardID, cardScriptable.Name, cardScriptable.Description));
         }
 
         return rewards;
     }
+
 
     private void LoadCards()
     {
