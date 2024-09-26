@@ -50,10 +50,6 @@ public class ControlState : IGameState
                 Board.Instance.RotateCardsCounterClockwise();
                 break;
         }
-        foreach (Card card in Board.Instance.DeployedCards)
-        {
-            Debug.Log($"{card.Name} is at {card.Slot.Row}, {card.Slot.Col}");
-        }
         ApplyWhileInPlayEffects();
     }
 

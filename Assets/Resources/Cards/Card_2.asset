@@ -27,6 +27,7 @@ MonoBehaviour:
   Class: 1
   Trait: 2
   BaseAttack: 1
+  Description: 'Melee: +1 Temp DMG'
   HasEffect: 1
   Trigger: 2
   Condition: 3

@@ -27,6 +27,7 @@ MonoBehaviour:
   Class: 1
   Trait: 2
   BaseAttack: 0
+  Description: Give all Soldier cards on this Row +1 Temp DMG
   HasEffect: 1
   Trigger: 2
   Condition: 1

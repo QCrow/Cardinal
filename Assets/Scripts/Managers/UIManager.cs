@@ -13,9 +13,12 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Button _attackButton;
     public Button AttackButton => _attackButton;
 
-    [SerializeField] private List<Button> _arrowButtons;
+    private List<Button> _arrowButtons = new();
 
     [SerializeField] private TMPro.TMP_Text _totalAttackText;
+
+    [SerializeField] private GameObject _rewardsPanel;
+    private List<RewardSlot> _rewardSlots;
 
     private void Awake()
     {
@@ -33,6 +36,9 @@ public class UIManager : MonoBehaviour
     {
         GameManager.Instance.OnStateChanged.AddListener(HandleGameStateChanged);
         GameManager.Instance.OnHealthChanged.AddListener(HandleHealthChanged);
+
+        _healthBar.SetHealth(GameManager.Instance.MaxHealth, GameManager.Instance.MaxHealth);
+        _rewardSlots = new List<RewardSlot>(_rewardsPanel.GetComponentsInChildren<RewardSlot>());
     }
 
     private void HandleGameStateChanged(IGameState previousState, IGameState currentState)
@@ -43,6 +49,7 @@ public class UIManager : MonoBehaviour
                 _deployButton.interactable = true;
                 _attackButton.interactable = false;
                 SetArrowButtonsInteractable(false);
+                SetRewardsPanelActive(false);
                 break;
             case DeployState _:
                 _deployButton.interactable = false;
@@ -58,6 +65,9 @@ public class UIManager : MonoBehaviour
                 _deployButton.interactable = false;
                 _attackButton.interactable = false;
                 SetArrowButtonsInteractable(false);
+                break;
+            case RewardState _:
+                SetRewardsPanelActive(true);
                 break;
             default:
                 break;
@@ -85,5 +95,25 @@ public class UIManager : MonoBehaviour
     public void SetTotalAttack(int totalAttack)
     {
         _totalAttackText.text = $"{totalAttack}";
+    }
+
+    private void SetRewardsPanelActive(bool active)
+    {
+        _rewardsPanel.SetActive(active);
+    }
+
+    public void SetRewards(List<Reward> rewards)
+    {
+        for (int i = 0; i < _rewardSlots.Count; i++)
+        {
+            if (i < rewards.Count)
+            {
+                _rewardSlots[i].SetReward(rewards[i]);
+            }
+            else
+            {
+                _rewardSlots[i].SetReward(null);
+            }
+        }
     }
 }

@@ -27,6 +27,7 @@ MonoBehaviour:
   Class: 2
   Trait: 2
   BaseAttack: 1
+  Description: 'Ranged: +1 Temp DMG'
   HasEffect: 1
   Trigger: 2
   Condition: 3
