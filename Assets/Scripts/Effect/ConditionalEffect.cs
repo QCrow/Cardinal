@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Linq;
+using System.Collections.Generic;
 
 public abstract class ConditionalEffect
 {
@@ -14,7 +15,6 @@ public abstract class ConditionalEffect
 
     public abstract void ApplyEffect();
     public abstract void RevertEffect();
-    public abstract string GenerateDescription();
 }
 
 public class ConstantEffect : ConditionalEffect
@@ -23,14 +23,13 @@ public class ConstantEffect : ConditionalEffect
 
     public override void ApplyEffect() { _effect.Apply(); }
     public override void RevertEffect() { _effect.Revert(); }
-    public override string GenerateDescription() { return _effect.GenerateDescription(); }
 }
 
-public class PositionEffect : ConditionalEffect
+public class PositionCondition : ConditionalEffect
 {
     public PositionType Position;
 
-    public PositionEffect(Card card, Effect effect, PositionType position) : base(card, effect)
+    public PositionCondition(Card card, Effect effect, PositionType position) : base(card, effect)
     {
         Position = position;
     }
@@ -50,111 +49,60 @@ public class PositionEffect : ConditionalEffect
             _effect.Revert();
         }
     }
-
-    public override string GenerateDescription()
-    {
-        string description = "";
-        switch (Position)
-        {
-            case PositionType.Front:
-                description = "Melee: ";
-                break;
-            case PositionType.Back:
-                description = "Ranged: ";
-                break;
-            default:
-                break;
-        }
-        description += _effect.GenerateDescription();
-        return description;
-    }
 }
 
-public class NextToEffect : ConditionalEffect
+public class TargetWithPropertyCondition : ConditionalEffect
 {
-    public Selector NextTo;
+    public Target TargetField;
 
-    public NextToEffect(Card card, Effect effect, Selector nextTo) : base(card, effect)
+    public TargetWithPropertyCondition(Card card, Effect effect, Target targetField) : base(card, effect)
     {
-        NextTo = nextTo;
+        TargetField = targetField;
     }
 
     public override void ApplyEffect()
     {
-        switch (NextTo.Check)
+        List<Card> targets = TargetField.GetAvailableTargets(Card);
+        switch (TargetField.TargetProperty.Check)
         {
             case SelectorCheckType.Exists:
-                if (Card.Slot.Neighbors.Exists(slot => slot != null && slot.Card != null && NextTo.IsMatch(slot.Card)))
+                if (targets.Count > 0)
                 {
                     _effect.Apply();
                 }
                 break;
             case SelectorCheckType.Minimum:
-                if (Card.Slot.Neighbors.Count(slot => slot != null && slot.Card != null && NextTo.IsMatch(slot.Card)) >= NextTo.Minimum)
+                if (targets.Count >= TargetField.TargetProperty.Minimum)
                 {
                     _effect.Apply();
                 }
                 break;
             case SelectorCheckType.Count:
-                int count = Card.Slot.Neighbors.Count(slot => slot != null && slot.Card != null && NextTo.IsMatch(slot.Card));
-                _effect.Apply(count);
+                _effect.Apply(targets.Count);
                 break;
         }
     }
 
     public override void RevertEffect()
     {
-        switch (NextTo.Check)
+        List<Card> targets = TargetField.GetAvailableTargets(Card);
+        switch (TargetField.TargetProperty.Check)
         {
             case SelectorCheckType.Exists:
-                if (Card.Slot.Neighbors.Exists(slot => slot != null && slot.Card != null && NextTo.IsMatch(slot.Card)))
+                if (targets.Count > 0)
                 {
                     _effect.Revert();
                 }
                 break;
             case SelectorCheckType.Minimum:
-                if (Card.Slot.Neighbors.Count(slot => slot != null && slot.Card != null && NextTo.IsMatch(slot.Card)) >= NextTo.Minimum)
+                if (targets.Count >= TargetField.TargetProperty.Minimum)
                 {
                     _effect.Revert();
                 }
                 break;
             case SelectorCheckType.Count:
-                int count = Card.Slot.Neighbors.Count(slot => slot != null && slot.Card != null && NextTo.IsMatch(slot.Card));
-                _effect.Revert(count);
+                _effect.Revert(targets.Count);
                 break;
         }
-    }
-
-    public override string GenerateDescription()
-    {
-        string description = "";
-        switch (NextTo.Check)
-        {
-            case SelectorCheckType.Exists:
-                description = "If next to ";
-                break;
-            case SelectorCheckType.Minimum:
-                description = $"If next to at least {NextTo.Minimum} ";
-                break;
-            default:
-                break;
-        }
-        switch (NextTo.Type)
-        {
-            case SelectorType.ID:
-                description += $"{CardManager.Instance.GetCardScriptableByID(NextTo.ID).Name}:";
-                break;
-            case SelectorType.Name:
-                description += $"{NextTo.Name}:";
-                break;
-            case SelectorType.Trait:
-                description += $"{NextTo.Trait}:";
-                break;
-            default:
-                break;
-        }
-
-        description += _effect.GenerateDescription();
-        return description;
     }
 }

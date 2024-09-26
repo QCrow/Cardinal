@@ -36,8 +36,8 @@ public class CardScriptable : SerializedScriptableObject
     [ShowIf("@HasEffect && Condition == ConditionType.Position")]
     public PositionType Position;
 
-    [ShowIf("@HasEffect && Condition == ConditionType.NextTo")]
-    public Selector NextTo;
+    [ShowIf("@HasEffect && Condition == ConditionType.TargetWithProperty")]
+    public Target TargetWithProperty;
 
     [ShowIf("HasEffect", true)]
     public EffectType Keyword;

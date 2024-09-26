@@ -26,24 +26,33 @@ MonoBehaviour:
   Rarity: 0
   Class: 1
   Trait: 2
-  BaseAttack: 1
-  Description: 'If next to another Recruit: +1 Temp DMG'
+  BaseAttack: 0
+  Description: 'If next to another Soldier: +2 Temp DMG'
   HasEffect: 1
   Trigger: 2
   Condition: 4
   Position: 0
-  NextTo:
-    Type: 2
-    Check: 0
-    Minimum: 0
-    ID: 1
-    Name: Recruit
-    Trait: 0
-    Rarity: 0
+  TargetWithProperty:
+    TargetRange: 1
+    TargetProperty:
+      Type: 3
+      Check: 0
+      Minimum: 0
+      ID: 0
+      Name: Recruit
+      Trait: 2
+      Rarity: 0
   Keyword: 2
   Modifier: 1
-  Value: 1
+  Value: 2
   IsTargeted: 0
   Target:
     TargetRange: 0
-    TargetTrait: 0
+    TargetProperty:
+      Type: 0
+      Check: 0
+      Minimum: 0
+      ID: 0
+      Name: 
+      Trait: 0
+      Rarity: 0

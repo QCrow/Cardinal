@@ -12,7 +12,7 @@ public class Slot : SerializedMonoBehaviour
         Row = row;
         Col = col;
     }
-    public List<Slot> Neighbors => Board.Instance.GetNeighbors(this);
+    public List<Slot> Neighbors => Board.Instance.GetAdjacentSlots(this);
     public Slot Up => Board.Instance.GetSlotAtPosition(Row - 1, Col);
     public Slot Down => Board.Instance.GetSlotAtPosition(Row + 1, Col);
     public Slot Left => Board.Instance.GetSlotAtPosition(Row, Col - 1);

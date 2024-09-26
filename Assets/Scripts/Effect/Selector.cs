@@ -37,18 +37,18 @@ public class Selector
 
     public bool IsMatch(Card card)
     {
-        switch (Type)
+        return Type switch
         {
-            case SelectorType.ID:
-                return card.ID == ID;
-            case SelectorType.Name:
-                return card.Name == Name;
-            case SelectorType.Trait:
-                return card.Trait == Trait;
-            case SelectorType.Rarity:
-                return card.Rarity == Rarity;
-            default:
-                return false;
-        }
+            SelectorType.ID => card.ID == ID,
+            SelectorType.Name => card.Name == Name,
+            SelectorType.Trait => Trait switch
+            {
+                TraitType.All => true,
+                TraitType.None => false,
+                _ => card.Trait == Trait,
+            },
+            SelectorType.Rarity => card.Rarity == Rarity,
+            _ => false,
+        };
     }
 }
