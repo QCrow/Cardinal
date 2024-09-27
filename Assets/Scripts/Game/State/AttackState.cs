@@ -4,7 +4,6 @@ public class AttackState : IGameState
 {
     public void OnEnter(GameManager gameManager)
     {
-        Debug.Log("Entering Attack State...");
         Attack();
         GameManager.Instance.ChangeState(new RewardState());
     }
@@ -15,7 +14,6 @@ public class AttackState : IGameState
 
     private void Attack()
     {
-        Debug.Log("Attacking...");
         Board.Instance.DeployedCards.ForEach(card =>
         {
             if (card.Trigger == TriggerType.OnAttack)

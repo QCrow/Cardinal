@@ -117,6 +117,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         Slot.Card = null;
         Slot = null;
         transform.SetParent(CardManager.Instance.Graveyard.transform);
+        transform.localPosition = Vector3.zero;
     }
 
     public void ResetTemporaryState()
