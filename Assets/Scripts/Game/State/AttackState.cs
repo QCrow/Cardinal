@@ -16,10 +16,7 @@ public class AttackState : IGameState
     {
         Board.Instance.DeployedCards.ForEach(card =>
         {
-            if (card.Trigger == TriggerType.OnAttack)
-            {
-                card.ApplyEffect();
-            }
+            card.ApplyEffect(TriggerType.OnAttack);
 
             GameManager.Instance.InflictDamage(card.TotalAttack);
         });

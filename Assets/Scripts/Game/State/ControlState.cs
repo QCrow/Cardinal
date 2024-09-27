@@ -57,10 +57,7 @@ public class ControlState : IGameState
     {
         foreach (Card card in Board.Instance.DeployedCards)
         {
-            if (card.Trigger == TriggerType.WhileInPlay)
-            {
-                card.ApplyEffect();
-            }
+            card.ApplyEffect(TriggerType.WhileInPlay);
         }
 
         // DEBUG
@@ -72,10 +69,7 @@ public class ControlState : IGameState
     {
         foreach (Card card in Board.Instance.DeployedCards)
         {
-            if (card.Trigger == TriggerType.WhileInPlay)
-            {
-                card.RevertEffect();
-            }
+            card.RevertEffect(TriggerType.WhileInPlay);
         }
     }
 }

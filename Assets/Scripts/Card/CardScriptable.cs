@@ -3,6 +3,7 @@ using Sirenix.OdinInspector;
 using Newtonsoft.Json;
 using UnityEditor;
 using System.IO;
+using System.Collections.Generic;
 
 [CreateAssetMenu(fileName = "Card", menuName = "ScriptableObjects/Card", order = 1)]
 public class CardScriptable : SerializedScriptableObject
@@ -29,49 +30,12 @@ public class CardScriptable : SerializedScriptableObject
     public bool HasEffect = false;
 
     [ShowIf(nameof(HasEffectActive))]
-    [OnValueChanged("ValidateTrigger")]
-    public TriggerType Trigger = TriggerType.OnDeploy;
+    public List<SerializableCondition> Conditions;
 
-    [ShowIf(nameof(HasEffectActive))]
-    [OnValueChanged("ValidateTrigger")]
-    public ConditionType Condition;
-
-    [ShowIf(nameof(IsConditionCycle))]
-    public int CycleCount;
-
-    [ShowIf(nameof(IsConditionPosition))]
-    public PositionType Position;
-
-    [ShowIf(nameof(IsConditionTargetWithProperty))]
-    public Target TargetWithProperty;
-
-    [ShowIf(nameof(IsConditionTargetWithProperty))]
-    public CheckType Check;
-
-    [ShowIf(nameof(IsConditionTargetWithPropertyAndMinimum))]
-    [Tooltip("The minimum number of neighbors that must match the selector for the effect to activate.")]
-    public int Minimum;
-
-    [ShowIf(nameof(HasEffectActive))]
-    public EffectType Keyword;
-
-    [BoxGroup("Effect")]
-    [ShowIf(nameof(IsKeywordApply))]
-    [Tooltip("Type of the applied modifier.")]
-    public ModifierType Modifier;
-
-    [BoxGroup("Effect")]
-    [ShowIf(nameof(IsKeywordApplyOrTempDamageUp))]
-    [Tooltip("Amount of the applied modifier.")]
-    public int Value = 1;
-
-    [BoxGroup("Effect/Targeting")]
-    [ShowIf(nameof(IsKeywordApplyOrDestroy))]
-    public bool IsTargeted = false;
-
-    [BoxGroup("Effect/Targeting")]
-    [ShowIf(nameof(IsTargetedAndKeywordApplyOrDestroy))]
-    public Target Target;
+    private bool HasEffectActive()
+    {
+        return HasEffect;
+    }
 
     #region Validation
     private void OnEnable()
@@ -111,65 +75,5 @@ public class CardScriptable : SerializedScriptableObject
         AssetDatabase.Refresh();
         Debug.Log($"Card ID updated to {ID} and asset file renamed.");
     }
-
-    /// <summary>
-    /// Enforces that if ConditionType is Cycle, Trigger is OnAttack.
-    /// </summary>
-    private void ValidateTrigger()
-    {
-        if (Condition == ConditionType.Cycle)
-        {
-            Trigger = TriggerType.OnAttack;
-        }
-    }
-    #endregion
-
-    #region Helper Methods for Inspector Conditions
-
-    private bool HasEffectActive()
-    {
-        return HasEffect;
-    }
-
-    private bool IsConditionCycle()
-    {
-        return HasEffect && Condition == ConditionType.Cycle;
-    }
-
-    private bool IsConditionPosition()
-    {
-        return HasEffect && Condition == ConditionType.Position;
-    }
-
-    private bool IsConditionTargetWithProperty()
-    {
-        return HasEffect && Condition == ConditionType.TargetWithProperty;
-    }
-
-    private bool IsConditionTargetWithPropertyAndMinimum()
-    {
-        return HasEffect && Condition == ConditionType.TargetWithProperty && Check == CheckType.Minimum;
-    }
-
-    private bool IsKeywordApply()
-    {
-        return HasEffect && Keyword == EffectType.Apply;
-    }
-
-    private bool IsKeywordApplyOrTempDamageUp()
-    {
-        return HasEffect && (Keyword == EffectType.Apply || Keyword == EffectType.TempDamageUp);
-    }
-
-    private bool IsKeywordApplyOrDestroy()
-    {
-        return HasEffect && (Keyword == EffectType.Apply || Keyword == EffectType.Destroy);
-    }
-
-    private bool IsTargetedAndKeywordApplyOrDestroy()
-    {
-        return HasEffect && IsTargeted && (Keyword == EffectType.Apply || Keyword == EffectType.Destroy);
-    }
-
     #endregion
 }

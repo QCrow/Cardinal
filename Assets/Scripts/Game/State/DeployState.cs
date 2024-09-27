@@ -35,11 +35,8 @@ public class DeployState : IGameState
             card.ResetTemporaryState();
             card.BindToSlot(slot);
 
-            // Apply the card effect if it is a deploy trigger
-            if (card.Trigger == TriggerType.OnDeploy)
-            {
-                card.ApplyEffect();
-            }
+            // Apply the deploy trigger effects
+            card.ApplyEffect(TriggerType.OnDeploy);
             _cards.Add(card);
         }
 

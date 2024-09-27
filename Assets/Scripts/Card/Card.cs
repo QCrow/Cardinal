@@ -13,8 +13,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public int BaseAttack;
 
-    public TriggerType Trigger;
-    public ConditionalEffect ConditionalEffect = null;
+    public Dictionary<TriggerType, List<ConditionalEffect>> ConditionalEffects = new();
     #endregion
 
     #region Card Runtime State
@@ -42,7 +41,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     [SerializeField] private TMPro.TMP_Text _attackValueText;
     #endregion
 
-    public void Initialize(CardScriptable cardScriptable, ConditionalEffect effect)
+    public void Initialize(CardScriptable cardScriptable, Dictionary<TriggerType, List<ConditionalEffect>> conditionalEffects)
     {
         ID = cardScriptable.ID;
         Rarity = cardScriptable.Rarity;
@@ -50,8 +49,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         Class = cardScriptable.Class;
         Trait = cardScriptable.Trait;
         BaseAttack = cardScriptable.BaseAttack;
-        Trigger = cardScriptable.Trigger;
-        ConditionalEffect = effect;
+        ConditionalEffects = conditionalEffects;
 
         _cardNameText.text = Name;
         _descriptionText.text = cardScriptable.Description;
@@ -83,16 +81,22 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     #endregion
 
     #region Game Logic
-    public void ApplyEffect()
+    public void ApplyEffect(TriggerType trigger)
     {
-        if (ConditionalEffect == null) return;
-        ConditionalEffect.ApplyEffect();
+        if (!ConditionalEffects.ContainsKey(trigger)) return;
+        foreach (ConditionalEffect conditionalEffect in ConditionalEffects[trigger])
+        {
+            conditionalEffect.ApplyEffect();
+        }
     }
 
-    public void RevertEffect()
+    public void RevertEffect(TriggerType trigger)
     {
-        if (ConditionalEffect == null) return;
-        ConditionalEffect.RevertEffect();
+        if (!ConditionalEffects.ContainsKey(trigger)) return;
+        foreach (ConditionalEffect conditionalEffect in ConditionalEffects[trigger])
+        {
+            conditionalEffect.RevertEffect();
+        }
     }
 
     public void BindToSlot(Slot slot)
@@ -118,6 +122,19 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         Slot = null;
         transform.SetParent(CardManager.Instance.Graveyard.transform);
         transform.localPosition = Vector3.zero;
+    }
+
+    public void Destroy()
+    {
+        UnbindFromSlot();
+        CardManager.Instance.RemoveCard(this);
+        Destroy(gameObject);
+    }
+
+    //TODO: Implement this method
+    public void TransformInto(int cardID)
+    {
+        CardManager.Instance.TransformCard(this, cardID);
     }
 
     public void ResetTemporaryState()

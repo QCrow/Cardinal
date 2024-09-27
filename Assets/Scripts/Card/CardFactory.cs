@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public static class CardFactory
@@ -14,10 +15,19 @@ public static class CardFactory
             throw new System.ArgumentNullException(nameof(cardScriptable), "Card scriptable object cannot be null.");
         }
 
-        ConditionalEffect conditionalEffect = null;
+        Dictionary<TriggerType, List<ConditionalEffect>> conditionalEffect = new();
         if (cardScriptable.HasEffect)
         {
-            conditionalEffect = CreateConditionalEffect(card, cardScriptable);
+            foreach (var serializedCondition in cardScriptable.Conditions)
+            {
+                if (!conditionalEffect.ContainsKey(serializedCondition.Trigger))
+                {
+                    conditionalEffect.Add(serializedCondition.Trigger, new List<ConditionalEffect>());
+                }
+
+                ConditionalEffect condition = CreateConditionalEffect(card, serializedCondition);
+                conditionalEffect[serializedCondition.Trigger].Add(condition);
+            }
         }
 
         card.Initialize(cardScriptable, conditionalEffect);
@@ -25,40 +35,51 @@ public static class CardFactory
         return card;
     }
 
-    public static ConditionalEffect CreateConditionalEffect(Card card, CardScriptable cardScriptable)
+    public static ConditionalEffect CreateConditionalEffect(Card card, SerializableCondition condition)
     {
-        Effect effect = null;
-        switch (cardScriptable.Keyword)
+        List<Effect> effects = new();
+        foreach (var serializedEffect in condition.Effects)
         {
-            case EffectType.Apply:
-                effect = new AddModifierEffect(card, cardScriptable.Modifier, cardScriptable.Value, cardScriptable.IsTargeted, cardScriptable.Target);
-                break;
-            case EffectType.TempDamageUp:
-                effect = new TempDamageUpEffect(card, cardScriptable.Value);
-                break;
-            default:
-                throw new System.NotSupportedException($"Effect keyword '{cardScriptable.Keyword}' is not supported or implemented yet.");
-        }
+            Effect effect;
+            switch (serializedEffect.Keyword)
+            {
+                case EffectType.Apply:
+                    effect = new AddModifierEffect(card, serializedEffect.Modifier, serializedEffect.Value, serializedEffect.IsTargeted, serializedEffect.Target);
+                    break;
+                case EffectType.TempDamageUp:
+                    effect = new TempDamageUpEffect(card, serializedEffect.Value);
+                    break;
+                case EffectType.Destroy:
+                    effect = new DestroyEffect(card, serializedEffect.IsTargeted, serializedEffect.Target);
+                    break;
+                default:
+                    throw new System.NotSupportedException($"Effect keyword '{serializedEffect.Keyword}' is not supported or implemented yet.");
+            }
 
-        if (effect == null)
-        {
-            throw new System.InvalidOperationException($"Effect is not initialized for card {cardScriptable.Name}.");
+            if (effect == null)
+            {
+                throw new System.InvalidOperationException($"Effect could not be created for keyword '{serializedEffect.Keyword}'.");
+            }
+            effects.Add(effect);
         }
 
         ConditionalEffect conditionalEffect;
-        switch (cardScriptable.Condition)
+        switch (condition.Condition)
         {
             case ConditionType.Constant:
-                conditionalEffect = new ConstantEffect(card, effect);
+                conditionalEffect = new ConstantEffect(card, effects);
                 break;
             case ConditionType.Position:
-                conditionalEffect = new PositionCondition(card, effect, cardScriptable.Position);
+                conditionalEffect = new PositionCondition(card, effects, condition.Position);
                 break;
             case ConditionType.TargetWithProperty:
-                conditionalEffect = new TargetWithPropertyCondition(card, effect, cardScriptable.TargetWithProperty, cardScriptable.Check, cardScriptable.Minimum);
+                conditionalEffect = new TargetWithPropertyCondition(card, effects, condition.TargetWithProperty, condition.Check, condition.Minimum);
+                break;
+            case ConditionType.Cycle:
+                conditionalEffect = new CycleCondition(card, effects, condition.CycleCount);
                 break;
             default:
-                throw new System.NotSupportedException($"Condition type '{cardScriptable.Condition}' is not supported or implemented yet.");
+                throw new System.NotSupportedException($"Condition type '{condition.Condition}' is not supported or implemented yet.");
         }
         return conditionalEffect;
     }

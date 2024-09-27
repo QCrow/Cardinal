@@ -13,7 +13,8 @@ public enum EffectType
     Apply,
     TempDamageUp,
     Destroy,
-    AddCard
+    AddCard,
+    Transform
 }
 
 public enum ModifierType
