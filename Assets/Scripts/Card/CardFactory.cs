@@ -45,7 +45,7 @@ public static class CardFactory
             throw new System.InvalidOperationException($"Effect is not initialized for card {cardScriptable.Name}.");
         }
 
-        ConditionalEffect conditionalEffect = null;
+        ConditionalEffect conditionalEffect;
         switch (cardScriptable.Condition)
         {
             case ConditionType.Constant:
@@ -55,7 +55,7 @@ public static class CardFactory
                 conditionalEffect = new PositionCondition(card, effect, cardScriptable.Position);
                 break;
             case ConditionType.TargetWithProperty:
-                conditionalEffect = new TargetWithPropertyCondition(card, effect, cardScriptable.TargetWithProperty);
+                conditionalEffect = new TargetWithPropertyCondition(card, effect, cardScriptable.TargetWithProperty, cardScriptable.Check, cardScriptable.Minimum);
                 break;
             default:
                 throw new System.NotSupportedException($"Condition type '{cardScriptable.Condition}' is not supported or implemented yet.");

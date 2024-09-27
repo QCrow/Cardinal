@@ -33,11 +33,17 @@ public class CardScriptable : SerializedScriptableObject
     [ShowIf("HasEffect", true)]
     public ConditionType Condition;
 
+
     [ShowIf("@HasEffect && Condition == ConditionType.Position")]
     public PositionType Position;
 
     [ShowIf("@HasEffect && Condition == ConditionType.TargetWithProperty")]
     public Target TargetWithProperty;
+    [ShowIf("@HasEffect && Condition == ConditionType.TargetWithProperty")]
+    public CheckType Check;
+    [ShowIf("@HasEffect && Condition == ConditionType.TargetWithProperty && Check == CheckType.Minimum")]
+    [Tooltip("The minimum number of neighbors that must match the selector for the effect to activate.")]
+    public int Minimum;
 
     [ShowIf("HasEffect", true)]
     public EffectType Keyword;

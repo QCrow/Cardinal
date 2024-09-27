@@ -54,30 +54,34 @@ public class PositionCondition : ConditionalEffect
 public class TargetWithPropertyCondition : ConditionalEffect
 {
     public Target TargetField;
+    private CheckType _check;
+    private int _minimum;
 
-    public TargetWithPropertyCondition(Card card, Effect effect, Target targetField) : base(card, effect)
+    public TargetWithPropertyCondition(Card card, Effect effect, Target targetField, CheckType check, int minimum) : base(card, effect)
     {
         TargetField = targetField;
+        _check = check;
+        _minimum = minimum;
     }
 
     public override void ApplyEffect()
     {
         List<Card> targets = TargetField.GetAvailableTargets(Card);
-        switch (TargetField.TargetProperty.Check)
+        switch (_check)
         {
-            case SelectorCheckType.Exists:
+            case CheckType.Exists:
                 if (targets.Count > 0)
                 {
                     _effect.Apply();
                 }
                 break;
-            case SelectorCheckType.Minimum:
-                if (targets.Count >= TargetField.TargetProperty.Minimum)
+            case CheckType.Minimum:
+                if (targets.Count >= _minimum)
                 {
                     _effect.Apply();
                 }
                 break;
-            case SelectorCheckType.Count:
+            case CheckType.Count:
                 _effect.Apply(targets.Count);
                 break;
         }
@@ -86,21 +90,21 @@ public class TargetWithPropertyCondition : ConditionalEffect
     public override void RevertEffect()
     {
         List<Card> targets = TargetField.GetAvailableTargets(Card);
-        switch (TargetField.TargetProperty.Check)
+        switch (_check)
         {
-            case SelectorCheckType.Exists:
+            case CheckType.Exists:
                 if (targets.Count > 0)
                 {
                     _effect.Revert();
                 }
                 break;
-            case SelectorCheckType.Minimum:
-                if (targets.Count >= TargetField.TargetProperty.Minimum)
+            case CheckType.Minimum:
+                if (targets.Count >= _minimum)
                 {
                     _effect.Revert();
                 }
                 break;
-            case SelectorCheckType.Count:
+            case CheckType.Count:
                 _effect.Revert(targets.Count);
                 break;
         }

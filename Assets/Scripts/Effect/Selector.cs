@@ -11,21 +11,11 @@ public enum SelectorType
     Rarity
 }
 
-public enum SelectorCheckType
-{
-    Exists,
-    Minimum,
-    Count
-}
 
 [Serializable]
 public class Selector
 {
     public SelectorType Type;
-    public SelectorCheckType Check;
-    [ShowIf("Check", SelectorCheckType.Minimum)]
-    [Tooltip("The minimum number of neighbors that must match the selector for the effect to activate.")]
-    public int Minimum;
     [ShowIf("Type", SelectorType.ID)]
     public int ID;
     [ShowIf("Type", SelectorType.Name)]
