@@ -5,31 +5,44 @@ using System.Collections.Generic;
 public abstract class ConditionalEffect
 {
     public Card Card; // Card that the effect is attached to
-    protected Effect _effect;
+    protected List<Effect> _effects;
 
-    public ConditionalEffect(Card card, Effect effect)
+    public ConditionalEffect(Card card, List<Effect> effects)
     {
         Card = card;
-        _effect = effect;
+        _effects = effects;
     }
 
-    public abstract void ApplyEffect();
-    public abstract void RevertEffect();
+    public virtual void ApplyEffect()
+    {
+        foreach (Effect effect in _effects) { effect.Apply(); }
+    }
+    public virtual void RevertEffect()
+    {
+        foreach (Effect effect in _effects) { effect.Revert(); }
+    }
 }
 
 public class ConstantEffect : ConditionalEffect
 {
-    public ConstantEffect(Card card, Effect effect) : base(card, effect) { }
+    public ConstantEffect(Card card, List<Effect> effects) : base(card, effects) { }
 
-    public override void ApplyEffect() { _effect.Apply(); }
-    public override void RevertEffect() { _effect.Revert(); }
+    public override void ApplyEffect()
+    {
+        base.ApplyEffect();
+    }
+
+    public override void RevertEffect()
+    {
+        base.RevertEffect();
+    }
 }
 
 public class PositionCondition : ConditionalEffect
 {
     public PositionType Position;
 
-    public PositionCondition(Card card, Effect effect, PositionType position) : base(card, effect)
+    public PositionCondition(Card card, List<Effect> effects, PositionType position) : base(card, effects)
     {
         Position = position;
     }
@@ -38,7 +51,7 @@ public class PositionCondition : ConditionalEffect
     {
         if (Card.Slot.IsPosition(Position))
         {
-            _effect.Apply();
+            base.ApplyEffect();
         }
     }
 
@@ -46,7 +59,7 @@ public class PositionCondition : ConditionalEffect
     {
         if (Card.Slot.IsPosition(Position))
         {
-            _effect.Revert();
+            base.RevertEffect();
         }
     }
 }
@@ -54,10 +67,10 @@ public class PositionCondition : ConditionalEffect
 public class TargetWithPropertyCondition : ConditionalEffect
 {
     public Target TargetField;
-    private CheckType _check;
-    private int _minimum;
+    private readonly CheckType _check;
+    private readonly int _minimum;
 
-    public TargetWithPropertyCondition(Card card, Effect effect, Target targetField, CheckType check, int minimum) : base(card, effect)
+    public TargetWithPropertyCondition(Card card, List<Effect> effects, Target targetField, CheckType check, int minimum) : base(card, effects)
     {
         TargetField = targetField;
         _check = check;
@@ -72,17 +85,20 @@ public class TargetWithPropertyCondition : ConditionalEffect
             case CheckType.Exists:
                 if (targets.Count > 0)
                 {
-                    _effect.Apply();
+                    base.ApplyEffect();
                 }
                 break;
             case CheckType.Minimum:
                 if (targets.Count >= _minimum)
                 {
-                    _effect.Apply();
+                    base.ApplyEffect();
                 }
                 break;
             case CheckType.Count:
-                _effect.Apply(targets.Count);
+                foreach (Effect effect in _effects)
+                {
+                    effect.Apply(targets.Count);
+                }
                 break;
         }
     }
@@ -95,17 +111,20 @@ public class TargetWithPropertyCondition : ConditionalEffect
             case CheckType.Exists:
                 if (targets.Count > 0)
                 {
-                    _effect.Revert();
+                    base.RevertEffect();
                 }
                 break;
             case CheckType.Minimum:
                 if (targets.Count >= _minimum)
                 {
-                    _effect.Revert();
+                    base.RevertEffect();
                 }
                 break;
             case CheckType.Count:
-                _effect.Revert(targets.Count);
+                foreach (Effect effect in _effects)
+                {
+                    effect.Revert(targets.Count);
+                }
                 break;
         }
     }
@@ -113,12 +132,10 @@ public class TargetWithPropertyCondition : ConditionalEffect
 
 public class CycleCondition : ConditionalEffect
 {
-    private int _cycleCount;
+    private readonly int _cycleCount;
     private int _currentCycle;
 
-    public int TriggerCount = 0;
-
-    public CycleCondition(Card card, Effect effect, int cycleCount) : base(card, effect)
+    public CycleCondition(Card card, List<Effect> effects, int cycleCount) : base(card, effects)
     {
         _cycleCount = cycleCount;
         _currentCycle = cycleCount;
@@ -129,8 +146,8 @@ public class CycleCondition : ConditionalEffect
         _currentCycle--;
         if (_currentCycle <= 0)
         {
-            _effect.Apply();
             _currentCycle = _cycleCount;
+            base.ApplyEffect();
         }
     }
 

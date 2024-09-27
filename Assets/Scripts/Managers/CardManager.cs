@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sirenix.OdinInspector;
@@ -218,5 +219,10 @@ public class CardManager : SerializedMonoBehaviour
         card.transform.SetParent(parent, false);
 
         return card;
+    }
+
+    public void TransformCard(Card card, int cardID)
+    {
+        throw new NotImplementedException();
     }
 }

@@ -24,7 +24,6 @@ public abstract class Effect
         }
     }
     public virtual void ModifyPotency(int amount) { }
-    public abstract string GenerateDescription();
 }
 
 public class TempDamageUpEffect : Effect
@@ -50,20 +49,15 @@ public class TempDamageUpEffect : Effect
     {
         _damage += amount;
     }
-
-    public override string GenerateDescription()
-    {
-        return $"+{_damage} temp DMG.";
-    }
 }
 
 public class AddModifierEffect : Effect
 {
-    private ModifierType _modifierType;
+    private readonly ModifierType _modifierType;
     private int _amount;
 
-    private bool _isTargeted;
-    private Target _target;
+    private readonly bool _isTargeted;
+    private readonly Target _target;
 
     public AddModifierEffect(Card card, ModifierType modifierType, int amount, bool isTargeted = false, Target target = null) : base(card)
     {
@@ -101,9 +95,62 @@ public class AddModifierEffect : Effect
     {
         _amount += amount;
     }
+}
 
-    public override string GenerateDescription()
+public class DestroyEffect : Effect
+{
+    private readonly bool _isTargeted;
+    private readonly Target _target;
+
+    public DestroyEffect(Card card, bool isTargeted = false, Target target = null) : base(card)
     {
-        return $"+{_amount} {_modifierType.ToString()}";
+        _isTargeted = isTargeted;
+        _target = target;
+    }
+
+    public override void Apply()
+    {
+        if (_isTargeted)
+        {
+            _target.GetAvailableTargets(_card).ForEach(target => target.Destroy());
+        }
+        else
+        {
+            _card.Destroy();
+        }
+    }
+
+    public override void Revert()
+    {
+        throw new System.NotImplementedException("Currently, DestroyEffect cannot be reverted.");
+
+        // if (_isTargeted)
+        // {
+        //     _target.GetAvailableTargets(_card).ForEach(target => target.ResetTemporaryState());
+        // }
+        // else
+        // {
+        //     _card.ResetTemporaryState();
+        // }
+    }
+}
+
+public class AddCardEffect : Effect
+{
+    private readonly int _cardID;
+
+    public AddCardEffect(Card card, int cardID) : base(card)
+    {
+        _cardID = cardID;
+    }
+
+    public override void Apply()
+    {
+        CardManager.Instance.AddCard(_cardID);
+    }
+
+    public override void Revert()
+    {
+        throw new System.NotImplementedException("Currently, AddCardEffect cannot be reverted.");
     }
 }
