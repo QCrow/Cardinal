@@ -11,7 +11,9 @@ public enum EffectType
 {
     None,
     Apply,
-    TempDamageUp
+    TempDamageUp,
+    Destroy,
+    AddCard
 }
 
 public enum ModifierType

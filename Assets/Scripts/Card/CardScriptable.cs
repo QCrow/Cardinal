@@ -27,42 +27,50 @@ public class CardScriptable : SerializedScriptableObject
     [Space(10)]
     [Title("Card Effect")]
     public bool HasEffect = false;
-    [ShowIf("HasEffect", true)]
+
+    [ShowIf(nameof(HasEffectActive))]
+    [OnValueChanged("ValidateTrigger")]
     public TriggerType Trigger = TriggerType.OnDeploy;
 
-    [ShowIf("HasEffect", true)]
+    [ShowIf(nameof(HasEffectActive))]
+    [OnValueChanged("ValidateTrigger")]
     public ConditionType Condition;
 
+    [ShowIf(nameof(IsConditionCycle))]
+    public int CycleCount;
 
-    [ShowIf("@HasEffect && Condition == ConditionType.Position")]
+    [ShowIf(nameof(IsConditionPosition))]
     public PositionType Position;
 
-    [ShowIf("@HasEffect && Condition == ConditionType.TargetWithProperty")]
+    [ShowIf(nameof(IsConditionTargetWithProperty))]
     public Target TargetWithProperty;
-    [ShowIf("@HasEffect && Condition == ConditionType.TargetWithProperty")]
+
+    [ShowIf(nameof(IsConditionTargetWithProperty))]
     public CheckType Check;
-    [ShowIf("@HasEffect && Condition == ConditionType.TargetWithProperty && Check == CheckType.Minimum")]
+
+    [ShowIf(nameof(IsConditionTargetWithPropertyAndMinimum))]
     [Tooltip("The minimum number of neighbors that must match the selector for the effect to activate.")]
     public int Minimum;
 
-    [ShowIf("HasEffect", true)]
+    [ShowIf(nameof(HasEffectActive))]
     public EffectType Keyword;
 
     [BoxGroup("Effect")]
-    [ShowIf("@HasEffect && (Keyword == EffectType.Apply)")]
+    [ShowIf(nameof(IsKeywordApply))]
     [Tooltip("Type of the applied modifier.")]
     public ModifierType Modifier;
 
     [BoxGroup("Effect")]
-    [ShowIf("@HasEffect && (Keyword == EffectType.Apply || Keyword == EffectType.TempDamageUp)")]
+    [ShowIf(nameof(IsKeywordApplyOrTempDamageUp))]
     [Tooltip("Amount of the applied modifier.")]
     public int Value = 1;
 
     [BoxGroup("Effect/Targeting")]
-    [ShowIf("@HasEffect && (Keyword == EffectType.Apply)")]
+    [ShowIf(nameof(IsKeywordApplyOrDestroy))]
     public bool IsTargeted = false;
+
     [BoxGroup("Effect/Targeting")]
-    [ShowIf("@HasEffect && IsTargeted && Keyword == EffectType.Apply")]
+    [ShowIf(nameof(IsTargetedAndKeywordApplyOrDestroy))]
     public Target Target;
 
     #region Validation
@@ -103,5 +111,65 @@ public class CardScriptable : SerializedScriptableObject
         AssetDatabase.Refresh();
         Debug.Log($"Card ID updated to {ID} and asset file renamed.");
     }
+
+    /// <summary>
+    /// Enforces that if ConditionType is Cycle, Trigger is OnAttack.
+    /// </summary>
+    private void ValidateTrigger()
+    {
+        if (Condition == ConditionType.Cycle)
+        {
+            Trigger = TriggerType.OnAttack;
+        }
+    }
+    #endregion
+
+    #region Helper Methods for Inspector Conditions
+
+    private bool HasEffectActive()
+    {
+        return HasEffect;
+    }
+
+    private bool IsConditionCycle()
+    {
+        return HasEffect && Condition == ConditionType.Cycle;
+    }
+
+    private bool IsConditionPosition()
+    {
+        return HasEffect && Condition == ConditionType.Position;
+    }
+
+    private bool IsConditionTargetWithProperty()
+    {
+        return HasEffect && Condition == ConditionType.TargetWithProperty;
+    }
+
+    private bool IsConditionTargetWithPropertyAndMinimum()
+    {
+        return HasEffect && Condition == ConditionType.TargetWithProperty && Check == CheckType.Minimum;
+    }
+
+    private bool IsKeywordApply()
+    {
+        return HasEffect && Keyword == EffectType.Apply;
+    }
+
+    private bool IsKeywordApplyOrTempDamageUp()
+    {
+        return HasEffect && (Keyword == EffectType.Apply || Keyword == EffectType.TempDamageUp);
+    }
+
+    private bool IsKeywordApplyOrDestroy()
+    {
+        return HasEffect && (Keyword == EffectType.Apply || Keyword == EffectType.Destroy);
+    }
+
+    private bool IsTargetedAndKeywordApplyOrDestroy()
+    {
+        return HasEffect && IsTargeted && (Keyword == EffectType.Apply || Keyword == EffectType.Destroy);
+    }
+
     #endregion
 }
