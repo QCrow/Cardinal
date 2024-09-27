@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Sirenix.OdinInspector;
+using Sirenix.Utilities.Editor;
 using UnityEngine;
 
 [System.Serializable]
@@ -34,16 +35,15 @@ public class SerializableCondition
     [OnValueChanged(nameof(ValidateTrigger))]
     public List<SerializableEffect> Effects;
 
-    // Message displayed in inspector when validation fails
-    [InfoBox("$ValidationWarningMessage", InfoMessageType.Warning, VisibleIf = nameof(HasValidationWarning))]
-    public string ValidationWarningMessage;
+    // Hides the warning message field in the inspector but keeps it accessible for the InfoBox
+    private string _validationWarningMessage;
 
     /// <summary>
     /// Validates triggers based on condition and effects, updates warning messages.
     /// </summary>
     private void ValidateTrigger()
     {
-        ValidationWarningMessage = ""; // Clear any previous messages
+        _validationWarningMessage = ""; // Clear any previous messages
 
         if (Trigger == TriggerType.OnAttack) return; // No need to validate 'OnAttack' triggers
 
@@ -51,7 +51,7 @@ public class SerializableCondition
         if (Condition == ConditionType.Cycle && Trigger != TriggerType.OnAttack)
         {
             Trigger = TriggerType.OnAttack;
-            ValidationWarningMessage = "Condition 'Cycle' requires the Trigger to be 'OnAttack'. Automatically set.";
+            _validationWarningMessage = "Condition 'Cycle' requires the Trigger to be 'OnAttack'. Automatically set.";
         }
 
         // Effect-based trigger validation
@@ -60,7 +60,20 @@ public class SerializableCondition
             if (Trigger != TriggerType.OnAttack && Trigger != TriggerType.OnDeath)
             {
                 Trigger = TriggerType.OnAttack;
-                ValidationWarningMessage += "\nEffects containing 'Destroy' or 'AddCard' require the Trigger to be 'OnAttack' or 'OnDeath'. Automatically set.";
+                _validationWarningMessage += "\nEffects containing 'Destroy' or 'AddCard' require the Trigger to be 'OnAttack' or 'OnDeath'. Automatically set.";
+            }
+        }
+    }
+
+    [OnInspectorGUI]
+    private void DrawWarningBox()
+    {
+        if (HasValidationWarning())
+        {
+            SirenixEditorGUI.WarningMessageBox(_validationWarningMessage);
+            if (GUILayout.Button("Dismiss Warning"))
+            {
+                _validationWarningMessage = ""; // Hide the warning when the button is clicked.
             }
         }
     }
@@ -68,7 +81,7 @@ public class SerializableCondition
     // Determines if the validation warning should be shown in the inspector
     private bool HasValidationWarning()
     {
-        return !string.IsNullOrEmpty(ValidationWarningMessage);
+        return !string.IsNullOrEmpty(_validationWarningMessage);
     }
 
     private bool IsConditionCycle()
