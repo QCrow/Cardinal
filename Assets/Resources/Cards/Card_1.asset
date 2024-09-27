@@ -36,12 +36,12 @@ MonoBehaviour:
     TargetRange: 1
     TargetProperty:
       Type: 3
-      Check: 0
-      Minimum: 0
       ID: 0
       Name: Recruit
       Trait: 2
       Rarity: 0
+  Check: 0
+  Minimum: 0
   Keyword: 2
   Modifier: 1
   Value: 2
@@ -50,8 +50,6 @@ MonoBehaviour:
     TargetRange: 0
     TargetProperty:
       Type: 0
-      Check: 0
-      Minimum: 0
       ID: 0
       Name: 
       Trait: 0

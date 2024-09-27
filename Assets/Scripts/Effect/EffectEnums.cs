@@ -33,3 +33,10 @@ public enum PositionType
     Corner,
     Edge
 }
+
+public enum CheckType
+{
+    Exists,
+    Minimum,
+    Count
+}
