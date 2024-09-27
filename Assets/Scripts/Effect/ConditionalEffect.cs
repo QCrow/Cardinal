@@ -110,3 +110,32 @@ public class TargetWithPropertyCondition : ConditionalEffect
         }
     }
 }
+
+public class CycleCondition : ConditionalEffect
+{
+    private int _cycleCount;
+    private int _currentCycle;
+
+    public int TriggerCount = 0;
+
+    public CycleCondition(Card card, Effect effect, int cycleCount) : base(card, effect)
+    {
+        _cycleCount = cycleCount;
+        _currentCycle = cycleCount;
+    }
+
+    public override void ApplyEffect()
+    {
+        _currentCycle--;
+        if (_currentCycle <= 0)
+        {
+            _effect.Apply();
+            _currentCycle = _cycleCount;
+        }
+    }
+
+    public override void RevertEffect()
+    {
+        throw new System.NotImplementedException("Effect for CycleCondition cannot be reverted.");
+    }
+}
