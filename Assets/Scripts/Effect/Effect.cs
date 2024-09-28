@@ -26,30 +26,6 @@ public abstract class Effect
     public virtual void ModifyPotency(int amount) { }
 }
 
-public class TempDamageUpEffect : Effect
-{
-    private EffectValue _value;
-
-    public TempDamageUpEffect(Card card, EffectValue value) : base(card)
-    {
-        _value = value;
-    }
-
-    public override void Apply()
-    {
-        _card.TempDamage += _value.GetValue(_card);
-    }
-
-    public override void Revert()
-    {
-        _card.TempDamage -= _value.GetValue(_card);
-    }
-
-    public override void ModifyPotency(int amount)
-    {
-        _value.BaseValue += amount;
-    }
-}
 
 public class AddModifierEffect : Effect
 {
@@ -71,11 +47,11 @@ public class AddModifierEffect : Effect
     {
         if (_isTargeted)
         {
-            _target.GetAvailableTargets(_card).ForEach(target => target.AddModifier(_modifierType, _value.GetValue(_card)));
+            _target.GetAvailableTargets(_card).ForEach(target => target.AddModifier(_modifierType, _value.GetValue(_card), _value.isPermanent));
         }
         else
         {
-            _card.AddModifier(_modifierType, _value.GetValue(_card));
+            _card.AddModifier(_modifierType, _value.GetValue(_card), _value.isPermanent);
         }
     }
 
@@ -83,11 +59,11 @@ public class AddModifierEffect : Effect
     {
         if (_isTargeted)
         {
-            _target.GetAvailableTargets(_card).ForEach(target => target.RemoveModifier(_modifierType, _value.GetValue(_card)));
+            _target.GetAvailableTargets(_card).ForEach(target => target.RemoveModifier(_modifierType, _value.GetValue(_card), _value.isPermanent));
         }
         else
         {
-            _card.RemoveModifier(_modifierType, _value.GetValue(_card));
+            _card.RemoveModifier(_modifierType, _value.GetValue(_card), _value.isPermanent);
         }
     }
 

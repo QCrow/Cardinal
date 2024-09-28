@@ -10,6 +10,7 @@ public class AttackState : IGameState
 
     public void OnExit(GameManager gameManager)
     {
+        UIManager.Instance.RefreshAttackValue();
     }
 
     private void Attack()
@@ -21,4 +22,5 @@ public class AttackState : IGameState
             GameManager.Instance.InflictDamage(card.TotalAttack);
         });
     }
+
 }

@@ -46,9 +46,6 @@ public static class CardFactory
                 case EffectType.Apply:
                     effect = new AddModifierEffect(card, serializedEffect.Modifier, serializedEffect.Value, serializedEffect.IsTargeted, serializedEffect.Target);
                     break;
-                case EffectType.TempDamageUp:
-                    effect = new TempDamageUpEffect(card, serializedEffect.Value);
-                    break;
                 case EffectType.Destroy:
                     effect = new DestroyEffect(card, serializedEffect.IsTargeted, serializedEffect.Target);
                     break;

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a2ed6f30d06c6db4398b5fcbe1f7838a, type: 3}
-  m_Name: Card_2
+  m_Name: Card_6
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -30,24 +30,24 @@ MonoBehaviour:
       Data: 1
     - Name: 
       Entry: 3
-      Data: 2
+      Data: 3
     - Name: 
       Entry: 13
       Data: 
     - Name: 
       Entry: 8
       Data: 
-  ID: 2
-  Name: Swordsman
-  Rarity: 0
-  BaseAttack: 1
-  Description: 'Melee: +1 Temp DMG'
+  ID: 6
+  Name: Shushu
+  Rarity: 2
+  BaseAttack: 2
+  Description: 
   HasEffect: 1
   Conditions:
-  - Trigger: 2
-    Condition: 3
-    CycleCount: 0
-    Position: 1
+  - Trigger: 3
+    Condition: 2
+    CycleCount: 3
+    Position: 0
     TargetWithFilter:
       TargetRange: 0
       TargetFilter:
@@ -60,7 +60,7 @@ MonoBehaviour:
     Minimum: 0
     Effects:
     - Keyword: 1
-      Modifier: 1
+      Modifier: 2
       CardID: 0
       Value:
         IsVariable: 0
@@ -74,7 +74,30 @@ MonoBehaviour:
             Trait: 0
             Rarity: 0
         BaseValue: 1
-        isPermanent: 0
+      IsTargeted: 1
+      Target:
+        TargetRange: 1
+        TargetFilter:
+          Type: 3
+          ID: 0
+          Name: 
+          Trait: 2
+          Rarity: 0
+    - Keyword: 1
+      Modifier: 1
+      CardID: 0
+      Value:
+        IsVariable: 1
+        VariableType: 0
+        Target:
+          TargetRange: 1
+          TargetFilter:
+            Type: 3
+            ID: 0
+            Name: 
+            Trait: 2
+            Rarity: 0
+        BaseValue: 1
       IsTargeted: 0
       Target:
         TargetRange: 0

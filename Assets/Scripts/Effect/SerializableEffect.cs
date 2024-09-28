@@ -34,7 +34,7 @@ public class SerializableEffect
 
     private bool IsKeywordApplyOrTempDamageUpOrAddCard()
     {
-        return Keyword == EffectType.Apply || Keyword == EffectType.TempDamageUp || Keyword == EffectType.AddCard;
+        return Keyword == EffectType.Apply || Keyword == EffectType.AddCard;
     }
 
     private bool IsKeywordApplyOrDestroy()
