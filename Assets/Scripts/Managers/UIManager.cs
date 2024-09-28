@@ -116,4 +116,9 @@ public class UIManager : MonoBehaviour
             }
         }
     }
+
+    public void RefreshAttackValue()
+    {
+        Board.Instance.DeployedCards.ForEach(card => card.UpdateAttackValue());
+    }
 }

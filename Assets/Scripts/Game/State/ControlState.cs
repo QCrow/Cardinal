@@ -62,7 +62,7 @@ public class ControlState : IGameState
 
         // DEBUG
         UIManager.Instance.SetTotalAttack(Board.Instance.DeployedCards.Sum(card => card.TotalAttack));
-
+        UIManager.Instance.RefreshAttackValue();
     }
 
     private void RevertWhileInPlayEffects()

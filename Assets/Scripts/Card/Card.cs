@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -17,20 +18,12 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     #region Card Runtime State
     public Slot Slot = null;
-    private Dictionary<ModifierType, int> _modifiers = new();
+    private Dictionary<ModifierType, int> _permanentModifiers = new();
 
-    [SerializeField] private int _tempDamage = 0;
-    public int TempDamage
-    {
-        get { return _tempDamage; }
-        set
-        {
-            _tempDamage = value;
-            UpdateAttackValue();
-        }
-    }
+    private Dictionary<ModifierType, int> _temporaryModifiers = new();
+
     // The total attack of the card, including base attack, temporary damage, and modifiers
-    public int TotalAttack => BaseAttack + _tempDamage + (_modifiers.TryGetValue(ModifierType.Strength, out int strength) ? strength : 0) - (_modifiers.TryGetValue(ModifierType.Weakness, out int weakness) ? weakness : 0);
+    public int TotalAttack => Math.Max(0, BaseAttack + GetModifierByType(ModifierType.Strength) - GetModifierByType(ModifierType.Weakness));
     #endregion
 
     #region Game Object References
@@ -137,45 +130,64 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void ResetTemporaryState()
     {
-        TempDamage = 0;
+        _temporaryModifiers.Clear();
     }
 
-    public void AddModifier(ModifierType type, int amount)
+    public void AddModifier(ModifierType type, int amount, bool isPermanent)
     {
-        if (type == ModifierType.TempDamageUp)
+        if (isPermanent)
         {
-            TempDamage += amount;
-        }
-        else
-        {
-            if (!_modifiers.ContainsKey(type))
+            if(!_permanentModifiers.ContainsKey(type))
             {
-                _modifiers[type] = amount;
+                _permanentModifiers[type] = amount;
             }
             else
             {
-                _modifiers[type] += amount;
+                _permanentModifiers[type] += amount;
+            }
+        }
+        else
+        {
+            if(!_temporaryModifiers.ContainsKey(type))
+            {
+                _temporaryModifiers[type] = amount;
+            }
+            else
+            {
+                _temporaryModifiers[type] += amount;
             }
         }
     }
 
-    public void RemoveModifier(ModifierType type, int amount)
+    public void RemoveModifier(ModifierType type, int amount, bool isPermanent)
     {
-        if (type == ModifierType.TempDamageUp)
+        if(isPermanent)
         {
-            TempDamage -= amount;
-        }
-        else
-        {
-            if (_modifiers.ContainsKey(type))
+            if(_permanentModifiers.ContainsKey(type))
             {
-                _modifiers[type] -= amount;
-                if (_modifiers[type] <= 0)
+                _permanentModifiers[type] -= amount;
+                if(_permanentModifiers[type] <= 0)
                 {
-                    _modifiers.Remove(type);
+                    _permanentModifiers.Remove(type);
                 }
             }
         }
+        else
+        {
+            if(_temporaryModifiers.ContainsKey(type))
+            {
+                _temporaryModifiers[type] -= amount;
+                if(_temporaryModifiers[type] <= 0)
+                {
+                    _temporaryModifiers.Remove(type);
+                }
+            }
+        }
+    }
+
+    public int GetModifierByType(ModifierType type)
+    {
+        return (_permanentModifiers.TryGetValue(type, out int value) ? value : 0) + (_temporaryModifiers.TryGetValue(type, out value) ? value : 0);
     }
     #endregion
 }

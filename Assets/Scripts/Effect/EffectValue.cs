@@ -11,6 +11,7 @@ public enum VariableType
 public class EffectValue
 {
     public bool IsVariable = false;
+    public bool isPermanent = false;
 
     [ShowIf(nameof(IsVariable))]
     public VariableType VariableType = VariableType.Target;

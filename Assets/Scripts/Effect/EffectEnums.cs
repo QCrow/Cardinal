@@ -11,7 +11,6 @@ public enum EffectType
 {
     None, // Only used for default value
     Apply,
-    TempDamageUp,
     Destroy,
     AddCard,
     Transform
@@ -22,7 +21,7 @@ public enum ModifierType
     None, // Only used for default value
     Strength,
     Weakness,
-    TempDamageUp
+    MultiStrike
 }
 
 public enum PositionType

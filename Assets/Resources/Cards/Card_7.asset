@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a2ed6f30d06c6db4398b5fcbe1f7838a, type: 3}
-  m_Name: Card_2
+  m_Name: Card_7
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -37,17 +37,17 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-  ID: 2
-  Name: Swordsman
+  ID: 7
+  Name: Crossbowman
   Rarity: 0
-  BaseAttack: 1
-  Description: 'Melee: +1 Temp DMG'
+  BaseAttack: 0
+  Description: 'Ranged: +1 Temp DMG, Cycle (3): +1 Temp DMG'
   HasEffect: 1
   Conditions:
   - Trigger: 2
     Condition: 3
     CycleCount: 0
-    Position: 1
+    Position: 3
     TargetWithFilter:
       TargetRange: 0
       TargetFilter:
@@ -59,8 +59,8 @@ MonoBehaviour:
     Check: 0
     Minimum: 0
     Effects:
-    - Keyword: 1
-      Modifier: 1
+    - Keyword: 2
+      Modifier: 0
       CardID: 0
       Value:
         IsVariable: 0
@@ -74,7 +74,45 @@ MonoBehaviour:
             Trait: 0
             Rarity: 0
         BaseValue: 1
-        isPermanent: 0
+      IsTargeted: 0
+      Target:
+        TargetRange: 0
+        TargetFilter:
+          Type: 0
+          ID: 0
+          Name: 
+          Trait: 0
+          Rarity: 0
+  - Trigger: 3
+    Condition: 2
+    CycleCount: 3
+    Position: 0
+    TargetWithFilter:
+      TargetRange: 0
+      TargetFilter:
+        Type: 0
+        ID: 0
+        Name: 
+        Trait: 0
+        Rarity: 0
+    Check: 0
+    Minimum: 0
+    Effects:
+    - Keyword: 2
+      Modifier: 0
+      CardID: 0
+      Value:
+        IsVariable: 0
+        VariableType: 0
+        Target:
+          TargetRange: 0
+          TargetFilter:
+            Type: 0
+            ID: 0
+            Name: 
+            Trait: 0
+            Rarity: 0
+        BaseValue: 1
       IsTargeted: 0
       Target:
         TargetRange: 0
