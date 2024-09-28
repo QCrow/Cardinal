@@ -64,13 +64,13 @@ public class PositionCondition : ConditionalEffect
     }
 }
 
-public class TargetWithPropertyCondition : ConditionalEffect
+public class TargetWithFilterCondition : ConditionalEffect
 {
     public Target TargetField;
     private readonly CheckType _check;
     private readonly int _minimum;
 
-    public TargetWithPropertyCondition(Card card, List<Effect> effects, Target targetField, CheckType check, int minimum) : base(card, effects)
+    public TargetWithFilterCondition(Card card, List<Effect> effects, Target targetField, CheckType check, int minimum) : base(card, effects)
     {
         TargetField = targetField;
         _check = check;

@@ -7,32 +7,33 @@ using UnityEngine;
 [System.Serializable]
 public class SerializableCondition
 {
-    [OnValueChanged(nameof(ValidateTrigger))]
+    [OnValueChanged(nameof(OnValidate))]
     public TriggerType Trigger;
 
-    [OnValueChanged(nameof(ValidateTrigger))]
+    [OnValueChanged(nameof(OnValidate))]
     public ConditionType Condition;
 
     [ShowIf(nameof(IsConditionCycle))]
-    public int CycleCount;
+    public int CycleCount = 1;
 
     [ShowIf(nameof(IsConditionPosition))]
     public PositionType Position;
 
     [BoxGroup("Condition Targeting")]
-    [ShowIf(nameof(IsConditionTargetWithProperty))]
-    public Target TargetWithProperty;
+    [ShowIf(nameof(IsConditionTargetWithFilter))]
+    [HideLabel]
+    public Target TargetWithFilter;
 
     [BoxGroup("Condition Targeting")]
-    [ShowIf(nameof(IsConditionTargetWithProperty))]
+    [ShowIf(nameof(IsConditionTargetWithFilter))]
     public CheckType Check;
 
     [BoxGroup("Condition Targeting")]
-    [ShowIf(nameof(IsConditionTargetWithPropertyAndMinimum))]
+    [ShowIf(nameof(IsConditionTargetWithFilterAndMinimum))]
     [Tooltip("The minimum number of neighbors that must match the selector for the effect to activate.")]
     public int Minimum;
 
-    [OnValueChanged(nameof(ValidateTrigger))]
+    [OnValueChanged(nameof(OnValidate))]
     public List<SerializableEffect> Effects;
 
     // Hides the warning message field in the inspector but keeps it accessible for the InfoBox
@@ -41,9 +42,12 @@ public class SerializableCondition
     /// <summary>
     /// Validates triggers based on condition and effects, updates warning messages.
     /// </summary>
-    private void ValidateTrigger()
+    private void OnValidate()
     {
         _validationWarningMessage = ""; // Clear any previous messages
+
+        if (Trigger == TriggerType.None) Trigger = TriggerType.OnAttack;
+        if (Condition == ConditionType.None) Condition = ConditionType.Constant;
 
         if (Trigger == TriggerType.OnAttack) return; // No need to validate 'OnAttack' triggers
 
@@ -94,13 +98,13 @@ public class SerializableCondition
         return Condition == ConditionType.Position;
     }
 
-    private bool IsConditionTargetWithProperty()
+    private bool IsConditionTargetWithFilter()
     {
-        return Condition == ConditionType.TargetWithProperty;
+        return Condition == ConditionType.TargetWithFilter;
     }
 
-    private bool IsConditionTargetWithPropertyAndMinimum()
+    private bool IsConditionTargetWithFilterAndMinimum()
     {
-        return Condition == ConditionType.TargetWithProperty && Check == CheckType.Minimum;
+        return Condition == ConditionType.TargetWithFilter && Check == CheckType.Minimum;
     }
 }

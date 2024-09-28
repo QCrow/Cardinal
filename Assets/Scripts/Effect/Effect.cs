@@ -28,41 +28,41 @@ public abstract class Effect
 
 public class TempDamageUpEffect : Effect
 {
-    private int _damage;
+    private EffectValue _value;
 
-    public TempDamageUpEffect(Card card, int damage) : base(card)
+    public TempDamageUpEffect(Card card, EffectValue value) : base(card)
     {
-        _damage = damage;
+        _value = value;
     }
 
     public override void Apply()
     {
-        _card.TempDamage += _damage;
+        _card.TempDamage += _value.GetValue(_card);
     }
 
     public override void Revert()
     {
-        _card.TempDamage -= _damage;
+        _card.TempDamage -= _value.GetValue(_card);
     }
 
     public override void ModifyPotency(int amount)
     {
-        _damage += amount;
+        _value.BaseValue += amount;
     }
 }
 
 public class AddModifierEffect : Effect
 {
     private readonly ModifierType _modifierType;
-    private int _amount;
+    private EffectValue _value;
 
     private readonly bool _isTargeted;
     private readonly Target _target;
 
-    public AddModifierEffect(Card card, ModifierType modifierType, int amount, bool isTargeted = false, Target target = null) : base(card)
+    public AddModifierEffect(Card card, ModifierType modifierType, EffectValue value, bool isTargeted = false, Target target = null) : base(card)
     {
         _modifierType = modifierType;
-        _amount = amount;
+        _value = value;
         _isTargeted = isTargeted;
         _target = target;
     }
@@ -71,11 +71,11 @@ public class AddModifierEffect : Effect
     {
         if (_isTargeted)
         {
-            _target.GetAvailableTargets(_card).ForEach(target => target.AddModifier(_modifierType, _amount));
+            _target.GetAvailableTargets(_card).ForEach(target => target.AddModifier(_modifierType, _value.GetValue(_card)));
         }
         else
         {
-            _card.AddModifier(_modifierType, _amount);
+            _card.AddModifier(_modifierType, _value.GetValue(_card));
         }
     }
 
@@ -83,17 +83,17 @@ public class AddModifierEffect : Effect
     {
         if (_isTargeted)
         {
-            _target.GetAvailableTargets(_card).ForEach(target => target.RemoveModifier(_modifierType, _amount));
+            _target.GetAvailableTargets(_card).ForEach(target => target.RemoveModifier(_modifierType, _value.GetValue(_card)));
         }
         else
         {
-            _card.RemoveModifier(_modifierType, _amount);
+            _card.RemoveModifier(_modifierType, _value.GetValue(_card));
         }
     }
 
     public override void ModifyPotency(int amount)
     {
-        _amount += amount;
+        _value.BaseValue += amount;
     }
 }
 

@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 
 public enum TargetRangeType
 {
@@ -23,12 +24,13 @@ public enum TargetRangeType
 public class Target
 {
     public TargetRangeType TargetRange;
-    public Selector TargetProperty;
+    [InlineProperty]
+    public Filter TargetFilter;
 
-    public Target(TargetRangeType targetRange, Selector targetProperty)
+    public Target(TargetRangeType targetRange, Filter targetFilter)
     {
         TargetRange = targetRange;
-        TargetProperty = targetProperty;
+        TargetFilter = targetFilter;
     }
 
     private List<Card> TargetSlotsToCards(List<Slot> slots)
@@ -68,9 +70,9 @@ public class Target
         }
         targets = TargetSlotsToCards(slots);
 
-        if (TargetProperty != null)
+        if (TargetFilter != null)
         {
-            targets = targets.FindAll(card => TargetProperty.IsMatch(card));
+            targets = targets.FindAll(card => TargetFilter.IsMatch(card));
         }
 
         return targets;

@@ -15,7 +15,9 @@ public class SerializableEffect
     public int CardID;
 
     [ShowIf(nameof(IsKeywordApplyOrTempDamageUpOrAddCard))]
-    public int Value = 1;
+    [BoxGroup("Value")]
+    [HideLabel]
+    public EffectValue Value;
 
     [BoxGroup("Targeting")]
     [ShowIf(nameof(IsKeywordApplyOrDestroy))]

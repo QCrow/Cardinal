@@ -72,8 +72,8 @@ public static class CardFactory
             case ConditionType.Position:
                 conditionalEffect = new PositionCondition(card, effects, condition.Position);
                 break;
-            case ConditionType.TargetWithProperty:
-                conditionalEffect = new TargetWithPropertyCondition(card, effects, condition.TargetWithProperty, condition.Check, condition.Minimum);
+            case ConditionType.TargetWithFilter:
+                conditionalEffect = new TargetWithFilterCondition(card, effects, condition.TargetWithFilter, condition.Check, condition.Minimum);
                 break;
             case ConditionType.Cycle:
                 conditionalEffect = new CycleCondition(card, effects, condition.CycleCount);

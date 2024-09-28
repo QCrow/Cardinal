@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using UnityEditor;
 using System.IO;
 using System.Collections.Generic;
+using System.Drawing.Text;
 
 [CreateAssetMenu(fileName = "Card", menuName = "ScriptableObjects/Card", order = 1)]
 public class CardScriptable : SerializedScriptableObject
@@ -18,8 +19,7 @@ public class CardScriptable : SerializedScriptableObject
 
     public string Name;
     public RarityType Rarity;
-    public ClassType Class;
-    public TraitType Trait;
+    public HashSet<TraitType> Traits = new();
 
     public int BaseAttack;
 
@@ -30,7 +30,7 @@ public class CardScriptable : SerializedScriptableObject
     public bool HasEffect = false;
 
     [ShowIf(nameof(HasEffectActive))]
-    public List<SerializableCondition> Conditions;
+    public List<SerializableCondition> Conditions = new();
 
     private bool HasEffectActive()
     {

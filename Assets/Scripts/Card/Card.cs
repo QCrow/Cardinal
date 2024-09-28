@@ -8,8 +8,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public int ID;
     public RarityType Rarity;
     public string Name;
-    public ClassType Class;
-    public TraitType Trait;
+    public HashSet<TraitType> Traits;
 
     public int BaseAttack;
 
@@ -46,8 +45,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         ID = cardScriptable.ID;
         Rarity = cardScriptable.Rarity;
         Name = cardScriptable.Name;
-        Class = cardScriptable.Class;
-        Trait = cardScriptable.Trait;
+        Traits = cardScriptable.Traits;
         BaseAttack = cardScriptable.BaseAttack;
         ConditionalEffects = conditionalEffects;
 

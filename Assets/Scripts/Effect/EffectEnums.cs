@@ -9,7 +9,7 @@ public enum TriggerType
 
 public enum EffectType
 {
-    None,
+    None, // Only used for default value
     Apply,
     TempDamageUp,
     Destroy,
@@ -39,6 +39,7 @@ public enum PositionType
 
 public enum CheckType
 {
+    None, // Only used for default value
     Exists,
     Minimum,
     Count
