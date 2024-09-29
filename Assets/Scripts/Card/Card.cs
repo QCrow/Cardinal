@@ -31,6 +31,8 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     [SerializeField] private GameObject _descriptionContainer;
     [SerializeField] private TMPro.TMP_Text _descriptionText;
     [SerializeField] private TMPro.TMP_Text _attackValueText;
+    [SerializeField] private GameObject _cycleContainer;
+    [SerializeField] private TMPro.TMP_Text _currentCycleValueText;
     #endregion
 
     public void Initialize(CardScriptable cardScriptable, Dictionary<TriggerType, List<ConditionalEffect>> conditionalEffects)
@@ -42,6 +44,17 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         BaseAttack = cardScriptable.BaseAttack;
         ConditionalEffects = conditionalEffects;
 
+        _cycleContainer.SetActive(false);
+        if(conditionalEffects.TryGetValue(TriggerType.OnAttack, out List<ConditionalEffect> cycleEffects))
+        {
+            foreach(ConditionalEffect cycleEffect in cycleEffects)
+            {
+                if(cycleEffect.GetType() == typeof(CycleCondition))
+                {
+                    _cycleContainer.SetActive(true);
+                }
+            }
+        }
         _cardNameText.text = Name;
         _descriptionText.text = cardScriptable.Description;
         _attackValueText.text = TotalAttack.ToString();
@@ -56,6 +69,11 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public void UpdateAttackValue()
     {
         _attackValueText.text = TotalAttack.ToString();
+    }
+
+    public void UpdateCycleValue(int currentCycle)
+    {
+        _currentCycleValueText.text = currentCycle.ToString();
     }
 
     public void OnPointerEnter(PointerEventData eventData)

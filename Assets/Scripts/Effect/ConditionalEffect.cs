@@ -137,6 +137,7 @@ public class CycleCondition : ConditionalEffect
 
     public CycleCondition(Card card, List<Effect> effects, int cycleCount) : base(card, effects)
     {
+        card.UpdateCycleValue(cycleCount);
         _cycleCount = cycleCount;
         _currentCycle = cycleCount;
     }
@@ -150,6 +151,7 @@ public class CycleCondition : ConditionalEffect
             _currentCycle = _cycleCount;
             base.ApplyEffect();
         }
+        Card.UpdateCycleValue(_currentCycle);
     }
 
     public override void RevertEffect()
