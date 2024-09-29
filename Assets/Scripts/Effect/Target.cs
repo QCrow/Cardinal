@@ -54,13 +54,13 @@ public class Target
                 slots = Board.Instance.GetColumn(src.Slot.Col);
                 break;
             case TargetRangeType.Front:
-                slots = Board.Instance.GetRow(0);
+                slots = Board.Instance.GetColumn(0);
                 break;
             case TargetRangeType.Middle:
-                slots = Board.Instance.GetRow(1);
+                slots = Board.Instance.GetColumn(1);
                 break;
             case TargetRangeType.Back:
-                slots = Board.Instance.GetRow(2);
+                slots = Board.Instance.GetColumn(2);
                 break;
             case TargetRangeType.Center:
                 slots = Board.Instance.GetRow(1).FindAll(slot => slot.Col == 1);

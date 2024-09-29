@@ -41,7 +41,7 @@ MonoBehaviour:
   Name: Crossbowman
   Rarity: 0
   BaseAttack: 0
-  Description: 'Ranged: +1 Temp DMG, Cycle (3): +1 Temp DMG'
+  Description: 'Ranged: +1 Temp Strength, Cycle (3): +1 Temp Strength'
   HasEffect: 1
   Conditions:
   - Trigger: 2
@@ -59,11 +59,12 @@ MonoBehaviour:
     Check: 0
     Minimum: 0
     Effects:
-    - Keyword: 2
-      Modifier: 0
+    - Keyword: 1
+      Modifier: 1
       CardID: 0
       Value:
         IsVariable: 0
+        isPermanent: 0
         VariableType: 0
         Target:
           TargetRange: 0
@@ -98,11 +99,12 @@ MonoBehaviour:
     Check: 0
     Minimum: 0
     Effects:
-    - Keyword: 2
-      Modifier: 0
+    - Keyword: 1
+      Modifier: 1
       CardID: 0
       Value:
         IsVariable: 0
+        isPermanent: 0
         VariableType: 0
         Target:
           TargetRange: 0

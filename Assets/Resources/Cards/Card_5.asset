@@ -41,11 +41,11 @@ MonoBehaviour:
   Name: Assassin
   Rarity: 1
   BaseAttack: 1
-  Description: 
+  Description: 'Melee: Gain Multistrike (2)'
   HasEffect: 1
   Conditions:
-  - Trigger: 3
-    Condition: 1
+  - Trigger: 2
+    Condition: 3
     CycleCount: 1
     Position: 1
     TargetWithFilter:
@@ -64,6 +64,7 @@ MonoBehaviour:
       CardID: 0
       Value:
         IsVariable: 0
+        isPermanent: 0
         VariableType: 0
         Target:
           TargetRange: 0
@@ -74,7 +75,6 @@ MonoBehaviour:
             Trait: 0
             Rarity: 0
         BaseValue: 2
-        isPermanent: 0
       IsTargeted: 0
       Target:
         TargetRange: 0

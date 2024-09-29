@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a2ed6f30d06c6db4398b5fcbe1f7838a, type: 3}
-  m_Name: Card_8
+  m_Name: Card_10
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -27,23 +27,26 @@ MonoBehaviour:
         System.Core
     - Name: 
       Entry: 12
-      Data: 0
+      Data: 1
+    - Name: 
+      Entry: 3
+      Data: 4
     - Name: 
       Entry: 13
       Data: 
     - Name: 
       Entry: 8
       Data: 
-  ID: 8
-  Name: Slacking Fencer
+  ID: 10
+  Name: Necromancer
   Rarity: 1
-  BaseAttack: 0
-  Description: 'Cycle 5: +5 Temp Strength'
+  BaseAttack: 1
+  Description: 
   HasEffect: 1
   Conditions:
   - Trigger: 3
     Condition: 2
-    CycleCount: 5
+    CycleCount: 2
     Position: 0
     TargetWithFilter:
       TargetRange: 0
@@ -56,9 +59,9 @@ MonoBehaviour:
     Check: 0
     Minimum: 0
     Effects:
-    - Keyword: 1
-      Modifier: 1
-      CardID: 0
+    - Keyword: 3
+      Modifier: 0
+      CardID: 9
       Value:
         IsVariable: 0
         isPermanent: 0

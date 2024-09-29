@@ -41,7 +41,7 @@ MonoBehaviour:
   Name: Swordsman
   Rarity: 0
   BaseAttack: 1
-  Description: 'Melee: +1 Temp DMG'
+  Description: 'Melee: +1 Temp Strength'
   HasEffect: 1
   Conditions:
   - Trigger: 2
@@ -64,6 +64,7 @@ MonoBehaviour:
       CardID: 0
       Value:
         IsVariable: 0
+        isPermanent: 0
         VariableType: 0
         Target:
           TargetRange: 0
@@ -74,7 +75,6 @@ MonoBehaviour:
             Trait: 0
             Rarity: 0
         BaseValue: 1
-        isPermanent: 0
       IsTargeted: 0
       Target:
         TargetRange: 0

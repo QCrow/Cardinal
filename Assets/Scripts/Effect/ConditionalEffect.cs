@@ -144,7 +144,7 @@ public class CycleCondition : ConditionalEffect
     public override void ApplyEffect()
     {
         _currentCycle--;
-        Debug.Log($"Current cycle: {_currentCycle}");
+        Debug.Log($"{Card.Name} Current cycle: {_currentCycle}");
         if (_currentCycle <= 0)
         {
             _currentCycle = _cycleCount;
