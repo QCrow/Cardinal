@@ -41,7 +41,7 @@ MonoBehaviour:
   Name: Drummer
   Rarity: 1
   BaseAttack: 0
-  Description: Solldier in the same row gain +1 Temp DMG
+  Description: Solldier in the same column gain +1 Temp Strength
   HasEffect: 1
   Conditions:
   - Trigger: 2
@@ -64,6 +64,7 @@ MonoBehaviour:
       CardID: 0
       Value:
         IsVariable: 0
+        isPermanent: 0
         VariableType: 0
         Target:
           TargetRange: 0
@@ -74,10 +75,9 @@ MonoBehaviour:
             Trait: 0
             Rarity: 0
         BaseValue: 1
-        isPermanent: 0
       IsTargeted: 1
       Target:
-        TargetRange: 2
+        TargetRange: 3
         TargetFilter:
           Type: 3
           ID: 0

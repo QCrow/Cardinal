@@ -41,7 +41,7 @@ MonoBehaviour:
   Name: Shushu
   Rarity: 2
   BaseAttack: 2
-  Description: 
+  Description: 'Count (3) : Absorb 1 Strength from adjacent soldiers permanently'
   HasEffect: 1
   Conditions:
   - Trigger: 3
@@ -64,6 +64,7 @@ MonoBehaviour:
       CardID: 0
       Value:
         IsVariable: 0
+        isPermanent: 1
         VariableType: 0
         Target:
           TargetRange: 0
@@ -88,6 +89,7 @@ MonoBehaviour:
       CardID: 0
       Value:
         IsVariable: 1
+        isPermanent: 1
         VariableType: 0
         Target:
           TargetRange: 1

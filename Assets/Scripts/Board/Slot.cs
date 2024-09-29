@@ -26,9 +26,9 @@ public class Slot : SerializedMonoBehaviour
     {
         return position switch
         {
-            PositionType.Front => Row == 0,
-            PositionType.Middle => Row == 1,
-            PositionType.Back => Row == 2,
+            PositionType.Front => Col == 0,
+            PositionType.Middle => Col == 1,
+            PositionType.Back => Col == 2,
             PositionType.Center => Row == 1 && Col == 1,
             _ => false,
         };

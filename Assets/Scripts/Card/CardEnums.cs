@@ -19,5 +19,6 @@ public enum TraitType
     All,
     Soldier,
     Demon,
+    Undead,
     Holy
 }

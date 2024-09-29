@@ -49,6 +49,9 @@ public static class CardFactory
                 case EffectType.Destroy:
                     effect = new DestroyEffect(card, serializedEffect.IsTargeted, serializedEffect.Target);
                     break;
+                case EffectType.AddCard:
+                    effect = new AddCardEffect(card, serializedEffect.CardID);
+                    break;
                 default:
                     throw new System.NotSupportedException($"Effect keyword '{serializedEffect.Keyword}' is not supported or implemented yet.");
             }
