@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class UIManager : MonoBehaviour
 {
@@ -12,6 +13,12 @@ public class UIManager : MonoBehaviour
     public Button DeployButton => _deployButton;
     [SerializeField] private Button _attackButton;
     public Button AttackButton => _attackButton;
+    [SerializeField] private Button _resetButton;
+    public Button ResetButton => _resetButton;
+
+    [SerializeField] private TMP_Text _attackCounter;
+    [SerializeField] private TMP_Text _deployCounter;
+    [SerializeField] private TMP_Text _DischargeCounter;
 
     private List<Button> _arrowButtons = new();
 
@@ -43,6 +50,7 @@ public class UIManager : MonoBehaviour
 
     private void HandleGameStateChanged(IGameState previousState, IGameState currentState)
     {
+        Debug.Log("Game State Changed: " + currentState.GetType().Name);
         switch (currentState)
         {
             case WaitState _:
@@ -59,11 +67,13 @@ public class UIManager : MonoBehaviour
             case ControlState _:
                 _deployButton.interactable = true;
                 _attackButton.interactable = true;
+                _resetButton.interactable = true;
                 SetArrowButtonsInteractable(true);
                 break;
             case AttackState _:
                 _deployButton.interactable = false;
                 _attackButton.interactable = false;
+                _resetButton.interactable = false;
                 SetArrowButtonsInteractable(false);
                 break;
             case RewardState _:

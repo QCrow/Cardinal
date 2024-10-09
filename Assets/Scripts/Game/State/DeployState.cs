@@ -10,6 +10,7 @@ public class DeployState : IGameState
         CardManager.Instance.Reshuffle();
 
         Deploy();
+        Board.Instance.SaveSnapshot();
 
         GameManager.Instance.ChangeState(new ControlState());
     }
@@ -41,11 +42,5 @@ public class DeployState : IGameState
         }
 
         Board.Instance.DeployedCards = _cards;
-    }
-
-    private IEnumerator AnimationCoroutine()
-    {
-        yield return new WaitForSeconds(1f);
-        GameManager.Instance.ChangeState(new ControlState());
     }
 }

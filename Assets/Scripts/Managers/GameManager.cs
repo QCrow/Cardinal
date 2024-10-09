@@ -32,13 +32,13 @@ public class GameManager : MonoBehaviour
 
     public void ChangeState(IGameState newState)
     {
+        OnStateChanged.Invoke(CurrentState, newState);
         IGameState previousState = CurrentState;
         CurrentState?.OnExit(this);
 
         CurrentState = newState;
 
         CurrentState?.OnEnter(this);
-        OnStateChanged.Invoke(previousState, CurrentState);
     }
     #endregion
 

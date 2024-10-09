@@ -303,6 +303,9 @@ MonoBehaviour:
   _healthBar: {fileID: 713415099}
   _deployButton: {fileID: 1976536058}
   _attackButton: {fileID: 1849824504}
+  _attackCounter: {fileID: 1714386325}
+  _deployCounter: {fileID: 1798427952833337774}
+  _DischargeCounter: {fileID: 893333421}
   _totalAttackText: {fileID: 231723557538041827}
   _rewardsPanel: {fileID: 990567335}
 --- !u!1 &122085904
