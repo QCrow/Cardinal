@@ -7,6 +7,7 @@ public class ControlState : IGameState
     {
         UIManager.Instance.DeployButton.onClick.AddListener(OnDeployButtonPressed);
         UIManager.Instance.AttackButton.onClick.AddListener(OnAttackButtonPressed);
+        GameManager.Instance.RemainingMoveCount = GameManager.Instance.MovePerTurn;
         ApplyWhileInPlayEffects();
     }
 

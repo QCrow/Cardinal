@@ -18,7 +18,8 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private TMP_Text _attackCounter;
     [SerializeField] private TMP_Text _deployCounter;
-    [SerializeField] private TMP_Text _DischargeCounter;
+    [SerializeField] private TMP_Text _dischargeCounter;
+    [SerializeField] private TMP_Text _remainingMoveCounter;
 
     private List<Button> _arrowButtons = new();
 
@@ -130,5 +131,12 @@ public class UIManager : MonoBehaviour
     public void RefreshAttackValue()
     {
         Board.Instance.DeployedCards.ForEach(card => card.UpdateAttackValue());
+    }
+
+    public void UpdateMoveCounter(int remainingMoveCount)
+    {
+        if (remainingMoveCount <= 0) SetArrowButtonsInteractable(false);
+        else SetArrowButtonsInteractable(true);
+        _remainingMoveCounter.text = $"{remainingMoveCount}";
     }
 }
