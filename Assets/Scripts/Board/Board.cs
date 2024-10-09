@@ -31,6 +31,7 @@ public class Board : MonoBehaviour
         get { return _deployedCards; }
         set { SetDeployedCards(value); }
     }
+    private List<List<Card>> _snapshots = new();  // List of snapshots of the board
 
     private RectTransform _rectTransform;  // Used to adjust the size of the board
 
@@ -350,7 +351,43 @@ public class Board : MonoBehaviour
         }
     }
 
+    public void SaveSnapshot()
+    {
+        _snapshots.Clear();
+        foreach (List<Slot> row in _slots)
+        {
+            List<Card> cards = row.Select(slot => slot.Card).ToList();
+            _snapshots.Add(cards);
+        }
+    }
 
+    public void RestoreFromSnapshot()
+    {
+        if (_snapshots.Count == 0)
+        {
+            return;
+        }
+        foreach (List<Slot> row in _slots)
+        {
+            foreach (Slot slot in row)
+            {
+                slot.Card = null;
+            }
+        }
+
+        for (int row = 0; row < _unitHeight; row++)
+        {
+            for (int col = 0; col < _unitWidth; col++)
+            {
+                Slot slot = _slots[row][col];
+                Card card = _snapshots[row][col];
+                if (card != null)
+                {
+                    card.BindToSlot(slot);
+                }
+            }
+        }
+    }
     #endregion
 
     #region Archive

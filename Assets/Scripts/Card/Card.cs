@@ -45,11 +45,11 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         ConditionalEffects = conditionalEffects;
 
         _cycleContainer.SetActive(false);
-        if(conditionalEffects.TryGetValue(TriggerType.OnAttack, out List<ConditionalEffect> cycleEffects))
+        if (conditionalEffects.TryGetValue(TriggerType.OnAttack, out List<ConditionalEffect> cycleEffects))
         {
-            foreach(ConditionalEffect cycleEffect in cycleEffects)
+            foreach (ConditionalEffect cycleEffect in cycleEffects)
             {
-                if(cycleEffect.GetType() == typeof(CycleCondition))
+                if (cycleEffect.GetType() == typeof(CycleCondition))
                 {
                     _cycleContainer.SetActive(true);
                 }
@@ -155,7 +155,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         if (isPermanent)
         {
-            if(!_permanentModifiers.ContainsKey(type))
+            if (!_permanentModifiers.ContainsKey(type))
             {
                 _permanentModifiers[type] = amount;
             }
@@ -166,7 +166,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         }
         else
         {
-            if(!_temporaryModifiers.ContainsKey(type))
+            if (!_temporaryModifiers.ContainsKey(type))
             {
                 _temporaryModifiers[type] = amount;
             }
@@ -179,12 +179,12 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void RemoveModifier(ModifierType type, int amount, bool isPermanent)
     {
-        if(isPermanent)
+        if (isPermanent)
         {
-            if(_permanentModifiers.ContainsKey(type))
+            if (_permanentModifiers.ContainsKey(type))
             {
                 _permanentModifiers[type] -= amount;
-                if(_permanentModifiers[type] <= 0)
+                if (_permanentModifiers[type] <= 0)
                 {
                     _permanentModifiers.Remove(type);
                 }
@@ -192,10 +192,10 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         }
         else
         {
-            if(_temporaryModifiers.ContainsKey(type))
+            if (_temporaryModifiers.ContainsKey(type))
             {
                 _temporaryModifiers[type] -= amount;
-                if(_temporaryModifiers[type] <= 0)
+                if (_temporaryModifiers[type] <= 0)
                 {
                     _temporaryModifiers.Remove(type);
                 }
