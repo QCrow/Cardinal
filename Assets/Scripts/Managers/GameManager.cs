@@ -33,7 +33,6 @@ public class GameManager : MonoBehaviour
     public void ChangeState(IGameState newState)
     {
         OnStateChanged.Invoke(CurrentState, newState);
-        IGameState previousState = CurrentState;
         CurrentState?.OnExit(this);
 
         CurrentState = newState;
@@ -43,9 +42,21 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Game Logic
-    [SerializeField] int _maxHealth = 100;
+    [SerializeField] private int _maxHealth = 100;
     public int MaxHealth => _maxHealth;
     [SerializeField] private int _currHealth = 100;
+
+    [SerializeField] private int _remainingMoveCount = 0;
+    public int RemainingMoveCount
+    {
+        get => _remainingMoveCount;
+        set
+        {
+            _remainingMoveCount = value;
+            UIManager.Instance.UpdateMoveCounter(_remainingMoveCount);
+        }
+    }
+    public int MovePerTurn = 3;
 
     public void InflictDamage(int damage)
     {

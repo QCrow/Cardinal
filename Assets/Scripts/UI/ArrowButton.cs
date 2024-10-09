@@ -35,8 +35,13 @@ public class ArrowButton : MonoBehaviour
     {
         if (GameManager.Instance.CurrentState is ControlState)
         {
+            if (GameManager.Instance.RemainingMoveCount <= 0)
+            {
+                return;
+            }
             ControlState controlState = (ControlState)GameManager.Instance.CurrentState;
             controlState.ApplyMovement(_direction, _index, _magnitude);
+            GameManager.Instance.RemainingMoveCount--;
         }
     }
 }
