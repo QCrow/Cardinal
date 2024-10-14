@@ -222,15 +222,19 @@ public class CardManager : SerializedMonoBehaviour
         return card;
     }
 
-    public void InstantiateDeckToParent(Transform parent)
+    public int InstantiateDeckToParent(Transform parent)
     {
         // Get the grouped deck (one entry per unique card ID with its count)
         Dictionary<int, int> groupedDeck = GetGroupedDeck();
+        int totalCards = 0;  // Initialize total card counter
 
         foreach (var kvp in groupedDeck)
         {
             int cardID = kvp.Key;
             int quantity = kvp.Value;
+
+            // Add quantity to the total count
+            totalCards += quantity;
 
             // Instantiate a single card for each unique card ID
             Card newCard = InstantiateCard(cardID, parent);
@@ -242,7 +246,11 @@ public class CardManager : SerializedMonoBehaviour
                 amountText.text = quantity.ToString();
             }
         }
+
+        // Return the total number of cards in the deck
+        return totalCards;
     }
+
 
     public Dictionary<int, int> GetGroupedDeck()
     {

@@ -29,6 +29,7 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private GameObject _rewardsPanel;
     private List<RewardSlot> _rewardSlots;
+    [SerializeField] private GameObject _deckVisualizerViewport;
     [SerializeField] private GameObject _deckVisualizer;
     private bool _isDeckVisualizerActive = false;
 
@@ -150,12 +151,13 @@ public class UIManager : MonoBehaviour
     {
         // Toggle the visualizer's active state
         _isDeckVisualizerActive = !_isDeckVisualizerActive;
-        _deckVisualizer.SetActive(_isDeckVisualizerActive);
+        _deckVisualizerViewport.SetActive(_isDeckVisualizerActive);
 
         if (_isDeckVisualizerActive)
         {
             // Populate the deck visualizer with cards when it becomes active
             PopulateDeckVisualizer();
+            ScrollToTop();  // Ensure the ScrollRect starts at the top
         }
         else
         {
@@ -168,8 +170,46 @@ public class UIManager : MonoBehaviour
     {
         Transform gridLayout = _deckVisualizer.GetComponentInChildren<GridLayoutGroup>().transform;
 
-        CardManager.Instance.InstantiateDeckToParent(gridLayout);
+        // Get the number of cards in the deck
+        int cardAmt = CardManager.Instance.InstantiateDeckToParent(gridLayout);
+
+        // Get necessary components
+        GridLayoutGroup layoutGroup = gridLayout.GetComponent<GridLayoutGroup>();
+        RectTransform viewportRect = _deckVisualizerViewport.GetComponent<RectTransform>();  // Use viewport's width
+        RectTransform contentRect = _deckVisualizer.GetComponent<RectTransform>();
+
+        // Extract layout parameters
+        float leftPadding = layoutGroup.padding.left;
+        float rightPadding = layoutGroup.padding.right;
+        float cardWidth = layoutGroup.cellSize.x;
+        float horizontalSpacing = layoutGroup.spacing.x;
+
+        // Calculate available width within the viewport
+        float availableWidth = viewportRect.rect.width - leftPadding - rightPadding;
+
+        // Calculate how many cards can fit per row
+        int cardsPerRow = Mathf.Max(1, Mathf.FloorToInt((availableWidth + horizontalSpacing) / (cardWidth + horizontalSpacing)));
+
+        // Calculate the number of rows needed
+        int numRows = Mathf.CeilToInt((float)cardAmt / cardsPerRow);
+
+        // Calculate the total height of the content
+        float upperPadding = layoutGroup.padding.top;
+        float lowerPadding = layoutGroup.padding.bottom;
+        float cardHeight = layoutGroup.cellSize.y;
+        float verticalSpacing = layoutGroup.spacing.y;
+
+        float newHeight = upperPadding + lowerPadding +
+                          (numRows * cardHeight) +
+                          ((numRows - 1) * verticalSpacing);
+
+        // Apply the new height to the RectTransform
+        contentRect.sizeDelta = new Vector2(contentRect.sizeDelta.x, newHeight);
+
+        // Force the layout to rebuild
+        LayoutRebuilder.ForceRebuildLayoutImmediate(contentRect);
     }
+
 
     private void ClearDeckVisualizer()
     {
@@ -179,5 +219,11 @@ public class UIManager : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
+    }
+
+    private void ScrollToTop()
+    {
+        // Set the normalized position to (0, 1) to scroll to the top
+        _deckVisualizerViewport.GetComponent<ScrollRect>().verticalNormalizedPosition = 1f;
     }
 }
