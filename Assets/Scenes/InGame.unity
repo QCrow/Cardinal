@@ -1830,7 +1830,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_EffectColor: {r: 1, g: 1, b: 1, a: 0.5}
-  m_EffectDistance: {x: 1, y: -1}
+  m_EffectDistance: {x: 2, y: -1}
   m_UseGraphicAlpha: 1
 --- !u!114 &1108534786
 MonoBehaviour:
@@ -3492,7 +3492,6 @@ RectTransform:
   - {fileID: 168100182}
   - {fileID: 1997325100}
   - {fileID: 713415095}
-  - {fileID: 446250646}
   - {fileID: 4123955966350026497}
   - {fileID: 1849824502}
   - {fileID: 1976536057}
@@ -3502,6 +3501,7 @@ RectTransform:
   - {fileID: 1523382598}
   - {fileID: 990567336}
   - {fileID: 1108534783}
+  - {fileID: 446250646}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
