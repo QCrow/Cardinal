@@ -30,27 +30,7 @@ public class ControlState : IGameState
     public void ApplyMovement(Direction direction, int index, int magnitude)
     {
         RevertWhileInPlayEffects();
-        switch (direction)
-        {
-            case Direction.Up:
-                Board.Instance.ShiftCardsOnColumn(index, -magnitude);
-                break;
-            case Direction.Down:
-                Board.Instance.ShiftCardsOnColumn(index, magnitude);
-                break;
-            case Direction.Left:
-                Board.Instance.ShiftCardsOnRow(index, -magnitude);
-                break;
-            case Direction.Right:
-                Board.Instance.ShiftCardsOnRow(index, magnitude);
-                break;
-            case Direction.Clockwise:
-                Board.Instance.RotateCardsClockwise();
-                break;
-            case Direction.CounterClockwise:
-                Board.Instance.RotateCardsCounterClockwise();
-                break;
-        }
+        Board.Instance.ApplyMovement(direction, index, magnitude);
         ApplyWhileInPlayEffects();
     }
 

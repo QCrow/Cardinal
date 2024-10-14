@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Game State
+    public bool IsNavigating = false;
     public IGameState CurrentState { get; private set; }
 
     public void ChangeState(IGameState newState)
