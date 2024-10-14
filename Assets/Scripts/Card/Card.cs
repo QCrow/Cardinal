@@ -33,6 +33,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     [SerializeField] private TMPro.TMP_Text _attackValueText;
     [SerializeField] private GameObject _cycleContainer;
     [SerializeField] private TMPro.TMP_Text _currentCycleValueText;
+    public TMPro.TMP_Text _amountInDeck;
     #endregion
 
     public void Initialize(CardScriptable cardScriptable, Dictionary<TriggerType, List<ConditionalEffect>> conditionalEffects)
@@ -201,6 +202,11 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                 }
             }
         }
+    }
+
+    public void DisableCycleContainer()
+    {
+        _cycleContainer.SetActive(false);
     }
 
     public int GetModifierByType(ModifierType type)
