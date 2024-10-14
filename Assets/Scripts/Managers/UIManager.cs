@@ -15,6 +15,8 @@ public class UIManager : MonoBehaviour
     public Button AttackButton => _attackButton;
     [SerializeField] private Button _resetButton;
     public Button ResetButton => _resetButton;
+    [SerializeField] private Button _checkDeckButton;
+    public Button CheckDeckButton => _checkDeckButton;
 
     [SerializeField] private TMP_Text _attackCounter;
     [SerializeField] private TMP_Text _deployCounter;
@@ -27,6 +29,8 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private GameObject _rewardsPanel;
     private List<RewardSlot> _rewardSlots;
+    [SerializeField] private GameObject _deckVisualizer;
+    private bool _isDeckVisualizerActive = false;
 
     private void Awake()
     {
@@ -44,9 +48,11 @@ public class UIManager : MonoBehaviour
     {
         GameManager.Instance.OnStateChanged.AddListener(HandleGameStateChanged);
         GameManager.Instance.OnHealthChanged.AddListener(HandleHealthChanged);
-
+        
         _healthBar.SetHealth(GameManager.Instance.MaxHealth, GameManager.Instance.MaxHealth);
         _rewardSlots = new List<RewardSlot>(_rewardsPanel.GetComponentsInChildren<RewardSlot>());
+
+        _checkDeckButton.onClick.AddListener(ToggleDeckVisualizer);
     }
 
     private void HandleGameStateChanged(IGameState previousState, IGameState currentState)
@@ -138,5 +144,40 @@ public class UIManager : MonoBehaviour
         if (remainingMoveCount <= 0) SetArrowButtonsInteractable(false);
         else SetArrowButtonsInteractable(true);
         _remainingMoveCounter.text = $"{remainingMoveCount}";
+    }
+
+    private void ToggleDeckVisualizer()
+    {
+        // Toggle the visualizer's active state
+        _isDeckVisualizerActive = !_isDeckVisualizerActive;
+        _deckVisualizer.SetActive(_isDeckVisualizerActive);
+
+        if (_isDeckVisualizerActive)
+        {
+            // Populate the deck visualizer with cards when it becomes active
+            PopulateDeckVisualizer();
+        }
+        else
+        {
+            // Clear the visualizer when it is hidden
+            ClearDeckVisualizer();
+        }
+    }
+
+    private void PopulateDeckVisualizer()
+    {
+        Transform gridLayout = _deckVisualizer.GetComponentInChildren<GridLayoutGroup>().transform;
+
+        CardManager.Instance.InstantiateDeckToParent(gridLayout);
+    }
+
+    private void ClearDeckVisualizer()
+    {
+        Transform gridLayout = _deckVisualizer.GetComponentInChildren<GridLayoutGroup>().transform;
+
+        foreach (Transform child in gridLayout)
+        {
+            Destroy(child.gameObject);
+        }
     }
 }
