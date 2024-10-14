@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
+using UnityEditor.Experimental.GraphView;
 
 public class Slot : SerializedMonoBehaviour
 {
@@ -13,6 +14,7 @@ public class Slot : SerializedMonoBehaviour
         Col = col;
     }
     public List<Slot> Neighbors => Board.Instance.GetAdjacentSlots(this);
+
     public Slot Up => Board.Instance.GetSlotAtPosition(Row - 1, Col);
     public Slot Down => Board.Instance.GetSlotAtPosition(Row + 1, Col);
     public Slot Left => Board.Instance.GetSlotAtPosition(Row, Col - 1);
@@ -21,6 +23,8 @@ public class Slot : SerializedMonoBehaviour
 
     [SerializeField] private Card _card;
     public Card Card { get => _card; set => _card = value; }
+    private MapNode _mapNode;
+    public MapNode MapNode { get => _mapNode; set => _mapNode = value; }
 
     public bool IsPosition(PositionType position)
     {

@@ -31,7 +31,7 @@ public class Board : MonoBehaviour
         get { return _deployedCards; }
         set { SetDeployedCards(value); }
     }
-    private List<List<Card>> _snapshots = new();  // List of snapshots of the board
+    private List<List<Card>> _cardsSnapshot = new();  // List of snapshots of the board
 
     private RectTransform _rectTransform;  // Used to adjust the size of the board
 
@@ -221,6 +221,31 @@ public class Board : MonoBehaviour
         }
     }
 
+    public void ApplyMovement(Direction direction, int index, int magnitude)
+    {
+        switch (direction)
+        {
+            case Direction.Up:
+                ShiftCardsOnColumn(index, -magnitude);
+                break;
+            case Direction.Down:
+                ShiftCardsOnColumn(index, magnitude);
+                break;
+            case Direction.Left:
+                ShiftCardsOnRow(index, -magnitude);
+                break;
+            case Direction.Right:
+                ShiftCardsOnRow(index, magnitude);
+                break;
+            case Direction.Clockwise:
+                RotateCardsClockwise();
+                break;
+            case Direction.CounterClockwise:
+                RotateCardsCounterClockwise();
+                break;
+        }
+    }
+
     public void ShiftCardsOnRow(int row, int shiftMagnitude)
     {
         Card?[] tempRow = new Card?[3];  // Temporary storage for cards in the row
@@ -353,17 +378,17 @@ public class Board : MonoBehaviour
 
     public void SaveSnapshot()
     {
-        _snapshots.Clear();
+        _cardsSnapshot.Clear();
         foreach (List<Slot> row in _slots)
         {
             List<Card> cards = row.Select(slot => slot.Card).ToList();
-            _snapshots.Add(cards);
+            _cardsSnapshot.Add(cards);
         }
     }
 
     public void RestoreFromSnapshot()
     {
-        if (_snapshots.Count == 0)
+        if (_cardsSnapshot.Count == 0)
         {
             return;
         }
@@ -380,7 +405,7 @@ public class Board : MonoBehaviour
             for (int col = 0; col < _unitWidth; col++)
             {
                 Slot slot = _slots[row][col];
-                Card card = _snapshots[row][col];
+                Card card = _cardsSnapshot[row][col];
                 if (card != null)
                 {
                     card.BindToSlot(slot);
