@@ -304,12 +304,14 @@ MonoBehaviour:
   _deployButton: {fileID: 1976536058}
   _attackButton: {fileID: 1849824504}
   _resetButton: {fileID: 1127821903}
+  _checkDeckButton: {fileID: 129103974}
   _attackCounter: {fileID: 1714386325}
   _deployCounter: {fileID: 1798427952833337774}
   _dischargeCounter: {fileID: 3277762}
   _remainingMoveCounter: {fileID: 1448680815}
   _totalAttackText: {fileID: 231723557538041827}
   _rewardsPanel: {fileID: 990567335}
+  _deckVisualizer: {fileID: 1108534782}
 --- !u!1 &122085904
 GameObject:
   m_ObjectHideFlags: 0
@@ -408,7 +410,7 @@ MonoBehaviour:
       Entry: 8
       Data: 
   Graveyard: {fileID: 1571635566}
-  _cardPrefab: {fileID: 3938424321586081278, guid: 104e6dca92aa2cb4bb6db4e6dfadda30, type: 3}
+  _cardPrefab: {fileID: 7342160196888913245, guid: 104e6dca92aa2cb4bb6db4e6dfadda30, type: 3}
 --- !u!1 &129103972
 GameObject:
   m_ObjectHideFlags: 0
@@ -1771,7 +1773,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1108534783
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1804,15 +1806,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
+    m_Left: 35
+    m_Right: 35
+    m_Top: 35
+    m_Bottom: 35
   m_ChildAlignment: 0
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 100, y: 100}
-  m_Spacing: {x: 0, y: 0}
+  m_CellSize: {x: 180, y: 180}
+  m_Spacing: {x: 40, y: 40}
   m_Constraint: 0
   m_ConstraintCount: 2
 --- !u!114 &1108534785
