@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sirenix.OdinInspector;
+using TMPro;
 using UnityEngine;
 
 public class CardManager : SerializedMonoBehaviour
@@ -219,6 +220,54 @@ public class CardManager : SerializedMonoBehaviour
         card.transform.SetParent(parent, false);
 
         return card;
+    }
+
+    public int InstantiateDeckToParent(Transform parent)
+    {
+        // Get the grouped deck (one entry per unique card ID with its count)
+        Dictionary<int, int> groupedDeck = GetGroupedDeck();
+
+        // Iterate through the grouped deck to instantiate cards
+        foreach (var kvp in groupedDeck)
+        {
+            int cardID = kvp.Key;
+            int quantity = kvp.Value;
+
+            // Instantiate a single card for each unique card ID
+            Card newCard = InstantiateCard(cardID, parent);
+
+            // Disable cycling if applicable
+            newCard.DisableCycleContainer();
+
+            // Find the TMP_Text for amount on the card and set the quantity
+            var amountText = newCard._amountInDeck;
+            if (amountText != null)
+            {
+                amountText.text = quantity.ToString();
+            }
+        }
+
+        // Return the total number of unique cards (number of keys in the dictionary)
+        return groupedDeck.Count;
+    }
+
+    public Dictionary<int, int> GetGroupedDeck()
+    {
+        Dictionary<int, int> groupedDeck = new();
+
+        foreach (var card in _deck)
+        {
+            if (groupedDeck.ContainsKey(card.ID))
+            {
+                groupedDeck[card.ID]++;
+            }
+            else
+            {
+                groupedDeck[card.ID] = 1;
+            }
+        }
+
+        return groupedDeck;
     }
 
     public void TransformCard(Card card, int cardID)
