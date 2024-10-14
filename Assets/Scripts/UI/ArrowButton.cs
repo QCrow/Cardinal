@@ -33,6 +33,10 @@ public class ArrowButton : MonoBehaviour
 
     public void OnClick()
     {
+        if (GameManager.Instance.IsNavigating)
+        {
+
+        }
         if (GameManager.Instance.CurrentState is ControlState)
         {
             if (GameManager.Instance.RemainingMoveCount <= 0)
