@@ -226,18 +226,18 @@ public class CardManager : SerializedMonoBehaviour
     {
         // Get the grouped deck (one entry per unique card ID with its count)
         Dictionary<int, int> groupedDeck = GetGroupedDeck();
-        int totalCards = 0;  // Initialize total card counter
 
+        // Iterate through the grouped deck to instantiate cards
         foreach (var kvp in groupedDeck)
         {
             int cardID = kvp.Key;
             int quantity = kvp.Value;
 
-            // Add quantity to the total count
-            totalCards += quantity;
-
             // Instantiate a single card for each unique card ID
             Card newCard = InstantiateCard(cardID, parent);
+
+            // Disable cycling if applicable
+            newCard.DisableCycleContainer();
 
             // Find the TMP_Text for amount on the card and set the quantity
             var amountText = newCard._amountInDeck;
@@ -247,10 +247,9 @@ public class CardManager : SerializedMonoBehaviour
             }
         }
 
-        // Return the total number of cards in the deck
-        return totalCards;
+        // Return the total number of unique cards (number of keys in the dictionary)
+        return groupedDeck.Count;
     }
-
 
     public Dictionary<int, int> GetGroupedDeck()
     {

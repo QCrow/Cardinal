@@ -204,6 +204,11 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         }
     }
 
+    public void DisableCycleContainer()
+    {
+        _cycleContainer.SetActive(false);
+    }
+
     public int GetModifierByType(ModifierType type)
     {
         return (_permanentModifiers.TryGetValue(type, out int value) ? value : 0) + (_temporaryModifiers.TryGetValue(type, out value) ? value : 0);
