@@ -12,7 +12,7 @@ public class AttackState : IGameState
 
         if (gameManager._remainingAttacks == 0 && gameManager.CurrentHealth > 0)
         {
-            GameManager.Instance.ChangeState(new LossState());
+            GameManager.Instance.ChangeState(new LoseState());
         }
         else if (gameManager.CurrentHealth <= 0)
         {

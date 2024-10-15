@@ -35,7 +35,7 @@ public class ArrowButton : MonoBehaviour
     {
         if (GameManager.Instance.IsNavigating)
         {
-
+            Map.Instance.ApplyMovement(_direction, _index, _magnitude);
         }
         if (GameManager.Instance.CurrentState is ControlState)
         {

@@ -63,7 +63,6 @@ public class UIManager : MonoBehaviour
 
     private void HandleGameStateChanged(IGameState previousState, IGameState currentState)
     {
-        Debug.Log("Game State Changed: " + currentState.GetType().Name);
         switch (currentState)
         {
             case WaitState _:
@@ -244,11 +243,15 @@ public class UIManager : MonoBehaviour
     {
         _battleUI.SetActive(false);
         _navigationUI.SetActive(true);
+
+        SetArrowButtonsInteractable(true);
     }
 
     public void ShowBattleUI()
     {
         _battleUI.SetActive(true);
         _navigationUI.SetActive(false);
+
+        SetArrowButtonsInteractable(false);
     }
 }

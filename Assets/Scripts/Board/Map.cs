@@ -23,7 +23,7 @@ public class Map : MonoBehaviour
     private MapNode[,] _mapNodes = new MapNode[3, 3];
     public MapNode[,] MapNodes => _mapNodes;
 
-    [SerializeField] Vector2Int _currentPosition = new(0, 0);
+    Vector2Int _currentPosition = new(0, 0);
     [SerializeField] Transform _positionIndicator;
 
     [SerializeField] List<GameObject> _nodeVisuals = new();
@@ -73,11 +73,8 @@ public class Map : MonoBehaviour
                 InitializeNodeVisual(row, col, _mapNodes[row, col].NodeType);
             }
         }
-    }
 
-    private void Update()
-    {
-        MoveTo(_currentPosition.x, _currentPosition.y);
+        MoveTo(0, 0);
     }
 
     public void MoveTo(int row, int col)
@@ -140,5 +137,52 @@ public class Map : MonoBehaviour
             Debug.LogWarning($"Invalid hex color string: {hex}");
             return Color.white;
         }
+    }
+
+    public void ApplyMovement(Direction direction, int index, int magnitude)
+    {
+        switch (direction)
+        {
+            case Direction.Up:
+                MoveOnColumn(index, -magnitude);
+                break;
+            case Direction.Down:
+                MoveOnColumn(index, magnitude);
+                break;
+            case Direction.Left:
+                MoveOnRow(index, -magnitude);
+                break;
+            case Direction.Right:
+                MoveOnRow(index, magnitude);
+                break;
+            case Direction.Clockwise:
+                MoveClockwise();
+                break;
+            case Direction.CounterClockwise:
+                MoveCounterClockwise();
+                break;
+        }
+
+        MoveTo(_currentPosition.x, _currentPosition.y);
+    }
+
+    private void MoveOnRow(int row, int magnitude)
+    {
+        _currentPosition.y = (_currentPosition.y + magnitude + 3) % 3;
+    }
+
+    private void MoveOnColumn(int col, int magnitude)
+    {
+        _currentPosition.x = (_currentPosition.x + magnitude + 3) % 3;
+    }
+
+    private void MoveClockwise()
+    {
+        _currentPosition = new Vector2Int(_currentPosition.y, 2 - _currentPosition.x);
+    }
+
+    private void MoveCounterClockwise()
+    {
+        _currentPosition = new Vector2Int(2 - _currentPosition.y, _currentPosition.x);
     }
 }
