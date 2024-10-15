@@ -8,6 +8,9 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; }
 
+    [SerializeField] private GameObject _battleUI;
+    [SerializeField] private GameObject _navigationUI;
+
     [SerializeField] private HealthBar _healthBar;
     [SerializeField] private Button _deployButton;
     public Button DeployButton => _deployButton;
@@ -49,7 +52,7 @@ public class UIManager : MonoBehaviour
     {
         GameManager.Instance.OnStateChanged.AddListener(HandleGameStateChanged);
         GameManager.Instance.OnHealthChanged.AddListener(HandleHealthChanged);
-        
+
         _healthBar.SetHealth(GameManager.Instance.MaxHealth, GameManager.Instance.MaxHealth);
         _rewardSlots = new List<RewardSlot>(_rewardsPanel.GetComponentsInChildren<RewardSlot>());
 
@@ -210,7 +213,6 @@ public class UIManager : MonoBehaviour
         LayoutRebuilder.ForceRebuildLayoutImmediate(contentRect);
     }
 
-
     private void ClearDeckVisualizer()
     {
         Transform gridLayout = _deckVisualizer.GetComponentInChildren<GridLayoutGroup>().transform;
@@ -225,5 +227,17 @@ public class UIManager : MonoBehaviour
     {
         // Set the normalized position to (0, 1) to scroll to the top
         _deckVisualizerViewport.GetComponent<ScrollRect>().verticalNormalizedPosition = 1f;
+    }
+
+    public void ShowNavigationUI()
+    {
+        _battleUI.SetActive(false);
+        _navigationUI.SetActive(true);
+    }
+
+    public void ShowBattleUI()
+    {
+        _battleUI.SetActive(true);
+        _navigationUI.SetActive(false);
     }
 }

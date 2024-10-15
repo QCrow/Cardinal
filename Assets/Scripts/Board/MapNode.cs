@@ -1,11 +1,20 @@
-public abstract class MapNode
-{
-    public abstract void OnEnter();
-}
+using UnityEngine;
 
-public class BattleNode : MapNode
+public class MapNode
 {
-    public override void OnEnter()
+    public int Row;
+    public int Col;
+    public MapNodeType NodeType;
+
+    public bool IsVisited;
+
+    public MapNode(MapNodeType nodeType)
     {
+        NodeType = nodeType;
+    }
+
+    public void OnEnter()
+    {
+
     }
 }
