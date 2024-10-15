@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
+using static UnityEditorInternal.VersionControl.ListControl;
 
 public class GameManager : MonoBehaviour
 {
@@ -60,7 +61,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int _maxHealth = 100;
     public int MaxHealth => _maxHealth;
     [SerializeField] private int _currHealth = 100;
-
+    public int CurrentHealth => _currHealth;
     [SerializeField] private int _remainingMoveCount = 0;
     public int RemainingMoveCount
     {
@@ -73,11 +74,46 @@ public class GameManager : MonoBehaviour
     }
     public int MovePerTurn = 3;
 
+    [SerializeField] private int _maxDeployCount = 2;
+    public int MaxDeployCount => _maxDeployCount;
+    public int RemainingDeployCount;
+
+    public void DecrementDeployCount()
+    {
+        if (RemainingDeployCount > 0)
+        {
+            RemainingDeployCount--;
+        }
+    }
+
+    public void ResetDeployCount()
+    {
+        RemainingDeployCount = _maxDeployCount;
+    }
+
+    public bool CanDeploy() => RemainingDeployCount > 0;
+
+    [SerializeField] private int _maxAttacks = 5;
+    public int MaxAttacks => _maxAttacks;
+    public int _remainingAttacks;
+    public void ResetAttackCounter()
+    {
+        _remainingAttacks = _maxAttacks;
+    }
+
+    public void DecrementAttackCounter()
+    {
+        _remainingAttacks--;
+        UIManager.Instance?.UpdateAttackCounter(_remainingAttacks);
+    }
+
     public void InflictDamage(int damage)
     {
         _currHealth -= damage;
         OnHealthChanged.Invoke(_currHealth);
     }
+
+    public int GetRemainingAttacks() => _remainingAttacks;
     #endregion
 
     #region Game Loop
@@ -88,6 +124,8 @@ public class GameManager : MonoBehaviour
 
         // Initialize the boss HP
         _currHealth = _maxHealth;
+        ResetAttackCounter();  // Initialize the attack counter
+        ResetDeployCount();  // Reset the deploy counter
 
         ChangeNavigationState(false);
     }
