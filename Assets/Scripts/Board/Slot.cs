@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
-using UnityEditor.Experimental.GraphView;
 
 public class Slot : SerializedMonoBehaviour
 {
@@ -23,8 +22,6 @@ public class Slot : SerializedMonoBehaviour
 
     [SerializeField] private Card _card;
     public Card Card { get => _card; set => _card = value; }
-    private MapNode _mapNode;
-    public MapNode MapNode { get => _mapNode; set => _mapNode = value; }
 
     public bool IsPosition(PositionType position)
     {
