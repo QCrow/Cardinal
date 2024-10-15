@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     #region Card Base Data
     public int ID;
@@ -18,9 +19,9 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     #region Card Runtime State
     public Slot Slot = null;
-    private Dictionary<ModifierType, int> _permanentModifiers = new();
+    [SerializeField] private Dictionary<ModifierType, int> _permanentModifiers = new();
 
-    private Dictionary<ModifierType, int> _temporaryModifiers = new();
+    [SerializeField] private Dictionary<ModifierType, int> _temporaryModifiers = new();
 
     // The total attack of the card, including base attack, temporary damage, and modifiers
     public int TotalAttack => Math.Max(0, BaseAttack + GetModifierByType(ModifierType.Strength) - GetModifierByType(ModifierType.Weakness));
@@ -209,6 +210,15 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         _cycleContainer.SetActive(false);
     }
 
+    /// <summary>
+    /// Get the total modifier value of a specific type
+    /// </summary>
+    /// <param name="type">
+    /// The type of modifier to get the value of
+    /// </param>
+    /// <returns>
+    /// The total modifier value of the specified type, 0 if no modifier of that type exists
+    /// </returns>
     public int GetModifierByType(ModifierType type)
     {
         return (_permanentModifiers.TryGetValue(type, out int value) ? value : 0) + (_temporaryModifiers.TryGetValue(type, out value) ? value : 0);

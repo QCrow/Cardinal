@@ -14,7 +14,7 @@ public class AttackState : IGameState
         {
             GameManager.Instance.ChangeState(new LossState());
         }
-        else if(gameManager.CurrentHealth <= 0)
+        else if (gameManager.CurrentHealth <= 0)
         {
             GameManager.Instance.ChangeState(new RewardState());
         }
@@ -35,7 +35,9 @@ public class AttackState : IGameState
         {
             card.ApplyEffect(TriggerType.OnAttack);
 
-            GameManager.Instance.InflictDamage(card.TotalAttack);
+            int attackCount = card.GetModifierByType(ModifierType.MultiStrike) > 0 ? card.GetModifierByType(ModifierType.MultiStrike) : 1;
+            for (int i = 0; i < attackCount; i++)
+                GameManager.Instance.InflictDamage(card.TotalAttack);
         });
     }
 
