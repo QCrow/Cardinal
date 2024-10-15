@@ -1138,10 +1138,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   FrontDisplay: {fileID: 446250646}
+  IsNavigating: 0
   _maxHealth: 100
   _currHealth: 100
-  _remainingMoveCount: 0
-  MovePerTurn: 3
   _remainingMoveCount: 0
   MovePerTurn: 3
 --- !u!1 &698313247
@@ -1483,6 +1482,7 @@ GameObject:
   - component: {fileID: 770663982}
   - component: {fileID: 770663981}
   - component: {fileID: 770663980}
+  - component: {fileID: 770663984}
   m_Layer: 5
   m_Name: Deck Visualizer Viewport
   m_TagString: Untagged
@@ -1593,6 +1593,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 770663978}
   m_CullTransparentMesh: 1
+--- !u!114 &770663984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 770663978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3312d7739989d2b4e91e6319e9a96d76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding: {x: 0, y: 0, z: 0, w: 0}
+  m_Softness: {x: 0, y: 0}
 --- !u!1 &770911230
 GameObject:
   m_ObjectHideFlags: 0
