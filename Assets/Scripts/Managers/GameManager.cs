@@ -29,7 +29,9 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Game State
-    public bool IsNavigating = false;
+    [SerializeField] private bool _isNavigating = false;
+    public bool IsNavigating => _isNavigating;
+
     public IGameState CurrentState { get; private set; }
 
     public void ChangeState(IGameState newState)
@@ -44,8 +46,8 @@ public class GameManager : MonoBehaviour
 
     public void ChangeNavigationState(bool isNavigating)
     {
-        IsNavigating = isNavigating;
-        if (IsNavigating)
+        _isNavigating = isNavigating;
+        if (_isNavigating)
         {
             UIManager.Instance.ShowNavigationUI();
         }
@@ -135,7 +137,7 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            ChangeNavigationState(!IsNavigating);
+            ChangeNavigationState(!_isNavigating);
         }
     }
 }

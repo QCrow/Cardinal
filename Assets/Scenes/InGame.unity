@@ -311,6 +311,7 @@ MonoBehaviour:
   _deployCounter: {fileID: 1798427952833337774}
   _dischargeCounter: {fileID: 3277762}
   _remainingMoveCounter: {fileID: 1448680815}
+  _remainingAttackCounter: {fileID: 1714386325}
   _totalAttackText: {fileID: 231723557538041827}
   _rewardsPanel: {fileID: 990567335}
   _deckVisualizerViewport: {fileID: 770663978}
@@ -1026,11 +1027,15 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   FrontDisplay: {fileID: 446250646}
-  IsNavigating: 0
+  _isNavigating: 0
   _maxHealth: 100
   _currHealth: 100
   _remainingMoveCount: 0
   MovePerTurn: 3
+  _maxDeployCount: 2
+  RemainingDeployCount: 0
+  _maxAttacks: 5
+  _remainingAttacks: 0
 --- !u!1 &698313247
 GameObject:
   m_ObjectHideFlags: 0
@@ -4172,7 +4177,7 @@ GameObject:
   - component: {fileID: 1936125758}
   - component: {fileID: 1936125757}
   m_Layer: 5
-  m_Name: Image (1)
+  m_Name: Current Position Display
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4383,7 +4388,7 @@ GameObject:
   - component: {fileID: 1985268226}
   - component: {fileID: 1985268225}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Current Position Anchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4421,7 +4426,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
