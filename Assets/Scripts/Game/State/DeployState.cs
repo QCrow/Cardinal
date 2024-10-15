@@ -6,6 +6,9 @@ public class DeployState : IGameState
 {
     public void OnEnter(GameManager gameManager)
     {
+        GameManager.Instance.DecrementDeployCount();
+        UIManager.Instance.UpdateDeployCounter(GameManager.Instance.RemainingDeployCount);
+        Debug.Log("RemainingDeployCount" + GameManager.Instance.RemainingDeployCount);
         Board.Instance.ClearBoard();
         CardManager.Instance.Reshuffle();
 
@@ -40,7 +43,6 @@ public class DeployState : IGameState
             card.ApplyEffect(TriggerType.OnDeploy);
             _cards.Add(card);
         }
-
         Board.Instance.DeployedCards = _cards;
     }
 }

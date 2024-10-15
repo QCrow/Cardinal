@@ -22,6 +22,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TMP_Text _deployCounter;
     [SerializeField] private TMP_Text _dischargeCounter;
     [SerializeField] private TMP_Text _remainingMoveCounter;
+    [SerializeField] private TMP_Text _remainingAttackCounter;
 
     private List<Button> _arrowButtons = new();
 
@@ -52,7 +53,8 @@ public class UIManager : MonoBehaviour
         
         _healthBar.SetHealth(GameManager.Instance.MaxHealth, GameManager.Instance.MaxHealth);
         _rewardSlots = new List<RewardSlot>(_rewardsPanel.GetComponentsInChildren<RewardSlot>());
-
+        UpdateAttackCounter(GameManager.Instance.MaxAttacks);
+        UpdateDeployCounter(GameManager.Instance.MaxDeployCount);
         _checkDeckButton.onClick.AddListener(ToggleDeckVisualizer);
     }
 
@@ -147,6 +149,15 @@ public class UIManager : MonoBehaviour
         _remainingMoveCounter.text = $"{remainingMoveCount}";
     }
 
+    public void UpdateAttackCounter(int remainingAttackCount)
+    {
+        _remainingAttackCounter.text = $"{remainingAttackCount}";
+    }
+
+    public void UpdateDeployCounter(int remainingDeployCount)
+    {
+        _deployCounter.text = $"{remainingDeployCount}";
+    }
     private void ToggleDeckVisualizer()
     {
         // Toggle the visualizer's active state
