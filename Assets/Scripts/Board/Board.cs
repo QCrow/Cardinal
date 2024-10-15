@@ -50,10 +50,11 @@ public class Board : MonoBehaviour
     private void Start()
     {
         _rectTransform = GetComponent<RectTransform>();
+        Initialize();
     }
 
     /// <summary>
-    /// Initializes the board's size in pixel and generates slots based on the board's dimensions.
+    /// Initializes the board's size in pixels and populates the slot list by retrieving existing child slots.
     /// </summary>
     public void Initialize()
     {
@@ -67,22 +68,31 @@ public class Board : MonoBehaviour
         gridLayout.spacing = new Vector2(_slotGap, _slotGap);
 
         // Initialize the list of slots
-        _slots = new();
-        // Populate the board with slots, arranging them in a grid
+        _slots = new List<List<Slot>>();
+
+        // Populate the board by retrieving existing slot GameObjects from the children
+        int childIndex = 0;
         for (int row = 0; row < _unitHeight; row++)
         {
-            List<Slot> slotRow = new();
+            List<Slot> slotRow = new List<Slot>();
             for (int col = 0; col < _unitWidth; col++)
             {
-                // Instantiate and name each slot based on its position in the grid
-                GameObject newGO = Instantiate(_slotPrefab, transform);
-                newGO.name = $"Slot {row} {col}";
+                // Get the child slot at the corresponding index
+                Transform slotTransform = transform.GetChild(childIndex++);
+                Slot slot = slotTransform.GetComponent<Slot>();
 
-                // Set the slot's row and column values and add it to the row list
-                Slot slot = newGO.GetComponent<Slot>();
-                slot.Initialize(row, col);
+                if (slot != null)
+                {
+                    // Initialize slot with its row and column values
+                    slot.Initialize(row, col);
 
-                slotRow.Add(slot);
+                    // Add the slot to the current row list
+                    slotRow.Add(slot);
+                }
+                else
+                {
+                    Debug.LogWarning($"Slot component missing on child at {row}, {col}");
+                }
             }
             _slots.Add(slotRow);
         }

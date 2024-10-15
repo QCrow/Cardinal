@@ -40,6 +40,20 @@ public class GameManager : MonoBehaviour
 
         CurrentState?.OnEnter(this);
     }
+
+    public void ChangeNavigationState(bool isNavigating)
+    {
+        IsNavigating = isNavigating;
+        if (IsNavigating)
+        {
+            UIManager.Instance.ShowNavigationUI();
+        }
+        else
+        {
+            UIManager.Instance.ShowBattleUI();
+            ChangeState(new WaitState());
+        }
+    }
     #endregion
 
     #region Game Logic
@@ -70,14 +84,20 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         // Initialize the board and start the game
-        Board.Instance.Initialize();
         CardManager.Instance.InitializeDeck();
 
         // Initialize the boss HP
         _currHealth = _maxHealth;
 
-        // After the board is initialized, start the game
-        ChangeState(new WaitState());
+        ChangeNavigationState(false);
     }
     #endregion
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            ChangeNavigationState(!IsNavigating);
+        }
+    }
 }
