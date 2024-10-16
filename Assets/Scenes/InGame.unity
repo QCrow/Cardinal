@@ -311,6 +311,7 @@ MonoBehaviour:
   _deployCounter: {fileID: 1798427952833337774}
   _dischargeCounter: {fileID: 3277762}
   _remainingMoveCounter: {fileID: 1448680815}
+  _remainingAttackCounter: {fileID: 1714386325}
   _totalAttackText: {fileID: 231723557538041827}
   _rewardsPanel: {fileID: 990567335}
   _deckVisualizerViewport: {fileID: 770663978}
@@ -1031,6 +1032,10 @@ MonoBehaviour:
   _currHealth: 100
   _remainingMoveCount: 0
   MovePerTurn: 3
+  _maxDeployCount: 2
+  RemainingDeployCount: 0
+  _maxAttacks: 5
+  _remainingAttacks: 0
 --- !u!1 &698313247
 GameObject:
   m_ObjectHideFlags: 0

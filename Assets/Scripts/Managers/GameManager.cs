@@ -121,7 +121,7 @@ public class GameManager : MonoBehaviour
     {
         // Initialize the board and start the game
         CardManager.Instance.InitializeDeck();
-
+        
         // Initialize the boss HP
         _currHealth = _maxHealth;
         ResetAttackCounter();  // Initialize the attack counter
