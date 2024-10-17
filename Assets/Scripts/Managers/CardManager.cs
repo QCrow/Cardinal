@@ -29,11 +29,12 @@ public class CardManager : SerializedMonoBehaviour
     private readonly System.Random _random = new();
     [SerializeField] private Dictionary<int, int> _startingDeck = new();
     private List<Card> _deck = new();
-    private List<Card> _shopDeck = new();
     private List<Card> _availableCards = new();
     public Transform Graveyard;
 
-    private Dictionary<RarityType, int> _rarityWeights = new()
+    // Define a shared dictionary of rarity weights for all levels
+    [SerializeField, ShowInInspector]
+    private Dictionary<RarityType, int> _sharedRarityWeights = new()
     {
         { RarityType.Common, 70 },
         { RarityType.Rare, 15 },
@@ -41,76 +42,66 @@ public class CardManager : SerializedMonoBehaviour
         { RarityType.Mythic, 1 }
     };
 
-    private Dictionary<RarityType, List<int>> _rarityCards = new();
-
-    private RarityType GetRandomRarity()
+    [SerializeField, ShowInInspector]
+    private Dictionary<int, Dictionary<RarityType, int>> _rewardLevelRarityWeights = new()
     {
-        int totalWeight = 0;
-        foreach (KeyValuePair<RarityType, int> rarity in _rarityWeights)
-        {
-            totalWeight += rarity.Value;
-        }
-
-        int randomValue = _random.Next(0, totalWeight);
-        int weightSum = 0;
-
-        foreach (KeyValuePair<RarityType, int> rarity in _rarityWeights)
-        {
-            weightSum += rarity.Value;
-            if (randomValue < weightSum)
+        { 1, new Dictionary<RarityType, int>
             {
-                return rarity.Key;
+                { RarityType.Common, 70 },
+                { RarityType.Rare, 15 },
+                { RarityType.Epic, 4 },
+                { RarityType.Mythic, 1 }
+            }
+        },
+        { 2, new Dictionary<RarityType, int>
+            {
+                { RarityType.Common, 60 },
+                { RarityType.Rare, 25 },
+                { RarityType.Epic, 10 },
+                { RarityType.Mythic, 5 }
             }
         }
+    };
 
-        return RarityType.Common;
+    private Dictionary<RarityType, List<int>> _rarityCards = new();
+
+    public Dictionary<RarityType, List<int>> GetRarityCards() { return _rarityCards; }
+
+    //if we want same rarity weights across different levels
+    private void InitializeRewardLevelRarityWeights(int maxLevel)
+    {
+        for (int level = 1; level <= maxLevel; level++)
+        {
+            _rewardLevelRarityWeights[level] = _sharedRarityWeights;
+        }
     }
 
     public List<Reward> GenerateRewardChoices()
     {
+        // Generate 3 reward card IDs using the utility method
+        List<int> rewardCardIDs = RandomRarityUtil.GenerateCardIDsByRarity(
+            _rarityCards,              // Available cards grouped by rarity
+            _rewardLevelRarityWeights,       // Rarity weights per level
+            GameManager.Instance.CurrentLevel,                     // Current game level
+            3,                         // Number of reward cards to generate
+            false                      // No duplicate rewards allowed
+        );
+
+        
+        // Create Reward objects from the generated card IDs
         List<Reward> rewards = new();
-        HashSet<int> selectedCardIDs = new();  // Use a HashSet to track selected card IDs
-        Dictionary<RarityType, List<int>> remainingCards = new();
-
-        // Copy available cards from each rarity to a new dictionary to track remaining cards
-        foreach (var rarity in _rarityCards)
+        foreach (int cardID in rewardCardIDs)
         {
-            remainingCards[rarity.Key] = new List<int>(rarity.Value);
-        }
-
-        // Generate 3 rewards
-        for (int i = 0; i < 3; i++)
-        {
-            RarityType rarity = GetRandomRarity();
-
-            // Keep looping until we find a valid rarity with available cards
-            while (!remainingCards.ContainsKey(rarity) || remainingCards[rarity].Count == 0)
-            {
-                Debug.LogWarning($"No cards left for rarity {rarity}. Trying a different rarity.");
-                rarity = GetRandomRarity();
-
-                // If no rarities have cards left, break out of the loop
-                if (remainingCards.All(r => r.Value.Count == 0))
-                {
-                    Debug.LogError("No cards left in any rarity. Stopping reward generation.");
-                    return rewards;
-                }
-            }
-
-            // Select a random card from the remaining cards of the selected rarity
-            int randomIndex = _random.Next(0, remainingCards[rarity].Count);
-            int cardID = remainingCards[rarity][randomIndex];
-            remainingCards[rarity].RemoveAt(randomIndex);  // Remove selected card from the pool
-
-            // Ensure no duplicates
-            selectedCardIDs.Add(cardID);
-
             CardScriptable cardScriptable = GetCardScriptableByID(cardID);
-            rewards.Add(new Reward(cardID, cardScriptable.Name, cardScriptable.Description));
+            if (cardScriptable != null)
+            {
+                rewards.Add(new Reward(cardID, cardScriptable.Name, cardScriptable.Description));
+            }
         }
 
         return rewards;
     }
+
 
 
     private void LoadCards()
@@ -149,37 +140,6 @@ public class CardManager : SerializedMonoBehaviour
                 Card cardInstance = InstantiateCard(card.Key);
                 _deck.Add(cardInstance);
             }
-        }
-    }
-
-    public void InitializeAndInstantiateShopCards(Dictionary<int, int> startingShopDeck, Transform parent)
-    {
-        _shopDeck.Clear();  // Clear any existing cards
-
-        int totalCards = 0;  // Track how many cards are added
-
-        // Populate the shop deck with up to 9 cards
-        foreach (KeyValuePair<int, int> card in startingShopDeck)
-        {
-            for (int i = 0; i < card.Value; i++)
-            {
-                if (totalCards >= 9)  // Ensure only 9 cards are added
-                    break;
-
-                Card cardInstance = InstantiateCard(card.Key);  // Create card instance
-                _shopDeck.Add(cardInstance);  // Add to shop deck
-                totalCards++;  // Increment the counter
-
-                // Instantiate the card in the parent container
-                var newcard = InstantiateCard(cardInstance.ID, parent);
-
-                int price = ShopManager.Instance.GetPriceByRarity(cardInstance.Rarity);
-                newcard.Price = price;
-                newcard.UpdatePriceValue();
-            }
-
-            if (totalCards >= 9)  // Stop if we have enough cards
-                break;
         }
     }
 

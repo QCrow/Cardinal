@@ -60,6 +60,8 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Game Logic
+    //TODO: update this!!
+    public int CurrentLevel = 1;
     [SerializeField] private int _maxHealth = 100;
     public int MaxHealth => _maxHealth;
     [SerializeField] private int _currHealth = 100;
