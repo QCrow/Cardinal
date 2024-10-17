@@ -43,32 +43,14 @@ public class CardManager : SerializedMonoBehaviour
     };
 
     [SerializeField, ShowInInspector]
-    private Dictionary<int, Dictionary<RarityType, int>> _rewardLevelRarityWeights = new()
-    {
-        { 1, new Dictionary<RarityType, int>
-            {
-                { RarityType.Common, 70 },
-                { RarityType.Rare, 15 },
-                { RarityType.Epic, 4 },
-                { RarityType.Mythic, 1 }
-            }
-        },
-        { 2, new Dictionary<RarityType, int>
-            {
-                { RarityType.Common, 60 },
-                { RarityType.Rare, 25 },
-                { RarityType.Epic, 10 },
-                { RarityType.Mythic, 5 }
-            }
-        }
-    };
+    private Dictionary<int, Dictionary<RarityType, int>> _rewardLevelRarityWeights = new();
 
     private Dictionary<RarityType, List<int>> _rarityCards = new();
 
     public Dictionary<RarityType, List<int>> GetRarityCards() { return _rarityCards; }
 
     //if we want same rarity weights across different levels
-    private void InitializeRewardLevelRarityWeights(int maxLevel)
+    private void InitializeDefaultRewardLevelRarityWeights(int maxLevel)
     {
         for (int level = 1; level <= maxLevel; level++)
         {
@@ -78,6 +60,7 @@ public class CardManager : SerializedMonoBehaviour
 
     public List<Reward> GenerateRewardChoices()
     {
+        InitializeDefaultRewardLevelRarityWeights(5);
         // Generate 3 reward card IDs using the utility method
         List<int> rewardCardIDs = RandomRarityUtil.GenerateCardIDsByRarity(
             _rarityCards,              // Available cards grouped by rarity
