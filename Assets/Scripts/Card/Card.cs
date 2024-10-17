@@ -4,15 +4,17 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     #region Card Base Data
     public int ID;
     public RarityType Rarity;
     public string Name;
+    public int Price;
     public HashSet<TraitType> Traits;
-
+    public TMPro.TMP_Text _amountInDeck;
     public int BaseAttack;
+    public bool isSold = false;
 
     public Dictionary<TriggerType, List<ConditionalEffect>> ConditionalEffects = new();
     #endregion
@@ -34,7 +36,8 @@ public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitH
     [SerializeField] private TMPro.TMP_Text _attackValueText;
     [SerializeField] private GameObject _cycleContainer;
     [SerializeField] private TMPro.TMP_Text _currentCycleValueText;
-    public TMPro.TMP_Text _amountInDeck;
+    [SerializeField] private TMPro.TMP_Text _price;
+    [SerializeField] private TMPro.TMP_Text SoldLabel;
     #endregion
 
     public void Initialize(CardScriptable cardScriptable, Dictionary<TriggerType, List<ConditionalEffect>> conditionalEffects)
@@ -78,6 +81,19 @@ public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitH
         _currentCycleValueText.text = currentCycle.ToString();
     }
 
+    public void UpdatePriceValue()
+    {
+        // Update the price value text
+        _price.text = $"{Price}";
+
+        // Move the PriceText component up slightly (adjust y value as needed)
+        RectTransform priceRect = _price.GetComponent<RectTransform>();
+        if (priceRect != null)
+        {
+            priceRect.anchoredPosition += new Vector2(0, 10);  // Move 10 units up
+        }
+    }
+
     public void OnPointerEnter(PointerEventData eventData)
     {
         _descriptionContainer.SetActive(true);
@@ -89,9 +105,34 @@ public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitH
         _descriptionContainer.transform.SetParent(transform, true);
         _descriptionContainer.SetActive(false);
     }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        TryPurchase();
+    }
     #endregion
 
     #region Game Logic
+    private void TryPurchase()
+    {
+        int playerGold = ShopManager.Instance.Gold;  // Get current player gold
+
+        if (playerGold >= Price)
+        {
+            ShopManager.Instance.SpendGold(Price);  // Deduct gold
+            Debug.Log($"Purchased {Name} for {Price} Gold.");
+
+            // Optionally: Add card to player¡¯s deck or inventory
+            CardManager.Instance.AddCard(ID);
+
+            isSold = true;
+            SoldLabel.gameObject.SetActive(true);
+        }
+        else
+        {
+            Debug.Log("Not enough gold to purchase this card.");
+        }
+    }
     public void ApplyEffect(TriggerType trigger)
     {
         if (!ConditionalEffects.ContainsKey(trigger)) return;
