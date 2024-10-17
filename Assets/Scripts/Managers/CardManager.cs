@@ -17,6 +17,7 @@ public class CardManager : SerializedMonoBehaviour
         {
             _instance = this;
             LoadCards();
+            DontDestroyOnLoad(gameObject);  // Persist across scenes
         }
         else
         {
@@ -28,6 +29,7 @@ public class CardManager : SerializedMonoBehaviour
     private readonly System.Random _random = new();
     [SerializeField] private Dictionary<int, int> _startingDeck = new();
     private List<Card> _deck = new();
+    private List<Card> _shopDeck = new();
     private List<Card> _availableCards = new();
     public Transform Graveyard;
 
@@ -150,6 +152,37 @@ public class CardManager : SerializedMonoBehaviour
         }
     }
 
+    public void InitializeAndInstantiateShopCards(Dictionary<int, int> startingShopDeck, Transform parent)
+    {
+        _shopDeck.Clear();  // Clear any existing cards
+
+        int totalCards = 0;  // Track how many cards are added
+
+        // Populate the shop deck with up to 9 cards
+        foreach (KeyValuePair<int, int> card in startingShopDeck)
+        {
+            for (int i = 0; i < card.Value; i++)
+            {
+                if (totalCards >= 9)  // Ensure only 9 cards are added
+                    break;
+
+                Card cardInstance = InstantiateCard(card.Key);  // Create card instance
+                _shopDeck.Add(cardInstance);  // Add to shop deck
+                totalCards++;  // Increment the counter
+
+                // Instantiate the card in the parent container
+                var newcard = InstantiateCard(cardInstance.ID, parent);
+
+                int price = ShopManager.Instance.GetPriceByRarity(cardInstance.Rarity);
+                newcard.Price = price;
+                newcard.UpdatePriceValue();
+            }
+
+            if (totalCards >= 9)  // Stop if we have enough cards
+                break;
+        }
+    }
+
     public void Reshuffle()
     {
 
@@ -204,7 +237,7 @@ public class CardManager : SerializedMonoBehaviour
         CardScriptable scriptable = GetCardScriptableByID(cardID);
         if (scriptable == null)
         {
-            Debug.LogError($"Card with ID {cardID} not found.");
+            UnityEngine.Debug.LogError($"Card with ID {cardID} not found.");
             return null;
         }
 
@@ -221,6 +254,7 @@ public class CardManager : SerializedMonoBehaviour
 
         return card;
     }
+
 
     public int InstantiateDeckToParent(Transform parent)
     {
