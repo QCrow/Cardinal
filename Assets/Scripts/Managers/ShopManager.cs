@@ -50,8 +50,12 @@ public class ShopManager : MonoBehaviour
             {8,1},
             {9,1},
         };
-        CardManager.Instance.InitializeAndInstantiateShopCards(_startingShopDeck, shopItemsContainer.transform);
         UpdatePlayerGoldUI();
+    }
+
+    public void InitializeShop()
+    {
+        CardManager.Instance.InitializeAndInstantiateShopCards(_startingShopDeck, shopItemsContainer.transform);
     }
 
     public int GetPriceByRarity(RarityType rarity)

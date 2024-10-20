@@ -32,8 +32,9 @@ public class ArrowButton : MonoBehaviour
     }
 
     public void OnClick()
-    {//TODO: Deal with different move cases for different states
-        if (GameManager.Instance.IsNavigating)
+    {
+        // TODO: Reduce coupling by using events
+        if (GameManager.Instance.CurrentGameState == GameState.Map)
         {
             Map.Instance.ApplyMovement(_direction, _index, _magnitude);
         }

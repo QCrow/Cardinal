@@ -11,5 +11,6 @@ public class RewardPhase : IBattlePhase
 
     public void OnExit()
     {
+        UIManager.Instance.SetRewardsPanelActive(false);
     }
 }

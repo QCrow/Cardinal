@@ -12,7 +12,6 @@ public class Map : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            GenerateMap();
         }
         else
         {
@@ -36,6 +35,11 @@ public class Map : MonoBehaviour
         { MapNodeType.RestSite, 1 },
         { MapNodeType.Mystery, 4 },
     };
+
+    private void Start()
+    {
+        GenerateMap();
+    }
 
     public void GenerateMap()
     {
