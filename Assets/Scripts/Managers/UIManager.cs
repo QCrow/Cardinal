@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 public class UIManager : MonoBehaviour
 {
@@ -10,31 +8,21 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private GameObject _battleUI;
     [SerializeField] private GameObject _navigationUI;
+    [SerializeField] private Transform FrontDisplay;
 
-    [SerializeField] private HealthBar _healthBar;
-    [SerializeField] private Button _deployButton;
-    public Button DeployButton => _deployButton;
-    [SerializeField] private Button _attackButton;
-    public Button AttackButton => _attackButton;
-    [SerializeField] private Button _resetButton;
-    public Button ResetButton => _resetButton;
-    [SerializeField] private Button _checkDeckButton;
-    public Button CheckDeckButton => _checkDeckButton;
 
-    [SerializeField] private TMP_Text _attackCounter;
-    [SerializeField] private TMP_Text _deployCounter;
-    [SerializeField] private TMP_Text _dischargeCounter;
-    [SerializeField] private TMP_Text _remainingMoveCounter;
-    [SerializeField] private TMP_Text _remainingAttackCounter;
+
 
     private List<Button> _arrowButtons = new();
 
     [SerializeField] private TMPro.TMP_Text _totalAttackText;
 
+    [SerializeField] private Button _checkDeckButton;
     [SerializeField] private GameObject _rewardsPanel;
     private List<RewardSlot> _rewardSlots;
     [SerializeField] private GameObject _deckVisualizerViewport;
     [SerializeField] private GameObject _deckVisualizer;
+
     private bool _isDeckVisualizerActive = false;
 
     private void Awake()
@@ -51,57 +39,11 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
-        GameManager.Instance.OnStateChanged.AddListener(HandleGameStateChanged);
-        GameManager.Instance.OnHealthChanged.AddListener(HandleHealthChanged);
-
-        _healthBar.SetHealth(GameManager.Instance.MaxHealth, GameManager.Instance.MaxHealth);
         _rewardSlots = new List<RewardSlot>(_rewardsPanel.GetComponentsInChildren<RewardSlot>());
-        UpdateAttackCounter(GameManager.Instance.MaxAttacks);
-        UpdateDeployCounter(GameManager.Instance.MaxDeployCount);
         _checkDeckButton.onClick.AddListener(ToggleDeckVisualizer);
     }
 
-    private void HandleGameStateChanged(IGameState previousState, IGameState currentState)
-    {
-        switch (currentState)
-        {
-            case WaitState _:
-                _deployButton.interactable = true;
-                _attackButton.interactable = false;
-                SetArrowButtonsInteractable(false);
-                SetRewardsPanelActive(false);
-                break;
-            case DeployState _:
-                _deployButton.interactable = false;
-                _attackButton.interactable = false;
-                SetArrowButtonsInteractable(false);
-                break;
-            case ControlState _:
-                _deployButton.interactable = true;
-                _attackButton.interactable = true;
-                _resetButton.interactable = true;
-                SetArrowButtonsInteractable(true);
-                break;
-            case AttackState _:
-                _deployButton.interactable = false;
-                _attackButton.interactable = false;
-                _resetButton.interactable = false;
-                SetArrowButtonsInteractable(false);
-                break;
-            case RewardState _:
-                SetRewardsPanelActive(true);
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void HandleHealthChanged(int currHealth)
-    {
-        _healthBar.SetHealth(currHealth, GameManager.Instance.MaxHealth);
-    }
-
-    private void SetArrowButtonsInteractable(bool interactable)
+    public void SetArrowButtonsInteractable(bool interactable)
     {
         foreach (var arrowButton in _arrowButtons)
         {
@@ -114,12 +56,7 @@ public class UIManager : MonoBehaviour
         _arrowButtons.Add(arrowButton);
     }
 
-    public void SetTotalAttack(int totalAttack)
-    {
-        _totalAttackText.text = $"{totalAttack}";
-    }
-
-    private void SetRewardsPanelActive(bool active)
+    public void SetRewardsPanelActive(bool active)
     {
         _rewardsPanel.SetActive(active);
     }
@@ -139,27 +76,6 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void RefreshAttackValue()
-    {
-        Board.Instance.DeployedCards.ForEach(card => card.UpdateAttackValue());
-    }
-
-    public void UpdateMoveCounter(int remainingMoveCount)
-    {
-        if (remainingMoveCount <= 0) SetArrowButtonsInteractable(false);
-        else SetArrowButtonsInteractable(true);
-        _remainingMoveCounter.text = $"{remainingMoveCount}";
-    }
-
-    public void UpdateAttackCounter(int remainingAttackCount)
-    {
-        _remainingAttackCounter.text = $"{remainingAttackCount}";
-    }
-
-    public void UpdateDeployCounter(int remainingDeployCount)
-    {
-        _deployCounter.text = $"{remainingDeployCount}";
-    }
     private void ToggleDeckVisualizer()
     {
         // Toggle the visualizer's active state
