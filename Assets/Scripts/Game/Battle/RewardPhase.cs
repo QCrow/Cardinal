@@ -1,14 +1,15 @@
 using System.Collections.Generic;
 
-public class RewardState : IGameState
+public class RewardPhase : IBattlePhase
 {
-    public void OnEnter(GameManager gameManager)
+    public void OnEnter()
     {
+        UIManager.Instance.SetRewardsPanelActive(true);
         List<Reward> rewards = CardManager.Instance.GenerateRewardChoices();
         UIManager.Instance.SetRewards(rewards);
     }
 
-    public void OnExit(GameManager gameManager)
+    public void OnExit()
     {
     }
 }

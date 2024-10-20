@@ -32,20 +32,14 @@ public class ArrowButton : MonoBehaviour
     }
 
     public void OnClick()
-    {
+    {//TODO: Deal with different move cases for different states
         if (GameManager.Instance.IsNavigating)
         {
             Map.Instance.ApplyMovement(_direction, _index, _magnitude);
         }
-        if (GameManager.Instance.CurrentState is ControlState)
+        if (BattleManager.Instance.CurrentBattlePhase is ControlPhase phase)
         {
-            if (GameManager.Instance.RemainingMoveCount <= 0)
-            {
-                return;
-            }
-            ControlState controlState = (ControlState)GameManager.Instance.CurrentState;
-            controlState.ApplyMovement(_direction, _index, _magnitude);
-            GameManager.Instance.RemainingMoveCount--;
+            phase.ApplyMovement(_direction, _index, _magnitude);
         }
     }
 }

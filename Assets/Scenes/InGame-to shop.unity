@@ -1038,7 +1038,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   FrontDisplay: {fileID: 446250646}
-  IsNavigating: 0
+  _isNavigating: 0
   _maxHealth: 100
   _currHealth: 100
   _remainingMoveCount: 0
