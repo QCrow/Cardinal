@@ -31,6 +31,6 @@ public class RewardSlot : MonoBehaviour
     public void OnClick()
     {
         CardManager.Instance.AddCard(_rewardID);
-        GameManager.Instance.ChangeNavigationState(true);
+        GameManager.Instance.ChangeGameState(GameState.Map);
     }
 }

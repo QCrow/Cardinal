@@ -1,5 +1,13 @@
 using UnityEngine;
 
+public enum GameState
+{
+    Map,
+    Battle,
+    Shop,
+    Event
+}
+
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
@@ -29,26 +37,35 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    #region Object References
-    public Transform FrontDisplay;
-    #endregion
-
     #region Game State
-    [SerializeField] private bool _isNavigating = false;
-    public bool IsNavigating => _isNavigating;
+    private GameState _currentGameState;
+    public GameState CurrentGameState => _currentGameState;
 
-    public IBattlePhase CurrentState { get; private set; }
-
-    public void ChangeNavigationState(bool isNavigating)
+    public void ChangeGameState(GameState gameState)
     {
-        _isNavigating = isNavigating;
-        if (_isNavigating)
+        _currentGameState = gameState;
+        switch (_currentGameState)
         {
-            UIManager.Instance.ShowNavigationUI();
-        }
-        else
-        {
-            UIManager.Instance.ShowBattleUI();
+            case GameState.Map:
+                CanMove = true;
+                UIManager.Instance.MapPanel.SetActive(true);
+                UIManager.Instance.BattlePanel.SetActive(false);
+                UIManager.Instance.ShopPanel.SetActive(false);
+                break;
+            case GameState.Battle:
+                CanMove = false;
+                UIManager.Instance.MapPanel.SetActive(false);
+                UIManager.Instance.BattlePanel.SetActive(true);
+                UIManager.Instance.ShopPanel.SetActive(false);
+                break;
+            case GameState.Shop:
+                CanMove = false;
+                UIManager.Instance.MapPanel.SetActive(false);
+                UIManager.Instance.BattlePanel.SetActive(false);
+                UIManager.Instance.ShopPanel.SetActive(true);
+                break;
+            case GameState.Event:
+                break;
         }
     }
     #endregion
@@ -57,8 +74,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         CardManager.Instance.InitializeDeck();
-
-        ChangeNavigationState(false);
+        ChangeGameState(GameState.Battle);
     }
     #endregion
 
@@ -66,7 +82,6 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            ChangeNavigationState(!_isNavigating);
         }
     }
 }

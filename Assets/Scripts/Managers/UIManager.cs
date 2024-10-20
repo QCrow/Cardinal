@@ -6,20 +6,20 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; }
 
-    [SerializeField] private GameObject _battleUI;
-    [SerializeField] private GameObject _navigationUI;
-    [SerializeField] private Transform FrontDisplay;
+    public GameObject MapPanel;
+    public GameObject BattlePanel;
+    public GameObject ShopPanel;
+    public GameObject EventPanel;
 
-
-
+    public Transform OverlayDisplay;
 
     private List<Button> _arrowButtons = new();
 
-    [SerializeField] private TMPro.TMP_Text _totalAttackText;
-
     [SerializeField] private Button _checkDeckButton;
+
     [SerializeField] private GameObject _rewardsPanel;
     private List<RewardSlot> _rewardSlots;
+
     [SerializeField] private GameObject _deckVisualizerViewport;
     [SerializeField] private GameObject _deckVisualizer;
 
@@ -153,21 +153,5 @@ public class UIManager : MonoBehaviour
     {
         // Set the normalized position to (0, 1) to scroll to the top
         _deckVisualizerViewport.GetComponent<ScrollRect>().verticalNormalizedPosition = 1f;
-    }
-
-    public void ShowNavigationUI()
-    {
-        _battleUI.SetActive(false);
-        _navigationUI.SetActive(true);
-
-        SetArrowButtonsInteractable(true);
-    }
-
-    public void ShowBattleUI()
-    {
-        _battleUI.SetActive(true);
-        _navigationUI.SetActive(false);
-
-        SetArrowButtonsInteractable(false);
     }
 }

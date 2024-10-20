@@ -97,7 +97,7 @@ public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitH
     public void OnPointerEnter(PointerEventData eventData)
     {
         _descriptionContainer.SetActive(true);
-        _descriptionContainer.transform.SetParent(GameManager.Instance.FrontDisplay, true);
+        _descriptionContainer.transform.SetParent(UIManager.Instance.OverlayDisplay, true);
     }
 
     public void OnPointerExit(PointerEventData eventData)

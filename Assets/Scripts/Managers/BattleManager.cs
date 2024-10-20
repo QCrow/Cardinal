@@ -58,6 +58,14 @@ public class BattleManager : MonoBehaviour
         AttackButton.onClick.AddListener(OnAttackButtonPressed);
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            ChangePhase(new RewardPhase());
+        }
+    }
+
     public void StartBattleAgainstEnemy(EnemyScriptable enemyScriptable)
     {
         EnemyMaxHealth = enemyScriptable.MaxHealth;
@@ -65,8 +73,20 @@ public class BattleManager : MonoBehaviour
         UpdateEnemyHealth();
 
         ResetAttackCounter();
+
+        if (CurrentBattlePhase != null)
+        {
+            Board.Instance.ClearBoard();
+        }
+
         //TODO: Trigger all battle start events such as artifact resolution
         ChangePhase(new WaitPhase());
+    }
+
+    public void StartBattleAgainstEnemy(string EnemyName)
+    {
+        EnemyScriptable enemyScriptable = Resources.Load<EnemyScriptable>($"Enemies/{EnemyName}");
+        StartBattleAgainstEnemy(enemyScriptable);
     }
 
     public void SetTotalAttack()
