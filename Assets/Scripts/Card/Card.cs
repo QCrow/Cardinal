@@ -117,6 +117,12 @@ public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitH
     {
         int playerGold = ShopManager.Instance.Gold;  // Get current player gold
 
+        if (isSold)
+        {
+            Debug.Log($"{Name} has already been sold.");
+            return;  // Exit if the card is already sold
+        }
+
         if (playerGold >= Price)
         {
             ShopManager.Instance.SpendGold(Price);  // Deduct gold
