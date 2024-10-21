@@ -33,19 +33,14 @@ public class ArrowButton : MonoBehaviour
 
     public void OnClick()
     {
-        if (GameManager.Instance.IsNavigating)
+        // TODO: Reduce coupling by using events
+        if (GameManager.Instance.CurrentGameState == GameState.Map)
         {
             Map.Instance.ApplyMovement(_direction, _index, _magnitude);
         }
-        if (GameManager.Instance.CurrentState is ControlState)
+        if (BattleManager.Instance.CurrentBattlePhase is ControlPhase phase)
         {
-            if (GameManager.Instance.RemainingMoveCount <= 0)
-            {
-                return;
-            }
-            ControlState controlState = (ControlState)GameManager.Instance.CurrentState;
-            controlState.ApplyMovement(_direction, _index, _magnitude);
-            GameManager.Instance.RemainingMoveCount--;
+            phase.ApplyMovement(_direction, _index, _magnitude);
         }
     }
 }

@@ -97,7 +97,7 @@ public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitH
     public void OnPointerEnter(PointerEventData eventData)
     {
         _descriptionContainer.SetActive(true);
-        _descriptionContainer.transform.SetParent(GameManager.Instance.FrontDisplay, true);
+        _descriptionContainer.transform.SetParent(UIManager.Instance.OverlayDisplay, true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -128,7 +128,7 @@ public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitH
             ShopManager.Instance.SpendGold(Price);  // Deduct gold
             Debug.Log($"Purchased {Name} for {Price} Gold.");
 
-            // Optionally: Add card to player¡¯s deck or inventory
+            // Optionally: Add card to playerï¿½ï¿½s deck or inventory
             CardManager.Instance.AddCard(ID);
 
             isSold = true;
@@ -189,7 +189,6 @@ public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitH
         Destroy(gameObject);
     }
 
-    //TODO: Implement this method
     public void TransformInto(int cardID)
     {
         CardManager.Instance.TransformCard(this, cardID);

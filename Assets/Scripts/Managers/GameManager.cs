@@ -1,14 +1,28 @@
 using UnityEngine;
-using UnityEngine.Events;
-using static UnityEditorInternal.VersionControl.ListControl;
+
+public enum GameState
+{
+    Map,
+    Battle,
+    Shop,
+    Event
+}
 
 public class GameManager : MonoBehaviour
 {
-    public UnityEvent<IGameState, IGameState> OnStateChanged = new();
-    public UnityEvent<int> OnHealthChanged = new();
-
-    #region Singleton
     public static GameManager Instance { get; private set; }
+
+    public bool CanMove
+    {
+        get => _canMove;
+        set
+        {
+            _canMove = value;
+            UIManager.Instance.SetArrowButtonsInteractable(_canMove);
+        }
+    }
+
+    private bool _canMove = false;
 
     private void Awake()
     {
@@ -22,116 +36,46 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    #endregion
-
-    #region Object References
-    public Transform FrontDisplay;
-    #endregion
 
     #region Game State
-    [SerializeField] private bool _isNavigating = false;
-    public bool IsNavigating => _isNavigating;
-
-    public IGameState CurrentState { get; private set; }
-
-    public void ChangeState(IGameState newState)
-    {
-        OnStateChanged.Invoke(CurrentState, newState);
-        CurrentState?.OnExit(this);
-
-        CurrentState = newState;
-
-        CurrentState?.OnEnter(this);
-    }
-
-    public void ChangeNavigationState(bool isNavigating)
-    {
-        _isNavigating = isNavigating;
-        if (_isNavigating)
-        {
-            UIManager.Instance.ShowNavigationUI();
-        }
-        else
-        {
-            UIManager.Instance.ShowBattleUI();
-            ChangeState(new WaitState());
-        }
-    }
-    #endregion
-
-    #region Game Logic
-    //TODO: update this!!
     public int CurrentLevel = 1;
-    [SerializeField] private int _maxHealth = 100;
-    public int MaxHealth => _maxHealth;
-    [SerializeField] private int _currHealth = 100;
-    public int CurrentHealth => _currHealth;
-    [SerializeField] private int _remainingMoveCount = 0;
-    public int RemainingMoveCount
+    private GameState _currentGameState;
+    public GameState CurrentGameState => _currentGameState;
+
+    public void ChangeGameState(GameState gameState)
     {
-        get => _remainingMoveCount;
-        set
+        _currentGameState = gameState;
+        switch (_currentGameState)
         {
-            _remainingMoveCount = value;
-            UIManager.Instance.UpdateMoveCounter(_remainingMoveCount);
+            case GameState.Map:
+                CanMove = true;
+                UIManager.Instance.MapPanel.SetActive(true);
+                UIManager.Instance.BattlePanel.SetActive(false);
+                UIManager.Instance.ShopPanel.SetActive(false);
+                break;
+            case GameState.Battle:
+                CanMove = false;
+                UIManager.Instance.MapPanel.SetActive(false);
+                UIManager.Instance.BattlePanel.SetActive(true);
+                UIManager.Instance.ShopPanel.SetActive(false);
+                break;
+            case GameState.Shop:
+                CanMove = false;
+                UIManager.Instance.MapPanel.SetActive(false);
+                UIManager.Instance.BattlePanel.SetActive(false);
+                UIManager.Instance.ShopPanel.SetActive(true);
+                break;
+            case GameState.Event:
+                break;
         }
     }
-    public int MovePerTurn = 3;
-
-    [SerializeField] private int _maxDeployCount = 2;
-    public int MaxDeployCount => _maxDeployCount;
-    public int RemainingDeployCount;
-
-    public void DecrementDeployCount()
-    {
-        if (RemainingDeployCount > 0)
-        {
-            RemainingDeployCount--;
-        }
-    }
-
-    public void ResetDeployCount()
-    {
-        RemainingDeployCount = _maxDeployCount;
-    }
-
-    public bool CanDeploy() => RemainingDeployCount > 0;
-
-    [SerializeField] private int _maxAttacks = 5;
-    public int MaxAttacks => _maxAttacks;
-    public int _remainingAttacks;
-    public void ResetAttackCounter()
-    {
-        _remainingAttacks = _maxAttacks;
-    }
-
-    public void DecrementAttackCounter()
-    {
-        _remainingAttacks--;
-        UIManager.Instance?.UpdateAttackCounter(_remainingAttacks);
-    }
-
-    public void InflictDamage(int damage)
-    {
-        _currHealth -= damage;
-        OnHealthChanged.Invoke(_currHealth);
-    }
-
-    public int GetRemainingAttacks() => _remainingAttacks;
     #endregion
 
     #region Game Loop
     private void Start()
     {
-        // Initialize the board and start the game
         CardManager.Instance.InitializeDeck();
-        
-        // Initialize the boss HP
-        _currHealth = _maxHealth;
-        ResetAttackCounter();  // Initialize the attack counter
-        ResetDeployCount();  // Reset the deploy counter
-
-        ChangeNavigationState(false);
+        ChangeGameState(GameState.Battle);
     }
     #endregion
 
@@ -139,7 +83,6 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            ChangeNavigationState(!_isNavigating);
         }
     }
 }

@@ -4,7 +4,6 @@ using Newtonsoft.Json;
 using UnityEditor;
 using System.IO;
 using System.Collections.Generic;
-using System.Drawing.Text;
 
 [CreateAssetMenu(fileName = "Card", menuName = "ScriptableObjects/Card", order = 1)]
 public class CardScriptable : SerializedScriptableObject

@@ -28,6 +28,7 @@ public class CardManager : SerializedMonoBehaviour
 
     private readonly System.Random _random = new();
     [SerializeField] private Dictionary<int, int> _startingDeck = new();
+    [SerializeField]
     private List<Card> _deck = new();
     private List<Card> _availableCards = new();
     public Transform Graveyard;
@@ -247,6 +248,7 @@ public class CardManager : SerializedMonoBehaviour
         return groupedDeck;
     }
 
+    //TODO: Implement this method
     public void TransformCard(Card card, int cardID)
     {
         throw new NotImplementedException();
