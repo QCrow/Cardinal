@@ -38,6 +38,7 @@ public class GameManager : MonoBehaviour
     }
 
     #region Game State
+    public int CurrentLevel = 1;
     private GameState _currentGameState;
     public GameState CurrentGameState => _currentGameState;
 
