@@ -1,5 +1,3 @@
-using UnityEngine;
-using System.Linq;
 using System.Collections.Generic;
 
 public abstract class ConditionalEffect
@@ -79,7 +77,7 @@ public class TargetWithFilterCondition : ConditionalEffect
 
     public override void ApplyEffect()
     {
-        List<Card> targets = TargetField.GetAvailableTargets(Card);
+        List<Card> targets = TargetField.GetAvailableCardTargets(Card);
         switch (_check)
         {
             case CheckType.Exists:
@@ -105,7 +103,7 @@ public class TargetWithFilterCondition : ConditionalEffect
 
     public override void RevertEffect()
     {
-        List<Card> targets = TargetField.GetAvailableTargets(Card);
+        List<Card> targets = TargetField.GetAvailableCardTargets(Card);
         switch (_check)
         {
             case CheckType.Exists:

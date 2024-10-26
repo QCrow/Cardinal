@@ -3,15 +3,14 @@ using UnityEngine;
 using TMPro;
 using Sirenix.OdinInspector;
 
-public class ShopManager : MonoBehaviour
+public class ShopManager : SerializedMonoBehaviour
 {
     // Singleton instance
     public static ShopManager Instance { get; private set; }
     public int Gold = 100;
-    [SerializeField] private GameObject shopCanvas;  // Canvas to toggle
     [SerializeField] private GameObject shopItemsContainer; // GridLayoutGroup container
     [SerializeField] private TMP_Text playerGoldText;        // UI to display player's gold
-    [ShowInInspector, SerializeField]
+
     public Dictionary<RarityType, int> rarityPrices = new()  // Rarity prices stored here
     {
         { RarityType.Common, 10 },
@@ -20,8 +19,7 @@ public class ShopManager : MonoBehaviour
         { RarityType.Mythic, 100 }
     };
 
-    [SerializeField, ShowInInspector]
-    private Dictionary<int, Dictionary<RarityType, int>> _shopItemsLevelRarityWeights = new()
+    public Dictionary<int, Dictionary<RarityType, int>> _shopItemsLevelRarityWeights = new()
     {
         { 1, new Dictionary<RarityType, int>
             {
@@ -78,11 +76,6 @@ public class ShopManager : MonoBehaviour
             Destroy(gameObject);  // Destroy duplicate instances
             return;
         }
-    }
-
-    private void Start()
-    {
-        shopCanvas.SetActive(false);  // Ensure the shop is hidden by default
     }
 
     private void SetupShop(int level)
@@ -152,16 +145,10 @@ public class ShopManager : MonoBehaviour
     }
 
     //Open or close the shop canvas
-    public void ToggleShopCanvas()
+    public void InitializeShop()
     {
         UpdatePlayerGoldUI();
-        bool isActive = shopCanvas.activeSelf;
-        shopCanvas.SetActive(!isActive);
 
-        // If the shop canvas is now active, setup the shop
-        if (shopCanvas.activeSelf)
-        {
-            SetupShop(GameManager.Instance.CurrentLevel);
-        }
+        SetupShop(GameManager.Instance.CurrentLevel);
     }
 }

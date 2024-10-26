@@ -31,7 +31,7 @@ public class EffectValue
     {
         return VariableType switch
         {
-            VariableType.Target => Target.GetAvailableTargets(card).Count,
+            VariableType.Target => Target.GetAvailableCardTargets(card).Count,
             _ => 0
         };
     }

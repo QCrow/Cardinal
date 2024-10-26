@@ -11,7 +11,6 @@ public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitH
     public RarityType Rarity;
     public string Name;
     public int Price;
-    public HashSet<TraitType> Traits;
     public TMPro.TMP_Text _amountInDeck;
     public int BaseAttack;
     public bool isSold = false;
@@ -21,12 +20,12 @@ public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     #region Card Runtime State
     public Slot Slot = null;
-    [SerializeField] private Dictionary<ModifierType, int> _permanentModifiers = new();
+    [SerializeField] private Dictionary<CardModifierType, int> _permanentModifiers = new();
 
-    [SerializeField] private Dictionary<ModifierType, int> _temporaryModifiers = new();
+    [SerializeField] private Dictionary<CardModifierType, int> _temporaryModifiers = new();
 
     // The total attack of the card, including base attack, temporary damage, and modifiers
-    public int TotalAttack => Math.Max(0, BaseAttack + GetModifierByType(ModifierType.Strength) - GetModifierByType(ModifierType.Weakness));
+    public int TotalAttack => Math.Max(0, BaseAttack + GetModifierByType(CardModifierType.Strength) - GetModifierByType(CardModifierType.Weakness));
     #endregion
 
     #region Game Object References
@@ -45,7 +44,6 @@ public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitH
         ID = cardScriptable.ID;
         Rarity = cardScriptable.Rarity;
         Name = cardScriptable.Name;
-        Traits = cardScriptable.Traits;
         BaseAttack = cardScriptable.BaseAttack;
         ConditionalEffects = conditionalEffects;
 
@@ -128,8 +126,8 @@ public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitH
             ShopManager.Instance.SpendGold(Price);  // Deduct gold
             Debug.Log($"Purchased {Name} for {Price} Gold.");
 
-            // Optionally: Add card to player��s deck or inventory
-            CardManager.Instance.AddCard(ID);
+            // Optionally: Add card to player's deck or inventory
+            CardManager.Instance.AddCardPermanently(ID);
 
             isSold = true;
             SoldLabel.gameObject.SetActive(true);
@@ -185,13 +183,13 @@ public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitH
     public void Destroy()
     {
         UnbindFromSlot();
-        CardManager.Instance.RemoveCard(this);
+        CardManager.Instance.RemoveCardPermanently(this);
         Destroy(gameObject);
     }
 
-    public void TransformInto(int cardID)
+    public void TransformTemporarilyInto(int cardID)
     {
-        CardManager.Instance.TransformCard(this, cardID);
+        CardManager.Instance.TransformCardTemporarily(this, cardID);
     }
 
     public void ResetTemporaryState()
@@ -199,7 +197,7 @@ public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitH
         _temporaryModifiers.Clear();
     }
 
-    public void AddModifier(ModifierType type, int amount, bool isPermanent)
+    public void AddModifier(CardModifierType type, int amount, bool isPermanent)
     {
         if (isPermanent)
         {
@@ -225,7 +223,7 @@ public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitH
         }
     }
 
-    public void RemoveModifier(ModifierType type, int amount, bool isPermanent)
+    public void RemoveModifier(CardModifierType type, int amount, bool isPermanent)
     {
         if (isPermanent)
         {
@@ -265,7 +263,7 @@ public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitH
     /// <returns>
     /// The total modifier value of the specified type, 0 if no modifier of that type exists
     /// </returns>
-    public int GetModifierByType(ModifierType type)
+    public int GetModifierByType(CardModifierType type)
     {
         return (_permanentModifiers.TryGetValue(type, out int value) ? value : 0) + (_temporaryModifiers.TryGetValue(type, out value) ? value : 0);
     }

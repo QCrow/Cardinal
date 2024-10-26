@@ -44,7 +44,14 @@ public static class CardFactory
             switch (serializedEffect.Keyword)
             {
                 case EffectType.Apply:
-                    effect = new AddModifierEffect(card, serializedEffect.Modifier, serializedEffect.Value, serializedEffect.IsTargeted, serializedEffect.Target);
+                    if (serializedEffect.ApplyOption == SerializableEffect.ApplyOptions.ToCard)
+                    {
+                        effect = new AddCardModifierEffect(card, serializedEffect.CardModifier, serializedEffect.Value, serializedEffect.IsTargeted, serializedEffect.Target);
+                    }
+                    else
+                    {
+                        effect = new AddSlotModifierEffect(card, serializedEffect.SlotModifier, serializedEffect.Value, serializedEffect.IsTargeted, serializedEffect.Target);
+                    }
                     break;
                 case EffectType.Destroy:
                     effect = new DestroyEffect(card, serializedEffect.IsTargeted, serializedEffect.Target);

@@ -70,19 +70,4 @@ public class GameManager : MonoBehaviour
         }
     }
     #endregion
-
-    #region Game Loop
-    private void Start()
-    {
-        CardManager.Instance.InitializeDeck();
-        ChangeGameState(GameState.Battle);
-    }
-    #endregion
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-        }
-    }
 }

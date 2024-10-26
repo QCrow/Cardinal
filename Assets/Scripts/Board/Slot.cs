@@ -23,8 +23,17 @@ public class Slot : SerializedMonoBehaviour
     [SerializeField] private Card _card;
     public Card Card { get => _card; set => _card = value; }
 
+    private Dictionary<SlotModifierType, int> _permanentModifiers = new();
+    private Dictionary<SlotModifierType, int> _temporaryModifiers = new();
+
     public bool IsPosition(PositionType position)
     {
+        // Mobilization modifier allows the slot to be considered as any position
+        if (GetModifierByType(SlotModifierType.Mobilization) > 0)
+        {
+            return true;
+        }
+
         return position switch
         {
             PositionType.Front => Col == 0,
@@ -34,4 +43,64 @@ public class Slot : SerializedMonoBehaviour
             _ => false,
         };
     }
+
+    #region Modifiers
+    public void AddModifier(SlotModifierType type, int amount, bool isPermanent)
+    {
+        if (isPermanent)
+        {
+            if (!_permanentModifiers.ContainsKey(type))
+            {
+                _permanentModifiers[type] = amount;
+            }
+            else
+            {
+                _permanentModifiers[type] += amount;
+            }
+        }
+        else
+        {
+            if (!_temporaryModifiers.ContainsKey(type))
+            {
+                _temporaryModifiers[type] = amount;
+            }
+            else
+            {
+                _temporaryModifiers[type] += amount;
+            }
+        }
+    }
+
+    public void RemoveModifier(SlotModifierType type, int amount, bool isPermanent)
+    {
+        if (isPermanent)
+        {
+            if (_permanentModifiers.ContainsKey(type))
+            {
+                _permanentModifiers[type] -= amount;
+                if (_permanentModifiers[type] <= 0)
+                {
+                    _permanentModifiers.Remove(type);
+                }
+            }
+        }
+        else
+        {
+            if (_temporaryModifiers.ContainsKey(type))
+            {
+                _temporaryModifiers[type] -= amount;
+                if (_temporaryModifiers[type] <= 0)
+                {
+                    _temporaryModifiers.Remove(type);
+                }
+            }
+        }
+    }
+
+    public int GetModifierByType(SlotModifierType type)
+    {
+        return (_permanentModifiers.TryGetValue(type, out int permanentValue) ? permanentValue : 0) +
+               (_temporaryModifiers.TryGetValue(type, out int temporaryValue) ? temporaryValue : 0);
+    }
+    #endregion
 }
