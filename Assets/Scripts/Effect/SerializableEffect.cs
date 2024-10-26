@@ -6,9 +6,22 @@ public class SerializableEffect
 {
     public EffectType Keyword;
 
+    public enum ApplyOptions
+    {
+        ToCard,
+        ToSlot
+    }
+
     [ShowIf(nameof(IsKeywordApply))]
+    public ApplyOptions ApplyOption;
+
+    [ShowIf(nameof(IsKeywordApplyAndToCard))]
     [Tooltip("Type of the applied modifier.")]
-    public ModifierType Modifier;
+    public CardModifierType CardModifier;
+
+    [ShowIf(nameof(IsKeywordApplyAndToSlot))]
+    [Tooltip("Type of the applied modifier.")]
+    public SlotModifierType SlotModifier;
 
     [ShowIf(nameof(IsKeywordAddCard))]
     [Tooltip("The ID of the card to add.")]
@@ -30,6 +43,16 @@ public class SerializableEffect
     private bool IsKeywordApply()
     {
         return Keyword == EffectType.Apply;
+    }
+
+    private bool IsKeywordApplyAndToCard()
+    {
+        return Keyword == EffectType.Apply && ApplyOption == ApplyOptions.ToCard;
+    }
+
+    private bool IsKeywordApplyAndToSlot()
+    {
+        return Keyword == EffectType.Apply && ApplyOption == ApplyOptions.ToSlot;
     }
 
     private bool IsKeywordApplyOrTempDamageUpOrAddCard()

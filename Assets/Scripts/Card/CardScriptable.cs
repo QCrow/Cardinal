@@ -18,7 +18,6 @@ public class CardScriptable : SerializedScriptableObject
 
     public string Name;
     public RarityType Rarity;
-    public HashSet<TraitType> Traits = new();
 
     public int BaseAttack;
 

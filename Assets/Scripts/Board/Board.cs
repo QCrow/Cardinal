@@ -281,6 +281,7 @@ public class Board : MonoBehaviour
             if (card != null && newSlot != null)
             {
                 card.BindToSlot(newSlot);  // Bind to the new slot
+                card.ApplyEffect(TriggerType.OnMove);
             }
         }
     }
@@ -310,6 +311,7 @@ public class Board : MonoBehaviour
             if (card != null && newSlot != null)
             {
                 card.BindToSlot(newSlot);  // Bind to the new slot
+                card.ApplyEffect(TriggerType.OnMove);
             }
         }
     }
@@ -345,6 +347,10 @@ public class Board : MonoBehaviour
                 if (card != null && newSlot != null)
                 {
                     card.BindToSlot(newSlot);  // Bind to the new slot
+                    if (row != 1 || col != 1)
+                    {
+                        card.ApplyEffect(TriggerType.OnMove); // Apply OnMove effect for all cards except the center card
+                    }
                 }
             }
         }
@@ -381,6 +387,10 @@ public class Board : MonoBehaviour
                 if (card != null && newSlot != null)
                 {
                     card.BindToSlot(newSlot);  // Bind to the new slot
+                    if (row != 1 || col != 1)
+                    {
+                        card.ApplyEffect(TriggerType.OnMove); // Apply OnMove effect for all cards except the center card
+                    }
                 }
             }
         }

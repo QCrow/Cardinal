@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Sirenix.OdinInspector;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class CardManager : SerializedMonoBehaviour
 {
     #region Singleton
+
     private static CardManager _instance;
     public static CardManager Instance => _instance;
 
@@ -17,23 +19,28 @@ public class CardManager : SerializedMonoBehaviour
         {
             _instance = this;
             LoadCards();
-            DontDestroyOnLoad(gameObject);  // Persist across scenes
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
             Destroy(gameObject);
         }
     }
+
     #endregion
 
+    #region Fields
+
     private readonly System.Random _random = new();
+    [SerializeField] private GameObject _cardPrefab;
+
     [SerializeField] private Dictionary<int, int> _startingDeck = new();
-    [SerializeField]
-    private List<Card> _deck = new();
+
+    [SerializeField] private List<Card> _permanentDeck = new();
+    private List<Card> _temporaryDeck = new();
     private List<Card> _availableCards = new();
     public Transform Graveyard;
 
-    // Define a shared dictionary of rarity weights for all levels
     [SerializeField, ShowInInspector]
     private Dictionary<RarityType, int> _sharedRarityWeights = new()
     {
@@ -48,45 +55,9 @@ public class CardManager : SerializedMonoBehaviour
 
     private Dictionary<RarityType, List<int>> _rarityCards = new();
 
-    public Dictionary<RarityType, List<int>> GetRarityCards() { return _rarityCards; }
+    #endregion
 
-    //if we want same rarity weights across different levels
-    private void InitializeDefaultRewardLevelRarityWeights(int maxLevel)
-    {
-        for (int level = 1; level <= maxLevel; level++)
-        {
-            _rewardLevelRarityWeights[level] = _sharedRarityWeights;
-        }
-    }
-
-    public List<Reward> GenerateRewardChoices()
-    {
-        InitializeDefaultRewardLevelRarityWeights(5);
-        // Generate 3 reward card IDs using the utility method
-        List<int> rewardCardIDs = RandomRarityUtil.GenerateCardIDsByRarity(
-            _rarityCards,              // Available cards grouped by rarity
-            _rewardLevelRarityWeights,       // Rarity weights per level
-            GameManager.Instance.CurrentLevel,                     // Current game level
-            3,                         // Number of reward cards to generate
-            false                      // No duplicate rewards allowed
-        );
-
-        
-        // Create Reward objects from the generated card IDs
-        List<Reward> rewards = new();
-        foreach (int cardID in rewardCardIDs)
-        {
-            CardScriptable cardScriptable = GetCardScriptableByID(cardID);
-            if (cardScriptable != null)
-            {
-                rewards.Add(new Reward(cardID, cardScriptable.Name, cardScriptable.Description));
-            }
-        }
-
-        return rewards;
-    }
-
-
+    #region Initialization
 
     private void LoadCards()
     {
@@ -96,79 +67,139 @@ public class CardManager : SerializedMonoBehaviour
         {
             if (!_rarityCards.ContainsKey(card.Rarity))
             {
-                _rarityCards.Add(card.Rarity, new List<int>());
+                _rarityCards[card.Rarity] = new List<int>();
             }
-
             _rarityCards[card.Rarity].Add(card.ID);
         }
-    }
 
-    [SerializeField] private GameObject _cardPrefab;
-
-    private void LogDeck()
-    {
-        string deck = "Deck: ";
-        foreach (Card card in _deck)
-        {
-            deck += card.ID + " ";
-        }
-        Debug.Log(deck);
-    }
-
-    public void InitializeDeck()
-    {
-        foreach (KeyValuePair<int, int> card in _startingDeck)
+        foreach (var card in _startingDeck)
         {
             for (int i = 0; i < card.Value; i++)
             {
-                Card cardInstance = InstantiateCard(card.Key);
-                _deck.Add(cardInstance);
+                _permanentDeck.Add(InstantiateCard(card.Key));
             }
         }
+    }
+
+    private void InitializeDefaultRewardLevelRarityWeights(int maxLevel)
+    {
+        for (int level = 1; level <= maxLevel; level++)
+        {
+            _rewardLevelRarityWeights[level] = _sharedRarityWeights;
+        }
+    }
+
+    public void ResetDecks()
+    {
+        _temporaryDeck.Clear();
+        _availableCards.Clear();
+
+        _temporaryDeck.AddRange(_permanentDeck);
+        Reshuffle();
+    }
+    #endregion
+
+    #region Deck Operations
+    public void AddCardPermanently(int cardID)
+    {
+        Card card = InstantiateCard(cardID);
+        _permanentDeck.Add(card);
+    }
+
+    public void RemoveCardPermanently(Card card)
+    {
+        _permanentDeck.Remove(card);
     }
 
     public void Reshuffle()
     {
-
         _availableCards.Clear();
-        _availableCards.AddRange(_deck);
+        _availableCards.AddRange(_temporaryDeck);
 
         for (int i = _availableCards.Count - 1; i > 0; i--)
         {
             int j = _random.Next(0, i + 1);
-            (_availableCards[j], _availableCards[i]) = (_availableCards[i], _availableCards[j]);
+            (_availableCards[i], _availableCards[j]) = (_availableCards[j], _availableCards[i]);
         }
     }
 
     public Card DrawCard()
     {
-        if (_availableCards.Count == 0)
-        {
-            return null;
-        }
+        if (_availableCards.Count == 0) return null;
 
         Card card = _availableCards[0];
         _availableCards.RemoveAt(0);
-
         return card;
     }
 
-    public void AddCard(int cardID)
+    public Dictionary<int, int> GetGroupedDeck()
+    {
+        return _permanentDeck
+            .GroupBy(card => card.ID)
+            .ToDictionary(g => g.Key, g => g.Count());
+    }
+
+    public int InstantiateDeckToParent(Transform parent)
+    {
+        var groupedDeck = GetGroupedDeck();
+        foreach (var kvp in groupedDeck)
+        {
+            var newCard = InstantiateCard(kvp.Key, parent);
+            newCard.DisableCycleContainer();
+
+            if (newCard._amountInDeck != null)
+            {
+                newCard._amountInDeck.text = kvp.Value.ToString();
+            }
+        }
+        return groupedDeck.Count;
+    }
+
+    #endregion
+
+    #region Reward Generation
+
+    public List<Reward> GenerateRewardChoices()
+    {
+        InitializeDefaultRewardLevelRarityWeights(5);
+
+        List<int> rewardCardIDs = RandomRarityUtil.GenerateCardIDsByRarity(
+            _rarityCards,
+            _rewardLevelRarityWeights,
+            GameManager.Instance.CurrentLevel,
+            3,
+            false
+        );
+
+        return rewardCardIDs
+            .Select(cardID => GetCardScriptableByID(cardID))
+            .Where(cardScriptable => cardScriptable != null)
+            .Select(cs => new Reward(cs.ID, cs.Name, cs.Description))
+            .ToList();
+    }
+
+    #endregion
+
+    #region Card Instantiation
+
+    public Card InstantiateCard(int cardID)
+    {
+        CardScriptable scriptable = GetCardScriptableByID(cardID);
+        if (scriptable == null)
+        {
+            Debug.LogError($"Card with ID {cardID} not found.");
+            return null;
+        }
+
+        var cardObject = Instantiate(_cardPrefab, Graveyard);
+        return CardFactory.CreateCard(cardObject, scriptable);
+    }
+
+    public Card InstantiateCard(int cardID, Transform parent)
     {
         Card card = InstantiateCard(cardID);
-        _deck.Add(card);
-        _availableCards.Add(card);
-    }
-
-    public void RemoveCard(Card card)
-    {
-        _deck.Remove(card);
-        _availableCards.Remove(card);
-    }
-
-    public void ClearDeck()
-    {
-        _deck.Clear();
+        if (card != null) card.transform.SetParent(parent, false);
+        return card;
     }
 
     public CardScriptable GetCardScriptableByID(int cardID)
@@ -176,81 +207,31 @@ public class CardManager : SerializedMonoBehaviour
         return Resources.Load<CardScriptable>($"Cards/Card_{cardID}");
     }
 
-    public Card InstantiateCard(int cardID)
+    #endregion
+
+    #region TODO
+
+    public void TransformCardTemporarily(Card card, int cardID)
     {
-        CardScriptable scriptable = GetCardScriptableByID(cardID);
-        if (scriptable == null)
+        Transform parent = card.transform.parent;
+        Card newCard = InstantiateCard(cardID, parent);
+
+        if (card.Slot != null)
         {
-            UnityEngine.Debug.LogError($"Card with ID {cardID} not found.");
-            return null;
+            Slot slot = card.Slot;
+            card.UnbindFromSlot();
+            newCard.BindToSlot(slot);
         }
 
-        GameObject cardObject = Instantiate(_cardPrefab, Graveyard);
-        Card card = CardFactory.CreateCard(cardObject, scriptable);
-
-        return card;
+        _temporaryDeck.Add(newCard);
+        _temporaryDeck.Remove(card);
     }
 
-    public Card InstantiateCard(int cardID, Transform parent)
-    {
-        Card card = InstantiateCard(cardID);
-        card.transform.SetParent(parent, false);
+    #endregion
 
-        return card;
-    }
+    #region Accessors
 
+    public Dictionary<RarityType, List<int>> GetRarityCards() => _rarityCards;
 
-    public int InstantiateDeckToParent(Transform parent)
-    {
-        // Get the grouped deck (one entry per unique card ID with its count)
-        Dictionary<int, int> groupedDeck = GetGroupedDeck();
-
-        // Iterate through the grouped deck to instantiate cards
-        foreach (var kvp in groupedDeck)
-        {
-            int cardID = kvp.Key;
-            int quantity = kvp.Value;
-
-            // Instantiate a single card for each unique card ID
-            Card newCard = InstantiateCard(cardID, parent);
-
-            // Disable cycling if applicable
-            newCard.DisableCycleContainer();
-
-            // Find the TMP_Text for amount on the card and set the quantity
-            var amountText = newCard._amountInDeck;
-            if (amountText != null)
-            {
-                amountText.text = quantity.ToString();
-            }
-        }
-
-        // Return the total number of unique cards (number of keys in the dictionary)
-        return groupedDeck.Count;
-    }
-
-    public Dictionary<int, int> GetGroupedDeck()
-    {
-        Dictionary<int, int> groupedDeck = new();
-
-        foreach (var card in _deck)
-        {
-            if (groupedDeck.ContainsKey(card.ID))
-            {
-                groupedDeck[card.ID]++;
-            }
-            else
-            {
-                groupedDeck[card.ID] = 1;
-            }
-        }
-
-        return groupedDeck;
-    }
-
-    //TODO: Implement this method
-    public void TransformCard(Card card, int cardID)
-    {
-        throw new NotImplementedException();
-    }
+    #endregion
 }

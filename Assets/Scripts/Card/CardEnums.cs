@@ -1,5 +1,6 @@
 public enum RarityType
 {
+    Starter,
     Common,
     Rare,
     Epic,

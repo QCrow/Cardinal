@@ -20,8 +20,6 @@ public class Filter
     public int ID;
     [ShowIf("Type", FilterType.Name)]
     public string Name;
-    [ShowIf("Type", FilterType.Trait)]
-    public TraitType Trait;
     [ShowIf("Type", FilterType.Rarity)]
     public RarityType Rarity;
 
@@ -31,12 +29,6 @@ public class Filter
         {
             FilterType.ID => card.ID == ID,
             FilterType.Name => card.Name == Name,
-            FilterType.Trait => Trait switch
-            {
-                TraitType.All => true,
-                TraitType.None => false,
-                _ => card.Traits.Contains(Trait),
-            },
             FilterType.Rarity => card.Rarity == Rarity,
             _ => false,
         };

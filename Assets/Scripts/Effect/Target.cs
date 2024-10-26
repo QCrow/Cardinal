@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 public enum TargetRangeType
 {
@@ -38,7 +39,7 @@ public class Target
         return slots.ConvertAll(slot => slot.Card).Where(card => card != null).ToList();
     }
 
-    public List<Card> GetAvailableTargets(Card src)
+    public List<Card> GetAvailableCardTargets(Card src)
     {
         List<Card> targets = new();
         List<Slot> slots = new();
@@ -76,5 +77,37 @@ public class Target
         }
 
         return targets;
+    }
+
+    public List<Slot> GetAvailableSlotTargets(Card src)
+    {
+        List<Slot> slots = new();
+        switch (TargetRange)
+        {
+            case TargetRangeType.Adjacent:
+                slots = src.Slot.Neighbors;
+                break;
+            case TargetRangeType.Row:
+                slots = Board.Instance.GetRow(src.Slot.Row);
+                break;
+            case TargetRangeType.Column:
+                slots = Board.Instance.GetColumn(src.Slot.Col);
+                break;
+            case TargetRangeType.Front:
+                slots = Board.Instance.GetColumn(0);
+                break;
+            case TargetRangeType.Middle:
+                slots = Board.Instance.GetColumn(1);
+                break;
+            case TargetRangeType.Back:
+                slots = Board.Instance.GetColumn(2);
+                break;
+            case TargetRangeType.Center:
+                slots = Board.Instance.GetRow(1).FindAll(slot => slot.Col == 1);
+                break;
+            default:
+                break;
+        }
+        return slots;
     }
 }

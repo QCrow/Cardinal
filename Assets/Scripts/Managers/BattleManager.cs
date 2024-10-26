@@ -79,6 +79,8 @@ public class BattleManager : MonoBehaviour
             Board.Instance.ClearBoard();
         }
 
+        CardManager.Instance.ResetDecks();
+
         //TODO: Trigger all battle start events such as artifact resolution
         ChangePhase(new WaitPhase());
     }
@@ -91,7 +93,7 @@ public class BattleManager : MonoBehaviour
 
     public void SetTotalAttack()
     {
-        int totalAttack = Board.Instance.DeployedCards.Sum(card => card.TotalAttack);
+        int totalAttack = Board.Instance.DeployedCards.Where(card => card != null).Sum(card => card.TotalAttack);
         _totalAttackText.text = $"{totalAttack}";
     }
 
@@ -146,6 +148,7 @@ public class BattleManager : MonoBehaviour
             GameManager.Instance.CanMove = false;
         }
         UpdateMoveCounterDisplay();
+        SetTotalAttack();
     }
 
     public void OnDeployButtonPressed()
@@ -184,12 +187,17 @@ public class BattleManager : MonoBehaviour
     {
         Board.Instance.RestoreFromSnapshot();
         ResetMoveCounter();
+
+        ApplyWhileInPlayEffects();
+        Board.Instance.DeployedCards.ForEach(card => card.UpdateAttackValue());
+        SetTotalAttack();
     }
 
     private void Deploy()
     {
         Board.Instance.ClearBoard();
         CardManager.Instance.Reshuffle();
+        ResetMoveCounter();
 
         List<Card> _cards = new();
 
@@ -212,6 +220,10 @@ public class BattleManager : MonoBehaviour
         }
         Board.Instance.DeployedCards = _cards;
         Board.Instance.SaveSnapshot();
+
+        ApplyWhileInPlayEffects();
+        Board.Instance.DeployedCards.ForEach(card => card.UpdateAttackValue());
+        SetTotalAttack();
     }
 
     private void UpdateRedeployCounterDisplay()
@@ -240,7 +252,7 @@ public class BattleManager : MonoBehaviour
             card.ApplyEffect(TriggerType.OnAttack);
 
             // Strike count is the number of times the card will attack, determined by the MultiStrike modifier
-            int strikeCount = card.GetModifierByType(ModifierType.MultiStrike) > 0 ? card.GetModifierByType(ModifierType.MultiStrike) : 1;
+            int strikeCount = card.GetModifierByType(CardModifierType.MultiStrike) > 0 ? card.GetModifierByType(CardModifierType.MultiStrike) : 1;
             for (int i = 0; i < strikeCount; i++) InflictDamage(card.TotalAttack);
         });
 
@@ -255,5 +267,50 @@ public class BattleManager : MonoBehaviour
     private void UpdateEnemyHealth()
     {
         _healthBar.SetHealth(EnemyCurrentHealth, EnemyMaxHealth);
+    }
+
+    public void ApplyWhileInPlayEffects()
+    {
+        foreach (Card card in Board.Instance.DeployedCards)
+        {
+            card.ApplyEffect(TriggerType.PrioWhileInPlay);
+        }
+
+        foreach (Card card in Board.Instance.DeployedCards)
+        {
+            card.ApplyEffect(TriggerType.WhileInPlay);
+        }
+
+        Board.Instance.DeployedCards.ForEach(card => card.UpdateAttackValue());
+    }
+
+    public void RevertWhileInPlayEffects()
+    {
+        foreach (Card card in Board.Instance.DeployedCards)
+        {
+            card.RevertEffect(TriggerType.WhileInPlay);
+        }
+
+        foreach (Card card in Board.Instance.DeployedCards)
+        {
+            card.RevertEffect(TriggerType.PrioWhileInPlay);
+        }
+    }
+
+    public void RecalculateWhileInPlayEffects()
+    {
+        foreach (Card card in Board.Instance.DeployedCards)
+        {
+            card.RevertEffect(TriggerType.WhileInPlay);
+            card.ApplyEffect(TriggerType.WhileInPlay);
+            card.UpdateAttackValue();
+        }
+    }
+
+    public void RecalculateCardWhileInPlayEffects(Card card)
+    {
+        card.RevertEffect(TriggerType.WhileInPlay);
+        card.ApplyEffect(TriggerType.WhileInPlay);
+        card.UpdateAttackValue();
     }
 }

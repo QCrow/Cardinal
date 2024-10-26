@@ -1,10 +1,14 @@
+using Sirenix.OdinInspector.Editor;
+
 public enum TriggerType
 {
     None, // Only used for default value
     OnDeploy,
+    PrioWhileInPlay,
     WhileInPlay,
     OnAttack,
-    OnDeath
+    OnDeath,
+    OnMove
 }
 
 public enum EffectType
@@ -16,12 +20,18 @@ public enum EffectType
     Transform
 }
 
-public enum ModifierType
+public enum CardModifierType
 {
     None, // Only used for default value
     Strength,
     Weakness,
     MultiStrike
+}
+
+public enum SlotModifierType
+{
+    None, // Only used for default value
+    Mobilization
 }
 
 public enum PositionType
