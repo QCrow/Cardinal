@@ -227,6 +227,7 @@ public class Board : MonoBehaviour
                     slot.Card.ResetTemporaryState();
                     slot.Card.UnbindFromSlot();
                 }
+                slot.ResetTemporaryState();
             }
         }
     }
@@ -432,6 +433,9 @@ public class Board : MonoBehaviour
                 }
             }
         }
+
+        _deployedCards.ForEach(card => card.ResetTemporaryState());
+        _slots.ForEach(row => row.ForEach(slot => slot.ResetTemporaryState()));
     }
     #endregion
 

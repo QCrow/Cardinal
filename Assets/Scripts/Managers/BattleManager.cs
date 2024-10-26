@@ -188,6 +188,7 @@ public class BattleManager : MonoBehaviour
         Board.Instance.RestoreFromSnapshot();
         ResetMoveCounter();
 
+
         ApplyWhileInPlayEffects();
         Board.Instance.DeployedCards.ForEach(card => card.UpdateAttackValue());
         SetTotalAttack();
