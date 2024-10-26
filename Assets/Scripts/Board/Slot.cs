@@ -23,8 +23,8 @@ public class Slot : SerializedMonoBehaviour
     [SerializeField] private Card _card;
     public Card Card { get => _card; set => _card = value; }
 
-    private Dictionary<SlotModifierType, int> _permanentModifiers = new();
-    private Dictionary<SlotModifierType, int> _temporaryModifiers = new();
+    [SerializeField] private Dictionary<SlotModifierType, int> _permanentModifiers = new();
+    [SerializeField] private Dictionary<SlotModifierType, int> _temporaryModifiers = new();
 
     public bool IsPosition(PositionType position)
     {
@@ -101,6 +101,11 @@ public class Slot : SerializedMonoBehaviour
     {
         return (_permanentModifiers.TryGetValue(type, out int permanentValue) ? permanentValue : 0) +
                (_temporaryModifiers.TryGetValue(type, out int temporaryValue) ? temporaryValue : 0);
+    }
+
+    public void ResetTemporaryState()
+    {
+        _temporaryModifiers.Clear();
     }
     #endregion
 }

@@ -24,11 +24,11 @@ MonoBehaviour:
   ID: 103
   Name: Quick Blader
   Rarity: 0
-  BaseAttack: 6
-  Description: 'On move:  I gain 1 TEMP STR.'
+  BaseAttack: 4
+  Description: 'On move:  I gain 2 TEMP STR.'
   HasEffect: 1
   Conditions:
-  - Trigger: 3
+  - Trigger: 6
     Condition: 1
     CycleCount: 1
     Position: 3
@@ -58,7 +58,7 @@ MonoBehaviour:
             ID: 0
             Name: 
             Rarity: 0
-        BaseValue: 1
+        BaseValue: 2
       IsTargeted: 0
       Target:
         TargetRange: 3

@@ -24,8 +24,8 @@ MonoBehaviour:
   ID: 100
   Name: Footman
   Rarity: 0
-  BaseAttack: 5
-  Description: 'Front: I have 2 TEMP STR.'
+  BaseAttack: 4
+  Description: 'Front: I have 4 TEMP STR.'
   HasEffect: 1
   Conditions:
   - Trigger: 3
@@ -58,7 +58,7 @@ MonoBehaviour:
             ID: 0
             Name: 
             Rarity: 0
-        BaseValue: 2
+        BaseValue: 4
       IsTargeted: 0
       Target:
         TargetRange: 0
