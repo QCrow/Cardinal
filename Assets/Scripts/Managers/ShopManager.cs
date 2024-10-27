@@ -10,7 +10,6 @@ public class ShopManager : SerializedMonoBehaviour
     public int Gold = 100;
     [SerializeField] private GameObject shopItemsContainer; // GridLayoutGroup container
     [SerializeField] private TMP_Text playerGoldText;        // UI to display player's gold
-
     public Dictionary<RarityType, int> rarityPrices = new()  // Rarity prices stored here
     {
         { RarityType.Common, 10 },
@@ -109,7 +108,7 @@ public class ShopManager : SerializedMonoBehaviour
     {
         // Instantiate the card using CardManager
         Card cardInstance = CardManager.Instance.InstantiateCard(cardID, parent);
-
+        cardInstance.isInShop = true;
         // Set the card's price based on its rarity
         int price = GetPriceByRarity(cardInstance.Rarity);
         cardInstance.Price = price;
@@ -148,7 +147,6 @@ public class ShopManager : SerializedMonoBehaviour
     public void InitializeShop()
     {
         UpdatePlayerGoldUI();
-
         SetupShop(GameManager.Instance.CurrentLevel);
     }
 }
