@@ -92,6 +92,19 @@ public class UIManager : MonoBehaviour
         {
             // Clear the visualizer when it is hidden
             ClearDeckVisualizer();
+            ClearDisplayOverlay();
+        }
+    }
+
+    private void ClearDisplayOverlay()
+    {
+        Transform overlayTransform = UIManager.Instance.OverlayDisplay;
+
+        // Loop through all children and destroy them
+        for (int i = overlayTransform.childCount - 1; i >= 0; i--)
+        {
+            GameObject child = overlayTransform.GetChild(i).gameObject;
+            Destroy(child);
         }
     }
 

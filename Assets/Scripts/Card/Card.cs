@@ -14,6 +14,7 @@ public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitH
     public TMPro.TMP_Text _amountInDeck;
     public int BaseAttack;
     public bool isSold = false;
+    public bool isInShop = false;
 
     public Dictionary<TriggerType, List<ConditionalEffect>> ConditionalEffects = new();
     #endregion
@@ -106,6 +107,7 @@ public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        if (!isInShop) return;
         TryPurchase();
     }
     #endregion
@@ -130,6 +132,7 @@ public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitH
             CardManager.Instance.AddCardPermanently(ID);
 
             isSold = true;
+            isInShop = false;
             SoldLabel.gameObject.SetActive(true);
         }
         else
