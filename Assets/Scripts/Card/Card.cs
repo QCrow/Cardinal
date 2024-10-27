@@ -101,7 +101,6 @@ public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        Debug.Log("exit!");
         _descriptionContainer.transform.SetParent(transform, true);
         _descriptionContainer.SetActive(false);
     }
