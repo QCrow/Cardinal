@@ -40,7 +40,7 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         _rewardSlots = new List<RewardSlot>(_rewardsPanel.GetComponentsInChildren<RewardSlot>());
-        _checkDeckButton.onClick.AddListener(ToggleDeckVisualizer);
+        // _checkDeckButton.onClick.AddListener(ToggleDeckVisualizer);
     }
 
     public void SetArrowButtonsInteractable(bool interactable)

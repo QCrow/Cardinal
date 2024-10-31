@@ -13,9 +13,9 @@ public enum Direction
 
 public class ArrowButton : MonoBehaviour
 {
-    [SerializeField] private Direction _direction;
-    [SerializeField] private int _index = 0;
-    [SerializeField] private int _magnitude = 1;
+    public Direction _direction;
+    public int _index = 0;
+    public int _magnitude = 1;
 
     private void Awake()
     {

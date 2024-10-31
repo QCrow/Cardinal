@@ -1,11 +1,14 @@
+using UnityEngine.UI;
+
 public class ControlPhase : IBattlePhase
 {
     public void OnEnter()
     {
         // Set up the UI for Redeploy
-        BattleManager.Instance.DeployButtonTextField.text = "Redeploy";
+        BattleManager.Instance.DeployButtonTextField.text = "REDEPLOY";
+        BattleManager.Instance.DeployButton.GetComponent<Image>().sprite = BattleManager.Instance.ButtonWithCounterSprite;
         BattleManager.Instance.ResetRedeployCounter();
-        BattleManager.Instance.RedeployCounter.SetActive(true);
+        BattleManager.Instance.RedeployCounterTextField.gameObject.SetActive(true);
 
         // Set up the UI for Attack
         BattleManager.Instance.AttackButton.interactable = true;
