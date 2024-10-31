@@ -8,37 +8,37 @@ public class BattleManager : MonoBehaviour
 {
     static public BattleManager Instance { get; private set; }
 
+    [Header("Enemy Health")]
     public int EnemyMaxHealth;
     public int EnemyCurrentHealth;
-
-    public IBattlePhase CurrentBattlePhase { get; private set; }
-
-    [SerializeField] private int _redeployCountPerTurn = 2;
-    private int _remainingRedeployCount;
-
-    [SerializeField] private int _totalAttackCount = 3;
-    private int _remainingAttackCount;
-
-    [SerializeField] private int _moveCountPerTurn = 3;
-    private int _remainingMoveCount;
-    public int RemainingMoveCount => _remainingMoveCount;
-
     [SerializeField] private HealthBar _healthBar;
+
+    [Header("Attack")]
+    [SerializeField] private int _totalAttackCount = 3;
+    [SerializeField] private int _remainingAttackCount;
     [SerializeField] private TMP_Text _totalAttackText;
-
-    public Button DeployButton;
-    public TMP_Text DeployButtonTextField;
-    public GameObject RedeployCounter;
-    public TMP_Text RedeployCounterTextField;
-    //TODO: Put move counter reference here
-    //TODO: Check with designer if we need a discharge counter
-
-    public Button AttackButton;
     public TMP_Text AttackCounterTextField;
 
+    [Header("Redeploy")]
+    [SerializeField] private int _redeployCountPerTurn = 2;
+    [SerializeField] private int _remainingRedeployCount;
+    public TMP_Text RedeployCounterTextField;
+
+    [Header("Move")]
+    [SerializeField] private int _moveCountPerTurn = 3;
+    [SerializeField] private int _remainingMoveCount;
+    public int RemainingMoveCount => _remainingMoveCount;
     public TMP_Text MoveCounterTextField;
 
+    [Header("Buttons")]
+    public Button DeployButton;
+    public TMP_Text DeployButtonTextField;
+    public Button AttackButton;
     public Button ResetButton;
+    public Sprite ButtonWithCounterSprite;
+    public Sprite ButtonWithoutCounterSprite;
+
+    public IBattlePhase CurrentBattlePhase { get; private set; }
 
     private void Awake()
     {
@@ -188,7 +188,6 @@ public class BattleManager : MonoBehaviour
         Board.Instance.RestoreFromSnapshot();
         ResetMoveCounter();
 
-
         ApplyWhileInPlayEffects();
         Board.Instance.DeployedCards.ForEach(card => card.UpdateAttackValue());
         SetTotalAttack();
@@ -296,22 +295,5 @@ public class BattleManager : MonoBehaviour
         {
             card.RevertEffect(TriggerType.PrioWhileInPlay);
         }
-    }
-
-    public void RecalculateWhileInPlayEffects()
-    {
-        foreach (Card card in Board.Instance.DeployedCards)
-        {
-            card.RevertEffect(TriggerType.WhileInPlay);
-            card.ApplyEffect(TriggerType.WhileInPlay);
-            card.UpdateAttackValue();
-        }
-    }
-
-    public void RecalculateCardWhileInPlayEffects(Card card)
-    {
-        card.RevertEffect(TriggerType.WhileInPlay);
-        card.ApplyEffect(TriggerType.WhileInPlay);
-        card.UpdateAttackValue();
     }
 }

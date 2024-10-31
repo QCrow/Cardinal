@@ -162,7 +162,7 @@ public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitH
     {
         Slot = slot;
         slot.Card = this;
-        transform.SetParent(slot.transform);
+        transform.SetParent(slot.ContentContainer.transform);
         RectTransform rectTransform = GetComponent<RectTransform>();
         if (rectTransform != null)
         {

@@ -4,6 +4,8 @@ using Sirenix.OdinInspector;
 
 public class Slot : SerializedMonoBehaviour
 {
+    public GameObject ContentContainer => transform.GetChild(0).gameObject;
+
     #region Position
     public int Row { get; private set; }
     public int Col { get; private set; }

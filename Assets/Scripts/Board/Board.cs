@@ -58,14 +58,14 @@ public class Board : MonoBehaviour
     /// </summary>
     public void Initialize()
     {
-        // Calculate and set the board's size in pixels based on the number of slots and gaps
-        int pixelWidth = _unitWidth * _slotWidth + (_unitWidth - 1) * _slotGap;
-        int pixelHeight = _unitHeight * _slotHeight + (_unitHeight - 1) * _slotGap;
-        _rectTransform.sizeDelta = new Vector2(pixelWidth, pixelHeight);
+        // // Calculate and set the board's size in pixels based on the number of slots and gaps
+        // int pixelWidth = _unitWidth * _slotWidth + (_unitWidth - 1) * _slotGap;
+        // int pixelHeight = _unitHeight * _slotHeight + (_unitHeight - 1) * _slotGap;
+        // _rectTransform.sizeDelta = new Vector2(pixelWidth, pixelHeight);
 
-        GridLayoutGroup gridLayout = GetComponent<GridLayoutGroup>();
-        gridLayout.cellSize = new Vector2(_slotWidth, _slotHeight);
-        gridLayout.spacing = new Vector2(_slotGap, _slotGap);
+        // GridLayoutGroup gridLayout = GetComponent<GridLayoutGroup>();
+        // gridLayout.cellSize = new Vector2(_slotWidth, _slotHeight);
+        // gridLayout.spacing = new Vector2(_slotGap, _slotGap);
 
         // Initialize the list of slots
         _slots = new List<List<Slot>>();
