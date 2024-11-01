@@ -52,10 +52,10 @@ public class SerializableCondition
         if (Trigger == TriggerType.OnAttack) return; // No need to validate 'OnAttack' triggers
 
         // Cycle trigger validation
-        if (Condition == ConditionType.Cycle && Trigger != TriggerType.OnAttack)
+        if (Condition == ConditionType.Cycle && Trigger != TriggerType.BeforeAttack && Trigger != TriggerType.OnAttack && Trigger != TriggerType.AfterAttack)
         {
             Trigger = TriggerType.OnAttack;
-            _validationWarningMessage = "Condition 'Cycle' requires the Trigger to be 'OnAttack'. Automatically set.";
+            _validationWarningMessage = "Condition 'Cycle' requires the Trigger to be 'BeforeAttack' or 'OnAttack' or 'AfterAttack'. Automatically set.";
         }
 
         // Effect-based trigger validation

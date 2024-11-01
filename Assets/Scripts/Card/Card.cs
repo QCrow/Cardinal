@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using System.Linq;
 
 public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
@@ -57,15 +58,20 @@ public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitH
         ConditionalEffects = conditionalEffects;
 
         _cycleContainer.SetActive(false);
-        if (conditionalEffects.TryGetValue(TriggerType.OnAttack, out List<ConditionalEffect> cycleEffects))
+        // if (conditionalEffects.TryGetValue(TriggerType.OnAttack, out List<ConditionalEffect> cycleEffects))
+        // {
+        //     foreach (ConditionalEffect cycleEffect in cycleEffects)
+        //     {
+        //         if (cycleEffect.GetType() == typeof(CycleCondition))
+        //         {
+        //             _cycleContainer.SetActive(true);
+        //         }
+        //     }
+        // }
+        // If there is any CycleCondition in the conditional effects, enable the cycle container
+        if (conditionalEffects.SelectMany(x => x.Value).OfType<CycleCondition>().Any())
         {
-            foreach (ConditionalEffect cycleEffect in cycleEffects)
-            {
-                if (cycleEffect.GetType() == typeof(CycleCondition))
-                {
-                    _cycleContainer.SetActive(true);
-                }
-            }
+            _cycleContainer.SetActive(true);
         }
         _cardNameText.text = Name;
         _descriptionText.text = cardScriptable.Description;

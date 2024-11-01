@@ -23,7 +23,7 @@ MonoBehaviour:
     SerializationNodes: []
   ID: 102
   Name: Logistics Master
-  Rarity: 0
+  Rarity: 3
   BaseAttack: 6
   Description: Units on my column ALWAYS trigger their positional effects.
   HasEffect: 1
@@ -39,6 +39,7 @@ MonoBehaviour:
         ID: 0
         Name: 
         Rarity: 0
+        NameContains: 
     Check: 0
     Minimum: 0
     Effects:
@@ -58,6 +59,7 @@ MonoBehaviour:
             ID: 0
             Name: 
             Rarity: 0
+            NameContains: 
         BaseValue: 1
       IsTargeted: 1
       Target:
@@ -67,3 +69,4 @@ MonoBehaviour:
           ID: 0
           Name: 
           Rarity: 0
+          NameContains: 

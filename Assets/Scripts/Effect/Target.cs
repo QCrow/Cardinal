@@ -45,6 +45,9 @@ public class Target
         List<Slot> slots = new();
         switch (TargetRange)
         {
+            case TargetRangeType.All:
+                slots = Board.Instance.GetAllSlots().SelectMany(slotList => slotList).ToList();
+                break;
             case TargetRangeType.Adjacent:
                 slots = src.Slot.Neighbors;
                 break;

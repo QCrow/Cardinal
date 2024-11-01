@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3262554c71336e14e965928786591a59, type: 3}
   m_Name: NormalEnemy
   m_EditorClassIdentifier: 
-  MaxHealth: 100
+  MaxHealth: 400
   Description: 
   EffectType: 1

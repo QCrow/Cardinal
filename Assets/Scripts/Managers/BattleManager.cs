@@ -268,11 +268,6 @@ public class BattleManager : MonoBehaviour
         {
             card.ApplyEffect(TriggerType.OnAttack);
 
-            if (card.ID == 202)
-            {
-                Debug.Log(card.TotalAttack);
-            }
-
             // Strike count is the number of times the card will attack, determined by the MultiStrike modifier
             int strikeCount = card.GetModifierByType(CardModifierType.MultiStrike) > 0 ? card.GetModifierByType(CardModifierType.MultiStrike) : 1;
             for (int i = 0; i < strikeCount; i++) InflictDamage(card.TotalAttack);
