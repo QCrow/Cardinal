@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2ed6f30d06c6db4398b5fcbe1f7838a, type: 3}
+  m_Name: Card_0
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  ID: 0
+  Name: Void
+  Rarity: 5
+  BaseAttack: 0
+  Description: 'Created, destroy self after battle.
+
+    Does not do anything, other
+    than watching you suffer.'
+  HasEffect: 0
+  Conditions:
+  - Trigger: 5
+    Condition: 1
+    CycleCount: 1
+    Position: 0
+    TargetWithFilter:
+      TargetRange: 0
+      TargetFilter:
+        Type: 0
+        ID: 0
+        Name: 
+        Rarity: 0
+        NameContains: 
+    Check: 0
+    Minimum: 0
+    Effects: []
+  - Trigger: 5
+    Condition: 1
+    CycleCount: 1
+    Position: 0
+    TargetWithFilter:
+      TargetRange: 0
+      TargetFilter:
+        Type: 0
+        ID: 0
+        Name: 
+        Rarity: 0
+        NameContains: 
+    Check: 0
+    Minimum: 0
+    Effects: []

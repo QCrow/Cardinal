@@ -267,7 +267,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 12
-      Data: 8
+      Data: 9
     - Name: 
       Entry: 7
       Data: 
@@ -358,6 +358,18 @@ MonoBehaviour:
     - Name: $k
       Entry: 3
       Data: 210
+    - Name: $v
+      Entry: 3
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 1
     - Name: $v
       Entry: 3
       Data: 1
@@ -1465,6 +1477,7 @@ MonoBehaviour:
   EnemyMaxHealth: 0
   EnemyCurrentHealth: 0
   _healthBar: {fileID: 713415099}
+  LastDealtDamage: 0
   _totalAttackCount: 5
   _remainingAttackCount: 0
   _totalAttackText: {fileID: 231723557538041827}

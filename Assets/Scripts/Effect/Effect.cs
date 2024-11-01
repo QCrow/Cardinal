@@ -254,7 +254,7 @@ public class GainPermanentDamageAndResetEffect : Effect
         if (exists)
         {
             _count++;
-            _card.AddModifier(CardModifierType.Strength, _value, true);
+            _card.BaseAttack += _value;
         }
         else
         {
@@ -264,7 +264,33 @@ public class GainPermanentDamageAndResetEffect : Effect
 
     public override void Revert()
     {
-        _card.RemoveModifier(CardModifierType.Strength, _value * _count, true);
+        _card.BaseAttack -= _value * _count;
         _count = 0;
+    }
+}
+
+public class MonoEffect : Effect
+{
+    public MonoEffect(Card card) : base(card)
+    { }
+
+    public override void Apply()
+    {
+        Board.Instance.DeployedCards.ForEach(card =>
+        {
+            if (card == _card) return;
+            Slot slot = card.Slot;
+            card.Remove();
+            Card voidCard = CardManager.Instance.AddCardTemporarily(0);
+            voidCard.BindToSlot(slot);
+        });
+        Board.Instance.SyncDeployedCards();
+
+        _card.AddModifier(CardModifierType.Strength, BattleManager.Instance.LastDealtDamage, true);
+        _card.UpdateAttackValue();
+    }
+
+    public override void Revert()
+    {
     }
 }

@@ -186,7 +186,7 @@ public class Board : MonoBehaviour
         SortDeployedCards();
     }
 
-    public void ResetDeployedCards()
+    public void SyncDeployedCards()
     {
         List<Slot> allSlots = _slots.SelectMany(row => row).ToList();
         List<Card> cards = allSlots.Select(slot => slot.Card).Where(card => card != null).ToList();

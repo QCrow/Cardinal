@@ -14,6 +14,7 @@ public class BattleManager : MonoBehaviour
     public int EnemyMaxHealth;
     public int EnemyCurrentHealth;
     [SerializeField] private HealthBar _healthBar;
+    public int LastDealtDamage = 0;
 
     [Header("Attack")]
     [SerializeField] private int _totalAttackCount = 3;
@@ -258,6 +259,7 @@ public class BattleManager : MonoBehaviour
 
     private void Attack()
     {
+        LastDealtDamage = 0;
         Board.Instance.DeployedCards.ForEach(card =>
         {
             card.ApplyEffect(TriggerType.BeforeAttack);
@@ -282,7 +284,9 @@ public class BattleManager : MonoBehaviour
 
     private void InflictDamage(int damage)
     {
+        LastDealtDamage += damage;
         EnemyCurrentHealth -= damage;
+
         UpdateEnemyHealth();
     }
 
