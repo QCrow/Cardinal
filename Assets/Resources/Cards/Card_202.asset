@@ -22,35 +22,35 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   ID: 202
-  Name: Sellsword
+  Name: Bladesworn Convert
   Rarity: 5
   BaseAttack: 4
   Description: Deal 3 extra DMG for each adjacent unit with name containing "Blade".
   HasEffect: 1
   Conditions:
-  - Trigger: 5
-    Condition: 1
+  - Trigger: 3
+    Condition: 4
     CycleCount: 1
     Position: 0
     TargetWithFilter:
-      TargetRange: 0
+      TargetRange: 1
       TargetFilter:
-        Type: 0
+        Type: 4
         ID: 0
         Name: 
         Rarity: 0
-        NameContains: 
-    Check: 0
+        NameContains: Blade
+    Check: 3
     Minimum: 0
     Effects:
-    - Keyword: 5
+    - Keyword: 1
       ApplyOption: 0
-      CardModifier: 0
+      CardModifier: 1
       SlotModifier: 0
       CardID: 0
       Value:
         IsVariable: 0
-        isPermanent: 1
+        isPermanent: 0
         VariableType: 0
         Target:
           TargetRange: 0
@@ -60,8 +60,8 @@ MonoBehaviour:
             Name: 
             Rarity: 0
             NameContains: 
-        BaseValue: 1
-      IsTargeted: 1
+        BaseValue: 3
+      IsTargeted: 0
       Target:
         TargetRange: 1
         TargetFilter:

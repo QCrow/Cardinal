@@ -3,6 +3,8 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
 using System.Linq;
+using System.Drawing.Text;
+using System.Collections;
 
 public class BattleManager : MonoBehaviour
 {
@@ -80,6 +82,16 @@ public class BattleManager : MonoBehaviour
         }
 
         CardManager.Instance.ResetDecks();
+
+        StartCoroutine(WaitForBoard());
+
+        IEnumerator WaitForBoard()
+        {
+            yield return new WaitUntil(() => Board.Instance.GetAllSlots().Count == 9);
+        }
+
+        enemyScriptable.Initialize();
+        enemyScriptable.ApplyEffect(); // TODO: Change this to only apply effects on battle start
 
         //TODO: Trigger all battle start events such as artifact resolution
         ChangePhase(new WaitPhase());
@@ -255,6 +267,11 @@ public class BattleManager : MonoBehaviour
         Board.Instance.DeployedCards.ForEach(card =>
         {
             card.ApplyEffect(TriggerType.OnAttack);
+
+            if (card.ID == 202)
+            {
+                Debug.Log(card.TotalAttack);
+            }
 
             // Strike count is the number of times the card will attack, determined by the MultiStrike modifier
             int strikeCount = card.GetModifierByType(CardModifierType.MultiStrike) > 0 ? card.GetModifierByType(CardModifierType.MultiStrike) : 1;

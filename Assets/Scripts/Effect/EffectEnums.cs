@@ -34,7 +34,8 @@ public enum CardModifierType
 public enum SlotModifierType
 {
     None, // Only used for default value
-    Mobilization
+    Mobilization,
+    NoDamage
 }
 
 public enum PositionType

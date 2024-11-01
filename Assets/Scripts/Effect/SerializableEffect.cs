@@ -27,17 +27,17 @@ public class SerializableEffect
     [Tooltip("The ID of the card to add.")]
     public int CardID;
 
-    [ShowIf(nameof(IsKeywordApplyOrTempDamageUpOrAddCardOrGainPermanentDamageAndReset))]
+    [ShowIf(nameof(HasValueCheck))]
     [BoxGroup("Value")]
     [HideLabel]
     public EffectValue Value;
 
     [BoxGroup("Targeting")]
-    [ShowIf(nameof(IsKeywordApplyOrDestroy))]
+    [ShowIf(nameof(IsTargetedCheck))]
     public bool IsTargeted = false;
 
     [BoxGroup("Targeting")]
-    [ShowIf(nameof(IsTargetedAndKeywordApplyOrDestroy))]
+    [ShowIf(nameof(TargetCheck))]
     public Target Target;
 
     private bool IsKeywordApply()
@@ -55,19 +55,19 @@ public class SerializableEffect
         return Keyword == EffectType.Apply && ApplyOption == ApplyOptions.ToSlot;
     }
 
-    private bool IsKeywordApplyOrTempDamageUpOrAddCardOrGainPermanentDamageAndReset()
+    private bool HasValueCheck()
     {
-        return Keyword == EffectType.Apply || Keyword == EffectType.AddCard || Keyword == EffectType.GainPermanentDamageAndReset;
+        return Keyword == EffectType.Apply || Keyword == EffectType.AddCard || Keyword == EffectType.GainPermanentDamageAndReset || Keyword == EffectType.Transform;
     }
 
-    private bool IsKeywordApplyOrDestroy()
+    private bool IsTargetedCheck()
     {
-        return Keyword == EffectType.Apply || Keyword == EffectType.Destroy || Keyword == EffectType.GainPermanentDamageAndReset;
+        return Keyword == EffectType.Apply || Keyword == EffectType.Destroy || Keyword == EffectType.GainPermanentDamageAndReset || Keyword == EffectType.Transform;
     }
 
-    private bool IsTargetedAndKeywordApplyOrDestroy()
+    private bool TargetCheck()
     {
-        return IsTargeted && (Keyword == EffectType.Apply || Keyword == EffectType.Destroy || Keyword == EffectType.GainPermanentDamageAndReset);
+        return IsTargeted && IsTargetedCheck();
     }
 
     private bool IsKeywordAddCard()

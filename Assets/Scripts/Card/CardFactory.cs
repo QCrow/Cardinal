@@ -59,6 +59,9 @@ public static class CardFactory
                 case EffectType.AddCard:
                     effect = new AddCardEffect(card, serializedEffect.CardID);
                     break;
+                case EffectType.Transform:
+                    effect = new TransformEffect(card, serializedEffect.Value, serializedEffect.IsTargeted, serializedEffect.Target);
+                    break;
                 case EffectType.GainPermanentDamageAndReset:
                     effect = new GainPermanentDamageAndResetEffect(card, serializedEffect.Value, serializedEffect.Target);
                     break;

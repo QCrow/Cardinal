@@ -40,17 +40,13 @@ public class Board : MonoBehaviour
         if (_instance == null)
         {
             _instance = this;
+            _rectTransform = GetComponent<RectTransform>();
+            Initialize();
         }
         else
         {
             Destroy(gameObject);
         }
-    }
-
-    private void Start()
-    {
-        _rectTransform = GetComponent<RectTransform>();
-        Initialize();
     }
 
     /// <summary>
@@ -186,6 +182,14 @@ public class Board : MonoBehaviour
     #region Card Management
     private void SetDeployedCards(List<Card> cards)
     {
+        _deployedCards = cards;
+        SortDeployedCards();
+    }
+
+    public void ResetDeployedCards()
+    {
+        List<Slot> allSlots = _slots.SelectMany(row => row).ToList();
+        List<Card> cards = allSlots.Select(slot => slot.Card).Where(card => card != null).ToList();
         _deployedCards = cards;
         SortDeployedCards();
     }

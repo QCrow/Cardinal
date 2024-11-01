@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public abstract class Effect
 {
     protected Card _card;
@@ -188,6 +190,46 @@ public class AddCardEffect : Effect
     public override void Revert()
     {
         throw new System.NotImplementedException("Currently, AddCardEffect cannot be reverted.");
+    }
+}
+
+public class TransformEffect : Effect
+{
+    private readonly int _cardID;
+    private readonly bool _isPermanent;
+    private readonly bool _isTargeted;
+    private readonly Target _target;
+
+    public TransformEffect(Card card, EffectValue effectValue, bool isTargeted, Target target) : base(card)
+    {
+        _cardID = effectValue.GetValue(card);
+        _isPermanent = effectValue.isPermanent;
+        _isTargeted = isTargeted;
+        _target = target;
+    }
+
+    public override void Apply()
+    {
+        if (_isTargeted)
+        {
+            _target.GetAvailableCardTargets(_card).ForEach(target =>
+            {
+                Card newCard = target.Transform(_cardID, _isPermanent);
+                newCard.ApplyEffect(TriggerType.WhileInPlay);
+            }
+        );
+        }
+        else
+        {
+            Card newCard = _card.Transform(_cardID, _isPermanent);
+            Debug.Log(newCard.ID);
+            newCard.ApplyEffect(TriggerType.WhileInPlay);
+        }
+    }
+
+    public override void Revert()
+    {
+        throw new System.NotImplementedException();
     }
 }
 
