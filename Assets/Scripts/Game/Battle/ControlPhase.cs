@@ -7,6 +7,8 @@ public class ControlPhase : IBattlePhase
         // Set up the UI for Redeploy
         BattleManager.Instance.DeployButtonTextField.text = "REDEPLOY";
         BattleManager.Instance.DeployButton.GetComponent<Image>().sprite = BattleManager.Instance.ButtonWithCounterSprite;
+        BattleManager.Instance.DeployButton.transition = Selectable.Transition.ColorTint;
+
         BattleManager.Instance.ResetRedeployCounter();
         BattleManager.Instance.RedeployCounterTextField.gameObject.SetActive(true);
 

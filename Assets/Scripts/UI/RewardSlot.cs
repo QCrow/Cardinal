@@ -27,7 +27,7 @@ public class RewardSlot : MonoBehaviour
         _rewardName.text = rewardName;
         _rewardText.text = rewardText;
         _rewardAttack.text = rewardAttack.ToString();
-        if(rewardCycle >0)
+        if (rewardCycle > 0)
         {
             _cycleContainer.SetActive(true);
             _rewardCycle.text = rewardCycle.ToString();
@@ -38,10 +38,11 @@ public class RewardSlot : MonoBehaviour
     public void SetReward(Reward reward)
     {
         CardScriptable cs = CardManager.Instance.GetCardScriptableByID(reward.RewardID);
-        if(cs.Conditions.Find(x => x.Condition == ConditionType.Cycle) != null)
+        if (cs.Conditions.Find(x => x.Condition == ConditionType.Cycle) != null)
         {
             reward.RewardCycle = cs.Conditions.Find(x => x.Condition == ConditionType.Cycle).CycleCount;
-        }else
+        }
+        else
         {
             reward.RewardCycle = 0;
         }
@@ -52,6 +53,7 @@ public class RewardSlot : MonoBehaviour
     public void OnClick()
     {
         CardManager.Instance.AddCardPermanently(_rewardID);
-        GameManager.Instance.ChangeGameState(GameState.Map);
+        // GameManager.Instance.ChangeGameState(GameState.Map); // TODO: TO BE CHANGED
+        Map.Instance.GoNext();
     }
 }
