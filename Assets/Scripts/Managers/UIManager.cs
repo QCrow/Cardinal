@@ -13,7 +13,7 @@ public class UIManager : MonoBehaviour
 
     public Transform OverlayDisplay;
 
-    private List<Button> _arrowButtons = new();
+    [SerializeField] private List<Button> _arrowButtons = new();
 
     [SerializeField] private Button _checkDeckButton;
 

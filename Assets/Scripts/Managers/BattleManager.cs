@@ -93,7 +93,6 @@ public class BattleManager : MonoBehaviour
         enemyScriptable.Initialize();
         enemyScriptable.ApplyEffect(); // TODO: Change this to only apply effects on battle start
 
-        //TODO: Trigger all battle start events such as artifact resolution
         ChangePhase(new WaitPhase());
     }
 
