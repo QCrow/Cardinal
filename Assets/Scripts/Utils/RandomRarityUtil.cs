@@ -1,9 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class RandomRarityUtil 
+public class RandomRarityUtil
 {
     private static readonly System.Random _random = new();
 
