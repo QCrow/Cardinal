@@ -35,7 +35,7 @@ public class CardScriptable : SerializedScriptableObject
     {
         return HasEffect;
     }
-
+#if UNITY_EDITOR
     #region Validation
     private void OnEnable()
     {
@@ -75,4 +75,5 @@ public class CardScriptable : SerializedScriptableObject
         Debug.Log($"Card ID updated to {ID} and asset file renamed.");
     }
     #endregion
+#endif
 }

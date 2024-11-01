@@ -5,19 +5,16 @@ public class ControlPhase : IBattlePhase
     public void OnEnter()
     {
         // Set up the UI for Redeploy
-        BattleManager.Instance.DeployButtonTextField.text = "REDEPLOY";
-        BattleManager.Instance.DeployButton.GetComponent<Image>().sprite = BattleManager.Instance.ButtonWithCounterSprite;
-        BattleManager.Instance.DeployButton.transition = Selectable.Transition.ColorTint;
+        BattleManager.Instance.ResetButtonTextField.text = "RESET";
 
-        BattleManager.Instance.ResetRedeployCounter();
-        BattleManager.Instance.RedeployCounterTextField.gameObject.SetActive(true);
+        // BattleManager.Instance.RedeployButton.interactable = true;
+        BattleManager.Instance.ToggleRedeployButton(true);
 
         // Set up the UI for Attack
-        BattleManager.Instance.AttackButton.interactable = true;
+        BattleManager.Instance.ToggleAttackButton(true);
 
         // Set up the UI for Move
         BattleManager.Instance.ResetMoveCounter();
-        BattleManager.Instance.ResetButton.interactable = true;
         GameManager.Instance.CanMove = true;
     }
 

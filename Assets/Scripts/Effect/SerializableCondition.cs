@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Sirenix.OdinInspector;
-using Sirenix.Utilities.Editor;
+// using Sirenix.Utilities.Editor;
 using UnityEngine;
 
 [System.Serializable]
@@ -74,7 +74,7 @@ public class SerializableCondition
     {
         if (HasValidationWarning())
         {
-            SirenixEditorGUI.WarningMessageBox(_validationWarningMessage);
+            // SirenixEditorGUI.WarningMessageBox(_validationWarningMessage);
             if (GUILayout.Button("Dismiss Warning"))
             {
                 _validationWarningMessage = ""; // Hide the warning when the button is clicked.

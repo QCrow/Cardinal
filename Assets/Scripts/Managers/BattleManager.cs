@@ -16,6 +16,8 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private HealthBar _healthBar;
     public int LastDealtDamage = 0;
 
+    [SerializeField] private TMP_Text _bossDescriptionText;
+
     [Header("Attack")]
     [SerializeField] private int _totalAttackCount = 3;
     [SerializeField] private int _remainingAttackCount;
@@ -34,12 +36,10 @@ public class BattleManager : MonoBehaviour
     public TMP_Text MoveCounterTextField;
 
     [Header("Buttons")]
-    public Button DeployButton;
-    public TMP_Text DeployButtonTextField;
     public Button AttackButton;
+    public Button RedeployButton;
     public Button ResetButton;
-    public Sprite ButtonWithCounterSprite;
-    public Sprite ButtonWithoutCounterSprite;
+    public TMP_Text ResetButtonTextField;
 
     public IBattlePhase CurrentBattlePhase { get; private set; }
 
@@ -57,7 +57,7 @@ public class BattleManager : MonoBehaviour
 
     private void Start()
     {
-        DeployButton.onClick.AddListener(OnDeployButtonPressed);
+        RedeployButton.onClick.AddListener(OnDeployButtonPressed);
         AttackButton.onClick.AddListener(OnAttackButtonPressed);
     }
 
@@ -76,13 +76,13 @@ public class BattleManager : MonoBehaviour
         UpdateEnemyHealth();
 
         ResetAttackCounter();
+        ResetRedeployCounter();
 
         if (CurrentBattlePhase != null)
         {
             Board.Instance.ClearBoard();
         }
 
-        CardManager.Instance.ResetDecks();
 
         StartCoroutine(WaitForBoard());
 
@@ -93,7 +93,9 @@ public class BattleManager : MonoBehaviour
 
         enemyScriptable.Initialize();
         enemyScriptable.ApplyEffect(); // TODO: Change this to only apply effects on battle start
+        CardManager.Instance.ResetDecks();
 
+        _bossDescriptionText.text = enemyScriptable.Description;
         ChangePhase(new WaitPhase());
     }
 
@@ -165,15 +167,12 @@ public class BattleManager : MonoBehaviour
 
     public void OnDeployButtonPressed()
     {
-        Deploy();
         if (CurrentBattlePhase is ControlPhase)
         {
+            Deploy();
             DecrementRedeployCounter();
         }
-        else
-        {
-            ChangePhase(new ControlPhase());
-        }
+
     }
 
     public void OnAttackButtonPressed()
@@ -197,12 +196,20 @@ public class BattleManager : MonoBehaviour
 
     public void OnResetButtonPressed()
     {
-        Board.Instance.RestoreFromSnapshot();
-        ResetMoveCounter();
+        if (CurrentBattlePhase is ControlPhase)
+        {
+            Board.Instance.RestoreFromSnapshot();
+            ResetMoveCounter();
 
-        ApplyWhileInPlayEffects();
-        Board.Instance.DeployedCards.ForEach(card => card.UpdateAttackValue());
-        SetTotalAttack();
+            ApplyWhileInPlayEffects();
+            Board.Instance.DeployedCards.ForEach(card => card.UpdateAttackValue());
+            SetTotalAttack();
+        }
+        else
+        {
+            Deploy();
+            ChangePhase(new ControlPhase());
+        }
     }
 
     private void Deploy()
@@ -243,13 +250,17 @@ public class BattleManager : MonoBehaviour
         RedeployCounterTextField.text = _remainingRedeployCount.ToString();
         if (_remainingRedeployCount == 0)
         {
-            DeployButton.interactable = false;
+            ToggleRedeployButton(false);
         }
     }
 
     private void UpdateAttackCounterDisplay()
     {
         AttackCounterTextField.text = _remainingAttackCount.ToString();
+        if (_remainingAttackCount == 0)
+        {
+            ToggleAttackButton(false);
+        }
     }
 
     private void UpdateMoveCounterDisplay()
@@ -321,5 +332,40 @@ public class BattleManager : MonoBehaviour
         {
             card.RevertEffect(TriggerType.PrioWhileInPlay);
         }
+    }
+
+    public void ToggleRedeployButton(bool value)
+    {
+        if (value && _remainingRedeployCount <= 0)
+        {
+            RedeployButton.interactable = false;
+        }
+        else
+        {
+            RedeployButton.interactable = value;
+        }
+
+        TMP_Text text = RedeployButton.transform.Find("Value").GetComponent<TMP_Text>();
+        Color textColor = text.color;
+        textColor.a = value ? 1 : 0.5f;
+        text.color = textColor;
+    }
+
+    public void ToggleAttackButton(bool value)
+    {
+        if (value && _remainingAttackCount <= 0)
+        {
+            AttackButton.interactable = false;
+            return;
+        }
+        else
+        {
+            AttackButton.interactable = value;
+        }
+
+        TMP_Text text = AttackButton.transform.Find("Value").GetComponent<TMP_Text>();
+        Color textColor = text.color;
+        textColor.a = value ? 1 : 0.5f;
+        text.color = textColor;
     }
 }

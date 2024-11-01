@@ -2,19 +2,49 @@ using UnityEngine;
 
 public class SceneManager : MonoBehaviour
 {
-    public static SceneManager Instance { get; private set; }
+    private static SceneManager _instance;
+
+    public static SceneManager Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                GameObject obj = new GameObject("SceneManager");
+                _instance = obj.AddComponent<SceneManager>();
+            }
+            return _instance;
+        }
+        private set
+        {
+            _instance = value;
+        }
+    }
 
     public void Awake()
     {
-        if (Instance == null)
+        if (_instance == null)
         {
-            Instance = this;
+            _instance = this;
             DontDestroyOnLoad(gameObject);
         }
-        else
+        else if (_instance != this)
         {
             Destroy(gameObject);
         }
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.R) && IsGameOverScene())
+        {
+            LoadScene("InGame");
+        }
+    }
+
+    public bool IsGameOverScene()
+    {
+        return UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Game Over";
     }
 
     public void LoadScene(string sceneName)

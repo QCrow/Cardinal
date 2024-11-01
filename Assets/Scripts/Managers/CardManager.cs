@@ -18,7 +18,6 @@ public class CardManager : SerializedMonoBehaviour
         {
             _instance = this;
             LoadCards();
-            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -70,6 +69,7 @@ public class CardManager : SerializedMonoBehaviour
             }
             _rarityCards[card.Rarity].Add(card.ID);
         }
+        _permanentDeck.Clear();
 
         foreach (var card in _startingDeck)
         {
@@ -94,7 +94,7 @@ public class CardManager : SerializedMonoBehaviour
         _availableCards.Clear();
 
         _temporaryDeck.AddRange(_permanentDeck);
-        foreach (Card card in _temporaryDeck)
+        foreach (Card card in _permanentDeck)
         {
             card.ResetAllState();
         }

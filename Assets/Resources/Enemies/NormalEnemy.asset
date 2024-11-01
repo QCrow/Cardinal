@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: NormalEnemy
   m_EditorClassIdentifier: 
   MaxHealth: 400
-  Description: 
+  Description: <u>The top left unit cannot deal any damage</u>, as their weapons
+    are glancing off the protective bark on the enemy, unable to pierce its defense.
   EffectType: 2
