@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a2ed6f30d06c6db4398b5fcbe1f7838a, type: 3}
-  m_Name: Card_200
+  m_Name: Card_210
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -21,20 +21,18 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  ID: 200
-  Name: Bladesworn Apprentice
-  Rarity: 1
-  BaseAttack: 0
-  Description: 'Before attacking, gain 2 permanent DMG if next to a unit with name
-    containing "Blade".
-
-    Otherwise, lose all gained DMG.'
+  ID: 210
+  Name: Si, The Blade Sovereign
+  Rarity: 4
+  BaseAttack: 4
+  Description: 'Front: Strike X times, where X equals the number of cards in play
+    with name containing "Blade".'
   HasEffect: 1
   Conditions:
-  - Trigger: 4
-    Condition: 1
+  - Trigger: 5
+    Condition: 3
     CycleCount: 1
-    Position: 0
+    Position: 1
     TargetWithFilter:
       TargetRange: 0
       TargetFilter:
@@ -46,30 +44,30 @@ MonoBehaviour:
     Check: 0
     Minimum: 0
     Effects:
-    - Keyword: 5
+    - Keyword: 1
       ApplyOption: 0
-      CardModifier: 0
+      CardModifier: 3
       SlotModifier: 0
       CardID: 0
       Value:
-        IsVariable: 0
-        isPermanent: 1
+        IsVariable: 1
+        isPermanent: 0
         VariableType: 0
         Target:
-          TargetRange: 0
+          TargetRange: 12
           TargetFilter:
-            Type: 0
+            Type: 4
             ID: 0
             Name: 
             Rarity: 0
-            NameContains: 
-        BaseValue: 2
-      IsTargeted: 1
+            NameContains: Blade
+        BaseValue: 1
+      IsTargeted: 0
       Target:
-        TargetRange: 1
+        TargetRange: 0
         TargetFilter:
-          Type: 4
+          Type: 0
           ID: 0
           Name: 
           Rarity: 0
-          NameContains: Blade
+          NameContains: 

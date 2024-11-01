@@ -23,12 +23,12 @@ MonoBehaviour:
     SerializationNodes: []
   ID: 103
   Name: Quick Blader
-  Rarity: 0
+  Rarity: 2
   BaseAttack: 4
-  Description: 'On move:  Deal 2 extra DMG on next attack.'
+  Description: 'On move:  Deal 3 extra DMG on next attack.'
   HasEffect: 1
   Conditions:
-  - Trigger: 6
+  - Trigger: 8
     Condition: 1
     CycleCount: 1
     Position: 3
@@ -60,7 +60,7 @@ MonoBehaviour:
             Name: 
             Rarity: 0
             NameContains: 
-        BaseValue: 2
+        BaseValue: 3
       IsTargeted: 0
       Target:
         TargetRange: 3

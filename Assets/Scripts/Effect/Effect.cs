@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class Effect
@@ -53,7 +54,9 @@ public class AddCardModifierEffect : Effect
     {
         if (_isTargeted)
         {
-            _target.GetAvailableCardTargets(_card).ForEach(target => target.AddModifier(_modifierType, _value.GetValue(_card), _value.isPermanent));
+            List<Card> cards = _target.GetAvailableCardTargets(_card);
+            Debug.Log(cards.Count);
+            cards.ForEach(target => target.AddModifier(_modifierType, _value.GetValue(_card), _value.isPermanent));
         }
         else
         {
