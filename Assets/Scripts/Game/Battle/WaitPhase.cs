@@ -8,15 +8,13 @@ public class WaitPhase : IBattlePhase
         Debug.Log("Entering Wait Phase");
         // Activate the deploy button, but hiding the redeploy counter and changing the text to "Deploy"
         // since the player is making the first deployment of the turn
-        BattleManager.Instance.DeployButtonTextField.text = "DEPLOY";
-        BattleManager.Instance.DeployButton.interactable = true;
-        BattleManager.Instance.DeployButton.GetComponent<Image>().sprite = BattleManager.Instance.ButtonWithoutCounterSprite;
-        BattleManager.Instance.DeployButton.transition = Selectable.Transition.ColorTint;
+        BattleManager.Instance.ResetButtonTextField.text = "DEPLOY";
+        BattleManager.Instance.ToggleRedeployButton(false);
 
-        BattleManager.Instance.RedeployCounterTextField.gameObject.SetActive(false);
+        BattleManager.Instance.ResetButton.interactable = true;
 
         // Setting the attack button to be inactive
-        BattleManager.Instance.AttackButton.interactable = false;
+        BattleManager.Instance.ToggleAttackButton(false);
 
         GameManager.Instance.CanMove = false;
     }

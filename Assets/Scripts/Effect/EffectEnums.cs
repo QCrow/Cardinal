@@ -1,5 +1,3 @@
-using Sirenix.OdinInspector.Editor;
-
 public enum TriggerType
 {
     None, // Only used for default value

@@ -110,12 +110,17 @@ public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitH
     public void OnPointerEnter(PointerEventData eventData)
     {
         _descriptionContainer.SetActive(true);
-        _descriptionContainer.transform.SetParent(UIManager.Instance.OverlayDisplay, true);
+        Canvas canvas = _descriptionContainer.GetComponent<Canvas>();
+        if (canvas == null)
+        {
+            canvas = _descriptionContainer.AddComponent<Canvas>();
+            canvas.overrideSorting = true;
+        }
+        canvas.sortingOrder = 100; // Set a high sorting order to ensure it appears on top
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        _descriptionContainer.transform.SetParent(transform, true);
         _descriptionContainer.SetActive(false);
     }
 
