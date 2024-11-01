@@ -174,7 +174,7 @@ public class CardManager : SerializedMonoBehaviour
         return rewardCardIDs
             .Select(cardID => GetCardScriptableByID(cardID))
             .Where(cardScriptable => cardScriptable != null)
-            .Select(cs => new Reward(cs.ID, cs.Name, cs.Description))
+            .Select(cs => new Reward(cs.ID, cs.Name, cs.Description, cs.BaseAttack))
             .ToList();
     }
 
