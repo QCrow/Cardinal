@@ -120,6 +120,8 @@ public class CardManager : SerializedMonoBehaviour
     public void DestroyCard(Card card)
     {
         _permanentDeck.Remove(card);
+        _temporaryDeck.Remove(card);
+        _availableCards.Remove(card);
     }
 
     public void RemoveCard(Card card)

@@ -27,13 +27,12 @@ MonoBehaviour:
   BaseAttack: 0
   Description: 'Created, destroy self after battle.
 
-    Does not do anything, other
-    than watching you suffer.'
-  HasEffect: 0
+    Cycle 2: Destroy self.'
+  HasEffect: 1
   Conditions:
   - Trigger: 5
-    Condition: 1
-    CycleCount: 1
+    Condition: 2
+    CycleCount: 2
     Position: 0
     TargetWithFilter:
       TargetRange: 0
@@ -45,19 +44,31 @@ MonoBehaviour:
         NameContains: 
     Check: 0
     Minimum: 0
-    Effects: []
-  - Trigger: 5
-    Condition: 1
-    CycleCount: 1
-    Position: 0
-    TargetWithFilter:
-      TargetRange: 0
-      TargetFilter:
-        Type: 0
-        ID: 0
-        Name: 
-        Rarity: 0
-        NameContains: 
-    Check: 0
-    Minimum: 0
-    Effects: []
+    Effects:
+    - Keyword: 2
+      ApplyOption: 0
+      CardModifier: 0
+      SlotModifier: 0
+      CardID: 0
+      Value:
+        IsVariable: 0
+        isPermanent: 0
+        VariableType: 0
+        Target:
+          TargetRange: 0
+          TargetFilter:
+            Type: 0
+            ID: 0
+            Name: 
+            Rarity: 0
+            NameContains: 
+        BaseValue: 1
+      IsTargeted: 0
+      Target:
+        TargetRange: 0
+        TargetFilter:
+          Type: 0
+          ID: 0
+          Name: 
+          Rarity: 0
+          NameContains: 
