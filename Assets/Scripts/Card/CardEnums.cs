@@ -4,7 +4,8 @@ public enum RarityType
     Common,
     Rare,
     Epic,
-    Mythic
+    Mythic,
+    Token
 }
 
 public enum ClassType

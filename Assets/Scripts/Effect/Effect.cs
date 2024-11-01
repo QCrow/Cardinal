@@ -190,3 +190,36 @@ public class AddCardEffect : Effect
         throw new System.NotImplementedException("Currently, AddCardEffect cannot be reverted.");
     }
 }
+
+public class GainPermanentDamageAndResetEffect : Effect
+{
+    private readonly int _value;
+    private int _count = 0;
+    private readonly Target _target;
+
+    public GainPermanentDamageAndResetEffect(Card card, EffectValue effectValue, Target target) : base(card)
+    {
+        _value = effectValue.GetValue(card);
+        _target = target;
+    }
+
+    public override void Apply()
+    {
+        bool exists = _target.GetAvailableCardTargets(_card).Count > 0;
+        if (exists)
+        {
+            _count++;
+            _card.AddModifier(CardModifierType.Strength, _value, true);
+        }
+        else
+        {
+            Revert();
+        }
+    }
+
+    public override void Revert()
+    {
+        _card.RemoveModifier(CardModifierType.Strength, _value * _count, true);
+        _count = 0;
+    }
+}

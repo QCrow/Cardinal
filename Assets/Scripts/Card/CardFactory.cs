@@ -59,6 +59,9 @@ public static class CardFactory
                 case EffectType.AddCard:
                     effect = new AddCardEffect(card, serializedEffect.CardID);
                     break;
+                case EffectType.GainPermanentDamageAndReset:
+                    effect = new GainPermanentDamageAndResetEffect(card, serializedEffect.Value, serializedEffect.Target);
+                    break;
                 default:
                     throw new System.NotSupportedException($"Effect keyword '{serializedEffect.Keyword}' is not supported or implemented yet.");
             }

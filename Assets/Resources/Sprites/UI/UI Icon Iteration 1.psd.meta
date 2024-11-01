@@ -40,7 +40,7 @@ ScriptedImporter:
     spriteMeshType: 1
     alignment: 0
     spritePivot: {x: 0.5, y: 0.5}
-    spritePixelsToUnits: 300
+    spritePixelsToUnits: 100
     spriteBorder: {x: 0, y: 0, z: 0, w: 0}
     spriteGenerateFallbackPhysicsShape: 0
     generateCubemap: 6
@@ -110,7 +110,7 @@ ScriptedImporter:
       y: 4
       width: 218
       height: 41
-    spriteID: a34583d506c8cdc428fbf008e3f5a4ac
+    spriteID: a9daa111a0cca9346b9a2fa08e2b55d4
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -131,7 +131,7 @@ ScriptedImporter:
       y: 53
       width: 39
       height: 71
-    spriteID: 73250c8816251ae4c895fc7d8a4f20b8
+    spriteID: 289fc672bb3561541ab815f50134476c
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -152,7 +152,7 @@ ScriptedImporter:
       y: 53
       width: 47
       height: 67
-    spriteID: be5af32f4023b4b4bafa0f7ae89f6ec1
+    spriteID: 0e5dd73b698a27648ada66bbaffeea26
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -173,7 +173,7 @@ ScriptedImporter:
       y: 4
       width: 0
       height: 0
-    spriteID: 942442916bde88e42af6f447319574c0
+    spriteID: 36981d61c735e834c9654d2e808fdde0
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -198,43 +198,7 @@ ScriptedImporter:
     characterGroups: []
     pivot: {x: 0, y: 0}
     boneReadOnly: 0
-  platformSettings:
-  - name: DefaultTexturePlatform
-    overridden: 0
-    ignorePlatformSupport: 0
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    androidETC2FallbackOverride: 0
-  - name: Standalone
-    overridden: 0
-    ignorePlatformSupport: 0
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    androidETC2FallbackOverride: 0
-  - name: WebGL
-    overridden: 0
-    ignorePlatformSupport: 0
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    androidETC2FallbackOverride: 0
+  platformSettings: []
   mosaicLayers: 1
   characterMode: 1
   documentPivot: {x: 0, y: 0}
@@ -252,14 +216,14 @@ ScriptedImporter:
   spriteCategoryList:
     categories: []
   spritePackingTag: 
-  resliceFromLayer: 1
+  resliceFromLayer: 0
   mosaicPSDLayers: []
   rigPSDLayers:
   - name: "\u753B\u677F 1"
     spriteName: 
     isGroup: 1
     parentIndex: -1
-    spriteID: bb50063eb2fb4564c9d6b8c656645aae
+    spriteID: 36fba63a524aa0a4f96a0ae80d6b7d2c
     layerID: 3
     mosaicPosition: {x: 0, y: 0}
     flatten: 0
@@ -269,7 +233,7 @@ ScriptedImporter:
     spriteName: Nametag
     isGroup: 0
     parentIndex: 0
-    spriteID: a34583d506c8cdc428fbf008e3f5a4ac
+    spriteID: a9daa111a0cca9346b9a2fa08e2b55d4
     layerID: 13
     mosaicPosition: {x: 4, y: 4}
     flatten: 0
@@ -279,7 +243,7 @@ ScriptedImporter:
     spriteName: Attack
     isGroup: 0
     parentIndex: 0
-    spriteID: 73250c8816251ae4c895fc7d8a4f20b8
+    spriteID: 289fc672bb3561541ab815f50134476c
     layerID: 9
     mosaicPosition: {x: 59, y: 53}
     flatten: 0
@@ -289,7 +253,7 @@ ScriptedImporter:
     spriteName: Hourglass
     isGroup: 0
     parentIndex: 0
-    spriteID: be5af32f4023b4b4bafa0f7ae89f6ec1
+    spriteID: 0e5dd73b698a27648ada66bbaffeea26
     layerID: 5
     mosaicPosition: {x: 4, y: 53}
     flatten: 0
@@ -299,44 +263,14 @@ ScriptedImporter:
     spriteName: "\u56FE\u5C42 1"
     isGroup: 0
     parentIndex: 0
-    spriteID: 942442916bde88e42af6f447319574c0
+    spriteID: 36981d61c735e834c9654d2e808fdde0
     layerID: 2
     mosaicPosition: {x: 230, y: 4}
     flatten: 0
     isImported: 1
     isVisible: 1
   sharedRigPSDLayers: []
-  pSDLayerImportSetting:
-  - spriteId: bb50063eb2fb4564c9d6b8c656645aae
-    name: "\u753B\u677F 1"
-    layerId: 3
-    flatten: 0
-    isGroup: 1
-    importLayer: 1
-  - spriteId: a34583d506c8cdc428fbf008e3f5a4ac
-    name: Nametag
-    layerId: 13
-    flatten: 0
-    isGroup: 0
-    importLayer: 1
-  - spriteId: 73250c8816251ae4c895fc7d8a4f20b8
-    name: Attack
-    layerId: 9
-    flatten: 0
-    isGroup: 0
-    importLayer: 1
-  - spriteId: be5af32f4023b4b4bafa0f7ae89f6ec1
-    name: Hourglass
-    layerId: 5
-    flatten: 0
-    isGroup: 0
-    importLayer: 1
-  - spriteId: 942442916bde88e42af6f447319574c0
-    name: "\u56FE\u5C42 1"
-    layerId: 2
-    flatten: 0
-    isGroup: 0
-    importLayer: 1
+  pSDLayerImportSetting: []
   importFileNodeState: 1
   platformSettingsDirtyTick: 0
   spriteSizeExpandChanged: 0

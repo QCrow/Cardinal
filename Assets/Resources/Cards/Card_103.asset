@@ -25,7 +25,7 @@ MonoBehaviour:
   Name: Quick Blader
   Rarity: 0
   BaseAttack: 4
-  Description: 'On move:  I gain 2 TEMP STR.'
+  Description: 'On move:  Deal 2 extra DMG on next attack.'
   HasEffect: 1
   Conditions:
   - Trigger: 6
@@ -39,6 +39,7 @@ MonoBehaviour:
         ID: 0
         Name: 
         Rarity: 0
+        NameContains: 
     Check: 0
     Minimum: 0
     Effects:
@@ -58,6 +59,7 @@ MonoBehaviour:
             ID: 0
             Name: 
             Rarity: 0
+            NameContains: 
         BaseValue: 2
       IsTargeted: 0
       Target:
@@ -67,3 +69,4 @@ MonoBehaviour:
           ID: 0
           Name: 
           Rarity: 0
+          NameContains: 

@@ -7,8 +7,8 @@ public enum FilterType
     None,
     ID,
     Name,
-    Trait,
-    Rarity
+    Rarity,
+    NameContains,
 }
 
 
@@ -22,6 +22,8 @@ public class Filter
     public string Name;
     [ShowIf("Type", FilterType.Rarity)]
     public RarityType Rarity;
+    [ShowIf("Type", FilterType.NameContains)]
+    public string NameContains;
 
     public bool IsMatch(Card card)
     {
@@ -30,6 +32,7 @@ public class Filter
             FilterType.ID => card.ID == ID,
             FilterType.Name => card.Name == Name,
             FilterType.Rarity => card.Rarity == Rarity,
+            FilterType.NameContains => card.Name.Contains(NameContains),
             _ => false,
         };
     }

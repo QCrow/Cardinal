@@ -4,7 +4,8 @@ using UnityEngine.UI;
 public class HealthBar : MonoBehaviour
 {
     [SerializeField] private Slider _slider;
-    [SerializeField] private TMPro.TMP_Text _healthText;
+    [SerializeField] private TMPro.TMP_Text _currentHealthText;
+    [SerializeField] private TMPro.TMP_Text _maxHealthText;
     private float _fillAmount;
 
     public void SetHealth(float currHealth, float maxHealth)
@@ -12,6 +13,7 @@ public class HealthBar : MonoBehaviour
         _fillAmount = currHealth / maxHealth;
 
         _slider.value = _fillAmount;
-        _healthText.text = $"{currHealth}/{maxHealth}";
+        _currentHealthText.text = $"{currHealth}";
+        _maxHealthText.text = $"{maxHealth}";
     }
 }

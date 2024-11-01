@@ -6,7 +6,9 @@ public enum TriggerType
     OnDeploy,
     PrioWhileInPlay,
     WhileInPlay,
+    BeforeAttack,
     OnAttack,
+    AfterAttack,
     OnDeath,
     OnMove
 }
@@ -17,7 +19,8 @@ public enum EffectType
     Apply,
     Destroy,
     AddCard,
-    Transform
+    Transform,
+    GainPermanentDamageAndReset,
 }
 
 public enum CardModifierType
