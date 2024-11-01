@@ -95,6 +95,10 @@ public class CardManager : SerializedMonoBehaviour
         _availableCards.Clear();
 
         _temporaryDeck.AddRange(_permanentDeck);
+        foreach (Card card in _temporaryDeck)
+        {
+            card.ResetAllState();
+        }
         Reshuffle();
     }
     #endregion
@@ -106,9 +110,25 @@ public class CardManager : SerializedMonoBehaviour
         _permanentDeck.Add(card);
     }
 
-    public void RemoveCardPermanently(Card card)
+    public Card AddCardTemporarily(int cardID)
+    {
+        Card card = InstantiateCard(cardID);
+        _temporaryDeck.Add(card);
+        _availableCards.Add(card);
+        return card;
+    }
+
+    public void DestroyCard(Card card)
     {
         _permanentDeck.Remove(card);
+    }
+
+    public void RemoveCard(Card card)
+    {
+        _temporaryDeck.Remove(card);
+        _availableCards.Remove(card);
+        card.transform.SetParent(Graveyard, false);
+        card.transform.localPosition = Vector3.zero;
     }
 
     public void Reshuffle()
@@ -222,7 +242,7 @@ public class CardManager : SerializedMonoBehaviour
             card.UnbindFromSlot();
             newCard.BindToSlot(slot);
         }
-        Board.Instance.ResetDeployedCards();
+        Board.Instance.SyncDeployedCards();
         _temporaryDeck.Add(newCard);
         _availableCards.Add(newCard);
         _temporaryDeck.Remove(card);
@@ -241,7 +261,7 @@ public class CardManager : SerializedMonoBehaviour
             card.UnbindFromSlot();
             newCard.BindToSlot(slot);
         }
-        Board.Instance.ResetDeployedCards();
+        Board.Instance.SyncDeployedCards();
         _permanentDeck.Add(newCard);
         _temporaryDeck.Add(newCard);
         _availableCards.Add(newCard);

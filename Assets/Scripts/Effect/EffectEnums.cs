@@ -21,6 +21,7 @@ public enum EffectType
     AddCard,
     Transform,
     GainPermanentDamageAndReset,
+    Mono
 }
 
 public enum CardModifierType

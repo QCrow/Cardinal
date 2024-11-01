@@ -174,6 +174,10 @@ public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     public void BindToSlot(Slot slot)
     {
+        if (slot.Card != null)
+        {
+            slot.Card.UnbindFromSlot();
+        }
         Slot = slot;
         slot.Card = this;
         transform.SetParent(slot.ContentContainer.transform);
@@ -197,10 +201,16 @@ public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitH
         transform.localPosition = Vector3.zero;
     }
 
+    public void Remove()
+    {
+        UnbindFromSlot();
+        CardManager.Instance.RemoveCard(this);
+    }
+
     public void Destroy()
     {
         UnbindFromSlot();
-        CardManager.Instance.RemoveCardPermanently(this);
+        CardManager.Instance.DestroyCard(this);
         Destroy(gameObject);
     }
 
@@ -218,6 +228,12 @@ public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     public void ResetTemporaryState()
     {
+        _temporaryModifiers.Clear();
+    }
+
+    public void ResetAllState()
+    {
+        _permanentModifiers.Clear();
         _temporaryModifiers.Clear();
     }
 

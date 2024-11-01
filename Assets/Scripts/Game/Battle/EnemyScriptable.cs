@@ -11,7 +11,8 @@ public class EnemyScriptable : ScriptableObject
     public enum EnemyEffectType
     {
         None,
-        CenterNoDamage
+        CenterNoDamage,
+        TopLeftNoDamage
     }
 
     public EnemyEffectType EffectType;
@@ -27,6 +28,9 @@ public class EnemyScriptable : ScriptableObject
                 break;
             case EnemyEffectType.CenterNoDamage:
                 _effect = new CenterNoDamageEnemyEffect();
+                break;
+            case EnemyEffectType.TopLeftNoDamage:
+                _effect = new TopLeftNoDamageEnemyEffect();
                 break;
         }
     }
