@@ -211,7 +211,7 @@ public class CardManager : SerializedMonoBehaviour
 
     #region TODO
 
-    public void TransformCardTemporarily(Card card, int cardID)
+    public Card TransformCardTemporarily(Card card, int cardID)
     {
         Transform parent = card.transform.parent;
         Card newCard = InstantiateCard(cardID, parent);
@@ -222,11 +222,34 @@ public class CardManager : SerializedMonoBehaviour
             card.UnbindFromSlot();
             newCard.BindToSlot(slot);
         }
-
+        Board.Instance.ResetDeployedCards();
         _temporaryDeck.Add(newCard);
+        _availableCards.Add(newCard);
         _temporaryDeck.Remove(card);
+        _availableCards.Remove(card);
+        return newCard;
     }
 
+    public Card TransformCardPermanently(Card card, int cardID)
+    {
+        Transform parent = card.transform.parent;
+        Card newCard = InstantiateCard(cardID, parent);
+
+        if (card.Slot != null)
+        {
+            Slot slot = card.Slot;
+            card.UnbindFromSlot();
+            newCard.BindToSlot(slot);
+        }
+        Board.Instance.ResetDeployedCards();
+        _permanentDeck.Add(newCard);
+        _temporaryDeck.Add(newCard);
+        _availableCards.Add(newCard);
+        _temporaryDeck.Remove(card);
+        _permanentDeck.Remove(card);
+        _availableCards.Remove(card);
+        return newCard;
+    }
     #endregion
 
     #region Accessors

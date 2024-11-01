@@ -26,7 +26,15 @@ public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitH
     [SerializeField] private Dictionary<CardModifierType, int> _temporaryModifiers = new();
 
     // The total attack of the card, including base attack, temporary damage, and modifiers
-    public int TotalAttack => Math.Max(0, BaseAttack + GetModifierByType(CardModifierType.Strength) - GetModifierByType(CardModifierType.Weakness));
+    public int TotalAttack => GetTotalAttack();
+    private int GetTotalAttack()
+    {
+        if (Slot != null && Slot.GetModifierByType(SlotModifierType.NoDamage) > 0)
+        {
+            return 0;
+        }
+        return Math.Max(0, BaseAttack + GetModifierByType(CardModifierType.Strength) - GetModifierByType(CardModifierType.Weakness));
+    }
     #endregion
 
     #region Game Object References
@@ -190,9 +198,16 @@ public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitH
         Destroy(gameObject);
     }
 
-    public void TransformTemporarilyInto(int cardID)
+    public Card Transform(int cardID, bool isPermanent = false)
     {
-        CardManager.Instance.TransformCardTemporarily(this, cardID);
+        if (isPermanent)
+        {
+            return CardManager.Instance.TransformCardPermanently(this, cardID);
+        }
+        else
+        {
+            return CardManager.Instance.TransformCardTemporarily(this, cardID);
+        }
     }
 
     public void ResetTemporaryState()

@@ -32,21 +32,21 @@ MonoBehaviour:
   HasEffect: 1
   Conditions:
   - Trigger: 4
-    Condition: 1
+    Condition: 4
     CycleCount: 1
     Position: 0
     TargetWithFilter:
-      TargetRange: 0
+      TargetRange: 1
       TargetFilter:
-        Type: 0
+        Type: 4
         ID: 0
         Name: 
         Rarity: 0
-        NameContains: 
-    Check: 0
+        NameContains: Blade
+    Check: 1
     Minimum: 0
     Effects:
-    - Keyword: 5
+    - Keyword: 4
       ApplyOption: 0
       CardModifier: 0
       SlotModifier: 0
@@ -63,8 +63,8 @@ MonoBehaviour:
             Name: 
             Rarity: 0
             NameContains: 
-        BaseValue: 1
-      IsTargeted: 1
+        BaseValue: 202
+      IsTargeted: 0
       Target:
         TargetRange: 1
         TargetFilter:
