@@ -286,7 +286,7 @@ public class MonoEffect : Effect
         });
         Board.Instance.SyncDeployedCards();
 
-        _card.AddModifier(CardModifierType.Strength, BattleManager.Instance.LastDealtDamage, true);
+        _card.AddModifier(CardModifierType.Strength, BattleManager.Instance.LastDealtDamage - _card.TotalAttack, true);
         _card.UpdateAttackValue();
     }
 

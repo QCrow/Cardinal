@@ -29,7 +29,8 @@ MonoBehaviour:
     removed, add a Void in its place.
 
     For the rest of the battle, deal X extra
-    DMG, where X equals the combined DMG that was dealt in the attack.'
+    DMG, where X equals the combined DMG that was dealt by the removed cards in the
+    previous attack.'
   HasEffect: 1
   Conditions:
   - Trigger: 6
