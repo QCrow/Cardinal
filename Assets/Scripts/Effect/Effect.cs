@@ -164,15 +164,6 @@ public class DestroyEffect : Effect
     public override void Revert()
     {
         throw new System.NotImplementedException("Currently, DestroyEffect cannot be reverted.");
-
-        // if (_isTargeted)
-        // {
-        //     _target.GetAvailableTargets(_card).ForEach(target => target.ResetTemporaryState());
-        // }
-        // else
-        // {
-        //     _card.ResetTemporaryState();
-        // }
     }
 }
 
