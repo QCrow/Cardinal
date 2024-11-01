@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a2ed6f30d06c6db4398b5fcbe1f7838a, type: 3}
-  m_Name: Card_9
+  m_Name: Card_202
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -20,33 +20,17 @@ MonoBehaviour:
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
-    SerializationNodes:
-    - Name: Traits
-      Entry: 7
-      Data: 0|System.Collections.Generic.HashSet`1[[TraitType, Assembly-CSharp]],
-        System.Core
-    - Name: 
-      Entry: 12
-      Data: 1
-    - Name: 
-      Entry: 3
-      Data: 4
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-  ID: 9
-  Name: Skeleton
-  Rarity: 0
-  BaseAttack: 3
-  Description: 'Count (3): Detroy itself.'
+    SerializationNodes: []
+  ID: 202
+  Name: Sellsword
+  Rarity: 5
+  BaseAttack: 4
+  Description: Deal 3 extra DMG for each adjacent unit with name containing "Blade".
   HasEffect: 1
   Conditions:
-  - Trigger: 3
-    Condition: 2
-    CycleCount: 3
+  - Trigger: 5
+    Condition: 1
+    CycleCount: 1
     Position: 0
     TargetWithFilter:
       TargetRange: 0
@@ -54,17 +38,19 @@ MonoBehaviour:
         Type: 0
         ID: 0
         Name: 
-        Trait: 0
         Rarity: 0
+        NameContains: 
     Check: 0
     Minimum: 0
     Effects:
-    - Keyword: 2
-      Modifier: 0
+    - Keyword: 5
+      ApplyOption: 0
+      CardModifier: 0
+      SlotModifier: 0
       CardID: 0
       Value:
         IsVariable: 0
-        isPermanent: 0
+        isPermanent: 1
         VariableType: 0
         Target:
           TargetRange: 0
@@ -72,15 +58,15 @@ MonoBehaviour:
             Type: 0
             ID: 0
             Name: 
-            Trait: 0
             Rarity: 0
+            NameContains: 
         BaseValue: 1
-      IsTargeted: 0
+      IsTargeted: 1
       Target:
-        TargetRange: 0
+        TargetRange: 1
         TargetFilter:
-          Type: 0
+          Type: 4
           ID: 0
           Name: 
-          Trait: 0
           Rarity: 0
+          NameContains: Blade

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a2ed6f30d06c6db4398b5fcbe1f7838a, type: 3}
-  m_Name: Card_8
+  m_Name: Card_200
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -20,30 +20,20 @@ MonoBehaviour:
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
-    SerializationNodes:
-    - Name: Traits
-      Entry: 7
-      Data: 0|System.Collections.Generic.HashSet`1[[TraitType, Assembly-CSharp]],
-        System.Core
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-  ID: 8
-  Name: Slacking Fencer
+    SerializationNodes: []
+  ID: 200
+  Name: Bladesworn Apprentice
   Rarity: 1
   BaseAttack: 0
-  Description: 'Cycle 5: +5 Temp Strength'
+  Description: 'Before attacking, gain 1 permanent DMG if next to a unit with name
+    containing "Blade".
+
+    Otherwise, lose all gained DMG.'
   HasEffect: 1
   Conditions:
-  - Trigger: 3
-    Condition: 2
-    CycleCount: 5
+  - Trigger: 4
+    Condition: 1
+    CycleCount: 1
     Position: 0
     TargetWithFilter:
       TargetRange: 0
@@ -51,17 +41,19 @@ MonoBehaviour:
         Type: 0
         ID: 0
         Name: 
-        Trait: 0
         Rarity: 0
+        NameContains: 
     Check: 0
     Minimum: 0
     Effects:
-    - Keyword: 1
-      Modifier: 1
+    - Keyword: 5
+      ApplyOption: 0
+      CardModifier: 0
+      SlotModifier: 0
       CardID: 0
       Value:
         IsVariable: 0
-        isPermanent: 0
+        isPermanent: 1
         VariableType: 0
         Target:
           TargetRange: 0
@@ -69,15 +61,15 @@ MonoBehaviour:
             Type: 0
             ID: 0
             Name: 
-            Trait: 0
             Rarity: 0
+            NameContains: 
         BaseValue: 1
-      IsTargeted: 0
+      IsTargeted: 1
       Target:
-        TargetRange: 0
+        TargetRange: 1
         TargetFilter:
-          Type: 0
+          Type: 4
           ID: 0
           Name: 
-          Trait: 0
           Rarity: 0
+          NameContains: Blade

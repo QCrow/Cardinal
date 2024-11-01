@@ -249,6 +249,11 @@ public class BattleManager : MonoBehaviour
     {
         Board.Instance.DeployedCards.ForEach(card =>
         {
+            card.ApplyEffect(TriggerType.BeforeAttack);
+        });
+
+        Board.Instance.DeployedCards.ForEach(card =>
+        {
             card.ApplyEffect(TriggerType.OnAttack);
 
             // Strike count is the number of times the card will attack, determined by the MultiStrike modifier
@@ -256,6 +261,12 @@ public class BattleManager : MonoBehaviour
             for (int i = 0; i < strikeCount; i++) InflictDamage(card.TotalAttack);
         });
 
+        Board.Instance.DeployedCards.ForEach(card =>
+        {
+            card.ApplyEffect(TriggerType.AfterAttack);
+        });
+
+        Board.Instance.DeployedCards.ForEach(card => card.UpdateAttackValue());
     }
 
     private void InflictDamage(int damage)

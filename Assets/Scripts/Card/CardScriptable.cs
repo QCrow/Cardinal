@@ -21,6 +21,7 @@ public class CardScriptable : SerializedScriptableObject
 
     public int BaseAttack;
 
+    [TextArea(3, 10)]
     public string Description;
 
     [Space(10)]
