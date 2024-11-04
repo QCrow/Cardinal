@@ -56,11 +56,11 @@ public class AddCardModifierEffect : Effect
         {
             List<Card> cards = _target.GetAvailableCardTargets(_card);
             Debug.Log(cards.Count);
-            cards.ForEach(target => target.AddModifier(_modifierType, _value.GetValue(_card), _value.isPermanent));
+            cards.ForEach(target => target.AddModifier(_modifierType, _value.GetValue(_card), _value.PersistenceType));
         }
         else
         {
-            _card.AddModifier(_modifierType, _value.GetValue(_card), _value.isPermanent);
+            _card.AddModifier(_modifierType, _value.GetValue(_card), _value.PersistenceType);
         }
     }
 
@@ -68,11 +68,11 @@ public class AddCardModifierEffect : Effect
     {
         if (_isTargeted)
         {
-            _target.GetAvailableCardTargets(_card).ForEach(target => target.RemoveModifier(_modifierType, _value.GetValue(_card), _value.isPermanent));
+            _target.GetAvailableCardTargets(_card).ForEach(target => target.RemoveModifier(_modifierType, _value.GetValue(_card), _value.PersistenceType));
         }
         else
         {
-            _card.RemoveModifier(_modifierType, _value.GetValue(_card), _value.isPermanent);
+            _card.RemoveModifier(_modifierType, _value.GetValue(_card), _value.PersistenceType);
         }
     }
 
@@ -108,12 +108,12 @@ public class AddSlotModifierEffect : Effect
         {
             _target.GetAvailableSlotTargets(_card).ForEach(target =>
             {
-                target.AddModifier(_modifierType, _value.GetValue(_card), _value.isPermanent);
+                target.AddModifier(_modifierType, _value.GetValue(_card), _value.IsPermanent);
             });
         }
         else
         {
-            _card.Slot.AddModifier(_modifierType, _value.GetValue(_card), _value.isPermanent);
+            _card.CurrentSlot.AddModifier(_modifierType, _value.GetValue(_card), _value.IsPermanent);
         }
     }
 
@@ -123,12 +123,12 @@ public class AddSlotModifierEffect : Effect
         {
             _target.GetAvailableSlotTargets(_card).ForEach(target =>
             {
-                target.RemoveModifier(_modifierType, _value.GetValue(_card), _value.isPermanent);
+                target.RemoveModifier(_modifierType, _value.GetValue(_card), _value.IsPermanent);
             });
         }
         else
         {
-            _card.Slot.RemoveModifier(_modifierType, _value.GetValue(_card), _value.isPermanent);
+            _card.CurrentSlot.RemoveModifier(_modifierType, _value.GetValue(_card), _value.IsPermanent);
         }
     }
 
@@ -138,26 +138,28 @@ public class AddSlotModifierEffect : Effect
     }
 }
 
-public class DestroyEffect : Effect
+public class RemoveEffect : Effect
 {
     private readonly bool _isTargeted;
     private readonly Target _target;
+    private readonly bool _isPermanent;
 
-    public DestroyEffect(Card card, bool isTargeted = false, Target target = null) : base(card)
+    public RemoveEffect(Card card, EffectValue effectValue, bool isTargeted = false, Target target = null) : base(card)
     {
         _isTargeted = isTargeted;
         _target = target;
+        _isPermanent = effectValue.IsPermanent;
     }
 
     public override void Apply()
     {
         if (_isTargeted)
         {
-            _target.GetAvailableCardTargets(_card).ForEach(target => target.Destroy());
+            _target.GetAvailableCardTargets(_card).ForEach(target => CardSystem.Instance.DeckManager.RemoveCard(target, _isPermanent));
         }
         else
         {
-            _card.Destroy();
+            CardSystem.Instance.DeckManager.RemoveCard(_card, _isPermanent);
         }
     }
 
@@ -170,15 +172,17 @@ public class DestroyEffect : Effect
 public class AddCardEffect : Effect
 {
     private readonly int _cardID;
+    private readonly bool _isPermanent;
 
-    public AddCardEffect(Card card, int cardID) : base(card)
+    public AddCardEffect(Card card, EffectValue effectValue) : base(card)
     {
-        _cardID = cardID;
+        _cardID = effectValue.GetValue(card);
+        _isPermanent = effectValue.IsPermanent;
     }
 
     public override void Apply()
     {
-        CardManager.Instance.AddCardPermanently(_cardID);
+        CardSystem.Instance.DeckManager.AddCard(_cardID, _isPermanent);
     }
 
     public override void Revert()
@@ -197,7 +201,7 @@ public class TransformEffect : Effect
     public TransformEffect(Card card, EffectValue effectValue, bool isTargeted, Target target) : base(card)
     {
         _cardID = effectValue.GetValue(card);
-        _isPermanent = effectValue.isPermanent;
+        _isPermanent = effectValue.IsPermanent;
         _isTargeted = isTargeted;
         _target = target;
     }
@@ -208,15 +212,14 @@ public class TransformEffect : Effect
         {
             _target.GetAvailableCardTargets(_card).ForEach(target =>
             {
-                Card newCard = target.Transform(_cardID, _isPermanent);
+                Card newCard = CardSystem.Instance.DeckManager.TransformCard(target, _cardID, _isPermanent);
                 newCard.ApplyEffect(TriggerType.WhileInPlay);
             }
         );
         }
         else
         {
-            Card newCard = _card.Transform(_cardID, _isPermanent);
-            Debug.Log(newCard.ID);
+            Card newCard = CardSystem.Instance.DeckManager.TransformCard(_card, _cardID, _isPermanent);
             newCard.ApplyEffect(TriggerType.WhileInPlay);
         }
     }
@@ -245,18 +248,18 @@ public class GainPermanentDamageAndResetEffect : Effect
         if (exists)
         {
             _count++;
-            _card.BaseAttack += _value;
+            _card.AddModifier(CardModifierType.Strength, _value, ModifierPersistenceType.Permanent);
         }
         else
         {
-            Revert();
+            _card.RemoveModifier(CardModifierType.Strength, _value * _count, ModifierPersistenceType.Permanent);
+            _count = 0;
         }
     }
 
     public override void Revert()
     {
-        _card.BaseAttack -= _value * _count;
-        _count = 0;
+        throw new System.NotImplementedException("Currently, GainPermanentDamageAndResetEffect cannot be reverted.");
     }
 }
 
@@ -270,18 +273,20 @@ public class MonoEffect : Effect
         Board.Instance.DeployedCards.ForEach(card =>
         {
             if (card == _card) return;
-            Slot slot = card.Slot;
-            card.Remove();
-            Card voidCard = CardManager.Instance.AddCardTemporarily(0);
+            Slot slot = card.CurrentSlot;
+            CardSystem.Instance.DeckManager.RemoveCard(card, false);
+            Card voidCard = CardSystem.Instance.DeckManager.AddCard(0, false);
             voidCard.BindToSlot(slot);
         });
-        Board.Instance.SyncDeployedCards();
 
-        _card.AddModifier(CardModifierType.Strength, BattleManager.Instance.LastDealtDamage - _card.TotalAttack, true);
+        Board.Instance.UpdateDeployedCards();
+
+        _card.AddModifier(CardModifierType.Strength, BattleManager.Instance.LastDealtDamage - _card.TotalAttack, ModifierPersistenceType.Battle);
         _card.UpdateAttackValue();
     }
 
     public override void Revert()
     {
+        throw new System.NotImplementedException("Currently, GainPermanentDamageAndResetEffect cannot be reverted.");
     }
 }

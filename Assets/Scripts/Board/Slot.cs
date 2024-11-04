@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Sirenix.OdinInspector;
 
-public class Slot : SerializedMonoBehaviour
+public class Slot : MonoBehaviour
 {
     public GameObject ContentContainer => transform.GetChild(0).gameObject;
 
@@ -22,8 +21,7 @@ public class Slot : SerializedMonoBehaviour
     public Slot Right => Board.Instance.GetSlotAtPosition(Row, Col + 1);
     #endregion
 
-    [SerializeField] private Card _card;
-    public Card Card { get => _card; set => _card = value; }
+    public SlotContent Content;
 
     [SerializeField] private Dictionary<SlotModifierType, int> _permanentModifiers = new();
     [SerializeField] private Dictionary<SlotModifierType, int> _temporaryModifiers = new();

@@ -7,16 +7,16 @@ public class RandomRarityUtil
     private static readonly System.Random _random = new();
 
     // Get a random rarity based on the current level's rarity weights
-    private static RarityType GetRandomRarity(
-        int level, Dictionary<int, Dictionary<RarityType, int>> levelRarityWeights)
+    private static CardRarityType GetRandomRarity(
+        int level, Dictionary<int, Dictionary<CardRarityType, int>> levelRarityWeights)
     {
         if (!levelRarityWeights.ContainsKey(level))
         {
             Debug.LogError($"No rarity weights found for level {level}. Using default weights.");
-            return RarityType.Common;
+            return CardRarityType.Common;
         }
 
-        Dictionary<RarityType, int> rarityWeights = levelRarityWeights[level];
+        Dictionary<CardRarityType, int> rarityWeights = levelRarityWeights[level];
         int totalWeight = rarityWeights.Values.Sum();
         int randomValue = _random.Next(0, totalWeight);
         int weightSum = 0;
@@ -30,13 +30,13 @@ public class RandomRarityUtil
             }
         }
 
-        return RarityType.Common;
+        return CardRarityType.Common;
     }
 
     // Generate a list of card IDs by rarity, considering the current level's rarity weights
     public static List<int> GenerateCardIDsByRarity(
-        Dictionary<RarityType, List<int>> _rarityCards,
-        Dictionary<int, Dictionary<RarityType, int>> levelRarityWeights,
+        Dictionary<CardRarityType, List<int>> _rarityCards,
+        Dictionary<int, Dictionary<CardRarityType, int>> levelRarityWeights,
         int level,
         int numberOfCards,
         bool allowDuplicates)
@@ -47,7 +47,7 @@ public class RandomRarityUtil
         for (int i = 0; i < numberOfCards; i++)
         {
             // Get a random rarity based on the current level's weights
-            RarityType rarity = GetRandomRarity(level, levelRarityWeights);
+            CardRarityType rarity = GetRandomRarity(level, levelRarityWeights);
 
             // Ensure the rarity has available cards, or try another
             while (!_rarityCards.ContainsKey(rarity) || _rarityCards[rarity].Count == 0)

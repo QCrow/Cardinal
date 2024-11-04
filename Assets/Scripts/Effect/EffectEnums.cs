@@ -15,7 +15,7 @@ public enum EffectType
 {
     None, // Only used for default value
     Apply,
-    Destroy,
+    RemoveCard,
     AddCard,
     Transform,
     GainPermanentDamageAndReset,

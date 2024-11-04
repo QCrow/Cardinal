@@ -23,7 +23,7 @@ MonoBehaviour:
     SerializationNodes: []
   ID: 100
   Name: Footman
-  Rarity: 1
+  Rarity: 2
   BaseAttack: 4
   Description: 'Front: Deal 10 extra DMG.'
   HasEffect: 1
@@ -47,10 +47,10 @@ MonoBehaviour:
       ApplyOption: 0
       CardModifier: 1
       SlotModifier: 0
-      CardID: 0
       Value:
         IsVariable: 0
-        isPermanent: 0
+        IsPermanent: 0
+        PersistenceType: 0
         VariableType: 0
         Target:
           TargetRange: 0

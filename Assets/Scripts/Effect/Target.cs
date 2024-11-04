@@ -18,7 +18,8 @@ public enum TargetRangeType
     Corner,
     Edge,
     Random,
-    All
+    All,
+    Others
 }
 
 [Serializable]
@@ -36,7 +37,7 @@ public class Target
 
     private List<Card> TargetSlotsToCards(List<Slot> slots)
     {
-        return slots.ConvertAll(slot => slot.Card).Where(card => card != null).ToList();
+        return slots.ConvertAll(slot => slot.Content as Card).Where(card => card != null).ToList();
     }
 
     public List<Card> GetAvailableCardTargets(Card src)
@@ -48,14 +49,18 @@ public class Target
             case TargetRangeType.All:
                 slots = Board.Instance.GetAllSlots().SelectMany(slotList => slotList).ToList();
                 break;
+            case TargetRangeType.Others:
+                slots = Board.Instance.GetAllSlots().SelectMany(slotList => slotList).ToList();
+                slots.Remove(src.CurrentSlot);
+                break;
             case TargetRangeType.Adjacent:
-                slots = src.Slot.Neighbors;
+                slots = src.CurrentSlot.Neighbors;
                 break;
             case TargetRangeType.Row:
-                slots = Board.Instance.GetRow(src.Slot.Row);
+                slots = Board.Instance.GetRow(src.CurrentSlot.Row);
                 break;
             case TargetRangeType.Column:
-                slots = Board.Instance.GetColumn(src.Slot.Col);
+                slots = Board.Instance.GetColumn(src.CurrentSlot.Col);
                 break;
             case TargetRangeType.Front:
                 slots = Board.Instance.GetColumn(0);
@@ -88,13 +93,13 @@ public class Target
         switch (TargetRange)
         {
             case TargetRangeType.Adjacent:
-                slots = src.Slot.Neighbors;
+                slots = src.CurrentSlot.Neighbors;
                 break;
             case TargetRangeType.Row:
-                slots = Board.Instance.GetRow(src.Slot.Row);
+                slots = Board.Instance.GetRow(src.CurrentSlot.Row);
                 break;
             case TargetRangeType.Column:
-                slots = Board.Instance.GetColumn(src.Slot.Col);
+                slots = Board.Instance.GetColumn(src.CurrentSlot.Col);
                 break;
             case TargetRangeType.Front:
                 slots = Board.Instance.GetColumn(0);

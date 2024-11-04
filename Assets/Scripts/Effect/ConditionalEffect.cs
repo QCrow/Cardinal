@@ -47,7 +47,7 @@ public class PositionCondition : ConditionalEffect
 
     public override void ApplyEffect()
     {
-        if (Card.Slot.IsPosition(Position))
+        if (Card.CurrentSlot.IsPosition(Position))
         {
             base.ApplyEffect();
         }
@@ -55,7 +55,7 @@ public class PositionCondition : ConditionalEffect
 
     public override void RevertEffect()
     {
-        if (Card.Slot.IsPosition(Position))
+        if (Card.CurrentSlot.IsPosition(Position))
         {
             base.RevertEffect();
         }
@@ -154,5 +154,11 @@ public class CycleCondition : ConditionalEffect
     public override void RevertEffect()
     {
         throw new System.NotImplementedException("Effect for CycleCondition cannot be reverted.");
+    }
+
+    public void ResetCycle()
+    {
+        _currentCycle = _cycleCount;
+        Card.UpdateCycleValue(_currentCycle);
     }
 }

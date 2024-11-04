@@ -1,11 +1,12 @@
-public enum RarityType
+public enum CardRarityType
 {
+    Token,
     Starter,
     Common,
     Rare,
     Epic,
     Mythic,
-    Token
+    Unique
 }
 
 public enum ClassType

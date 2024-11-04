@@ -59,7 +59,7 @@ public class SerializableCondition
         }
 
         // Effect-based trigger validation
-        if (Effects != null && Effects.Any(effect => effect.Keyword == EffectType.Destroy || effect.Keyword == EffectType.AddCard))
+        if (Effects != null && Effects.Any(effect => effect.Keyword == EffectType.RemoveCard || effect.Keyword == EffectType.AddCard))
         {
             if (Trigger != TriggerType.OnAttack && Trigger != TriggerType.OnDeath)
             {

@@ -53,11 +53,11 @@ public static class CardFactory
                         effect = new AddSlotModifierEffect(card, serializedEffect.SlotModifier, serializedEffect.Value, serializedEffect.IsTargeted, serializedEffect.Target);
                     }
                     break;
-                case EffectType.Destroy:
-                    effect = new DestroyEffect(card, serializedEffect.IsTargeted, serializedEffect.Target);
+                case EffectType.RemoveCard:
+                    effect = new RemoveEffect(card, serializedEffect.Value, serializedEffect.IsTargeted, serializedEffect.Target);
                     break;
                 case EffectType.AddCard:
-                    effect = new AddCardEffect(card, serializedEffect.CardID);
+                    effect = new AddCardEffect(card, serializedEffect.Value);
                     break;
                 case EffectType.Transform:
                     effect = new TransformEffect(card, serializedEffect.Value, serializedEffect.IsTargeted, serializedEffect.Target);
