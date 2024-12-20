@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Skeleton Boss
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300000, guid: e430753c5705f8245af99f108b480ed5, type: 3}
-  nodeType: 0
+  nodeType: 5

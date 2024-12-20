@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Executioner Boss
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300000, guid: 48dc9e9220fc7f54a86ca8f2c97797b0, type: 3}
-  nodeType: 0
+  nodeType: 5

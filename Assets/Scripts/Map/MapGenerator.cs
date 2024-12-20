@@ -26,6 +26,7 @@ namespace Map
 
             GenerateLayerDistances();
 
+            Debug.Log(conf.layers.Count);
             for (int i = 0; i < conf.layers.Count; i++)
                 PlaceLayer(i);
 
@@ -67,6 +68,7 @@ namespace Map
             // offset of this layer to make all the nodes centered:
             float offset = layer.nodesApartDistance * config.GridWidth / 2f;
 
+            //Debug.Log(config.GridWidth);
             for (int i = 0; i < config.GridWidth; i++)
             {
                 var supportedRandomNodeTypes =
@@ -74,6 +76,11 @@ namespace Map
                 NodeType nodeType = Random.Range(0f, 1f) < layer.randomizeNodes && supportedRandomNodeTypes.Count > 0
                     ? supportedRandomNodeTypes.Random()
                     : layer.nodeType;
+
+                if(config.nodeBlueprints.Where(b => b.nodeType == nodeType).ToList().Count == 0)
+                {
+                    Debug.Log(nodeType.ToString());
+                }
                 string blueprintName = config.nodeBlueprints.Where(b => b.nodeType == nodeType).ToList().Random().name;
                 Node node = new Node(nodeType, blueprintName, new Vector2Int(i, layerIndex))
                 {

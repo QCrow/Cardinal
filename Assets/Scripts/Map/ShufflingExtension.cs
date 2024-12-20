@@ -28,7 +28,10 @@ namespace Map
 
         public static T Random<T>(this IList<T> list)
         {
-            return list[rng.Next(list.Count)];
+            Debug.Log("List length is "+ list.Count);
+            var index = rng.Next(list.Count);
+            Debug.Log("index is : "+ rng.Next(list.Count));
+            return list[index];
         }
 
         public static T Last<T>(this IList<T> list)
