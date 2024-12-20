@@ -43,6 +43,7 @@ namespace Map
 
             // pick a random name of the boss level for this map:
             string bossNodeName = config.nodeBlueprints.Where(b => b.nodeType == NodeType.Boss).ToList().Random().name;
+            Debug.Log("Boss is: "+bossNodeName);
             return new Map(conf.name, bossNodeName, nodesList, new List<Vector2Int>());
         }
 

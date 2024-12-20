@@ -28,9 +28,9 @@ namespace Map
 
         public static T Random<T>(this IList<T> list)
         {
-            Debug.Log("List length is "+ list.Count);
+            //Debug.Log("List length is "+ list.Count);
             var index = rng.Next(list.Count);
-            Debug.Log("index is : "+ rng.Next(list.Count));
+            //Debug.Log("index is : "+ rng.Next(list.Count));
             return list[index];
         }
 
