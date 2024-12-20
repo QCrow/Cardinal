@@ -15,6 +15,7 @@ namespace Map
 
         private void Start()
         {
+            //GenerateNewMap();
             if (PlayerPrefs.HasKey("Map"))
             {
                 string mapJson = PlayerPrefs.GetString("Map");
