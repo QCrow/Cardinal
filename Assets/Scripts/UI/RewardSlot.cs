@@ -54,6 +54,6 @@ public class RewardSlot : MonoBehaviour
     {
         CardManager.Instance.AddCardPermanently(_rewardID);
         // GameManager.Instance.ChangeGameState(GameState.Map); // TODO: TO BE CHANGED
-        Map.Instance.GoNext();
+        //Map.Instance.GoNext();
     }
 }
