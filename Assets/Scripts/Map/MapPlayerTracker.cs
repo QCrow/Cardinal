@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Map
@@ -57,9 +58,10 @@ namespace Map
             view.SetAttainableNodes();
             view.SetLineColors();
             mapNode.ShowSwirlAnimation();
-
+            //EnterNode(mapNode);
             DOTween.Sequence().AppendInterval(enterNodeDelay).OnComplete(() => EnterNode(mapNode));
         }
+
 
         private static void EnterNode(MapNode mapNode)
         {
@@ -71,14 +73,22 @@ namespace Map
             switch (mapNode.Node.nodeType)
             {
                 case NodeType.MinorEnemy:
+                    GameManager.Instance.ChangeGameState(GameState.Battle);
+                    // TODO: Move the enemy generation logic to BattleManager
+                    BattleManager.Instance.StartBattleAgainstEnemy("NormalEnemy");
                     break;
                 case NodeType.EliteEnemy:
+                    GameManager.Instance.ChangeGameState(GameState.Battle);
+                    // TODO: Move the enemy generation logic to BattleManager
+                    BattleManager.Instance.StartBattleAgainstEnemy("EliteEnemy");
                     break;
                 case NodeType.RestSite:
                     break;
                 case NodeType.Treasure:
                     break;
                 case NodeType.Store:
+                    GameManager.Instance.ChangeGameState(GameState.Shop);
+                    ShopManager.Instance.InitializeShop();
                     break;
                 case NodeType.Boss:
                     break;

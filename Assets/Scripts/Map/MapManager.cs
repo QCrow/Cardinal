@@ -15,28 +15,32 @@ namespace Map
 
         private void Start()
         {
-            //GenerateNewMap();
-            if (PlayerPrefs.HasKey("Map"))
-            {
-                string mapJson = PlayerPrefs.GetString("Map");
-                Map map = JsonConvert.DeserializeObject<Map>(mapJson);
-                // using this instead of .Contains()
-                if (map.path.Any(p => p.Equals(map.GetBossNode().point)))
-                {
-                    // payer has already reached the boss, generate a new map
-                    GenerateNewMap();
-                }
-                else
-                {
-                    CurrentMap = map;
-                    // player has not reached the boss yet, load the current map
-                    view.ShowMap(map);
-                }
-            }
-            else
-            {
-                GenerateNewMap();
-            }
+            LoadMap();
+        }
+
+        public void LoadMap(){
+            // if (PlayerPrefs.HasKey("Map"))
+            // {
+            //     string mapJson = PlayerPrefs.GetString("Map");
+            //     Map map = JsonConvert.DeserializeObject<Map>(mapJson);
+            //     // using this instead of .Contains()
+            //     if (map.path.Any(p => p.Equals(map.GetBossNode().point)))
+            //     {
+            //         // payer has already reached the boss, generate a new map
+            //         GenerateNewMap();
+            //     }
+            //     else
+            //     {
+            //         CurrentMap = map;
+            //         // player has not reached the boss yet, load the current map
+            //         view.ShowMap(map);
+            //     }
+            // }
+            // else
+            // {
+            //     GenerateNewMap();
+            // }
+            GenerateNewMap();
         }
 
         public void GenerateNewMap()
