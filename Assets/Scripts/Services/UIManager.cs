@@ -6,6 +6,9 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; }
 
+    public Camera UICamera;
+
+
     public GameObject MapPanel;
     public GameObject BattlePanel;
     public GameObject ShopPanel;

@@ -108,12 +108,12 @@ public class AddSlotModifierEffect : Effect
         {
             _target.GetAvailableSlotTargets(_card).ForEach(target =>
             {
-                target.AddModifier(_modifierType, _value.GetValue(_card), _value.IsPermanent);
+                target.AddModifier(_modifierType, _value.GetValue(_card), _value.PersistenceType);
             });
         }
         else
         {
-            _card.CurrentSlot.AddModifier(_modifierType, _value.GetValue(_card), _value.IsPermanent);
+            _card.CurrentSlot.AddModifier(_modifierType, _value.GetValue(_card), _value.PersistenceType);
         }
     }
 
@@ -123,12 +123,12 @@ public class AddSlotModifierEffect : Effect
         {
             _target.GetAvailableSlotTargets(_card).ForEach(target =>
             {
-                target.RemoveModifier(_modifierType, _value.GetValue(_card), _value.IsPermanent);
+                target.RemoveModifier(_modifierType, _value.GetValue(_card), _value.PersistenceType);
             });
         }
         else
         {
-            _card.CurrentSlot.RemoveModifier(_modifierType, _value.GetValue(_card), _value.IsPermanent);
+            _card.CurrentSlot.RemoveModifier(_modifierType, _value.GetValue(_card), _value.PersistenceType);
         }
     }
 

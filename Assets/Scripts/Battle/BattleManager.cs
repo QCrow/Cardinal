@@ -205,12 +205,13 @@ public class BattleManager : MonoBehaviour
     {
         if (CurrentBattlePhase is ControlPhase)
         {
+            Board.Instance.DeployedCards.ForEach(card => card.ResetCardModifierState(ModifierPersistenceType.Turn));
+            Board.Instance.ClearBoardSlotsModifiers(ModifierPersistenceType.Turn);
             Board.Instance.RestoreFromSnapshot();
-            ResetMoveCounter();
 
             ApplyWhileInPlayEffects();
-            Board.Instance.DeployedCards.ForEach(card => card.UpdateAttackValue());
-            SetTotalAttack();
+
+            ResetMoveCounter();
         }
         else
         {
@@ -222,10 +223,12 @@ public class BattleManager : MonoBehaviour
     private void Deploy()
     {
         Board.Instance.ClearBoard();
+        Board.Instance.ClearBoardSlotsModifiers(ModifierPersistenceType.Turn);
         CardSystem.Instance.DeckManager.ShuffleDrawPool();
         ResetMoveCounter();
 
         List<Card> _cards = new();
+
 
         // Place cards randomly on the board
         while (true)
@@ -239,6 +242,7 @@ public class BattleManager : MonoBehaviour
 
             card.ResetCardModifierState(ModifierPersistenceType.Turn);
             card.BindToSlot(slot);
+            card.MoveToAndSetParent(slot.ContentContainer.GetComponent<RectTransform>());
 
             // Apply the deploy trigger effects
             card.ApplyEffect(TriggerType.OnDeploy);
@@ -248,6 +252,7 @@ public class BattleManager : MonoBehaviour
         Board.Instance.SaveSnapshot();
 
         ApplyWhileInPlayEffects();
+
         Board.Instance.DeployedCards.ForEach(card => card.UpdateAttackValue());
         SetTotalAttack();
     }

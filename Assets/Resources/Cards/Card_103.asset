@@ -50,7 +50,7 @@ MonoBehaviour:
       Value:
         IsVariable: 0
         IsPermanent: 0
-        PersistenceType: 1
+        PersistenceType: 0
         VariableType: 0
         Target:
           TargetRange: 0

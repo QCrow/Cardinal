@@ -1,8 +1,21 @@
 using UnityEngine;
+using DG.Tweening;
+using System.Collections;
 
-public class SlotContent : MonoBehaviour
+public abstract class SlotContent : MonoBehaviour
 {
     public Slot CurrentSlot { get; protected set; }
+
+    protected virtual void Awake()
+    {
+        if (!TryGetComponent<Canvas>(out var canvas))
+        {
+            canvas = gameObject.AddComponent<Canvas>();
+            canvas.sortingLayerName = "UI";
+        }
+        canvas.overrideSorting = true;
+        canvas.sortingOrder = 100;
+    }
 
     /// <summary>
     /// Binds the content to a specified slot.
@@ -19,8 +32,8 @@ public class SlotContent : MonoBehaviour
 
         CurrentSlot = slot;
         slot.Content = this;
-        transform.SetParent(slot.ContentContainer.transform);
-        ResetTransform();
+        // transform.SetParent(slot.ContentContainer.transform);
+        // ResetTransform();
     }
 
     /// <summary>
@@ -33,9 +46,26 @@ public class SlotContent : MonoBehaviour
             CurrentSlot.Content = null;
             CurrentSlot = null;
         }
+    }
 
+    /// <summary>
+    /// Moves the card to the graveyard.
+    /// </summary>
+    public void MoveToGraveyard()
+    {
         transform.SetParent(CardSystem.Instance.Graveyard.transform);
         ResetTransform();
+    }
+
+    public void MoveToAndSetParent(RectTransform dst, System.Action callback = null)
+    {
+        RectTransform rectTransform = GetComponent<RectTransform>();
+        rectTransform.SetParent(dst);
+        rectTransform.DOAnchorPos(Vector2.zero, 0.5f).OnComplete(() =>
+        {
+            ResetTransform();
+            callback?.Invoke();
+        });
     }
 
     /// <summary>

@@ -31,7 +31,8 @@ public class Board : MonoBehaviour
         get { return _deployedCards; }
         set { SetDeployedCards(value); }
     }
-    private List<List<Card>> _cardsSnapshot = new();  // List of snapshots of the board
+    private List<CardSaveData> _cardsSnapshot = new();  // List of snapshots of the board
+    private List<SlotSaveData> _slotsSnapshot = new();  // List of snapshots of the slots
 
     private RectTransform _rectTransform;  // Used to adjust the size of the board
 
@@ -234,6 +235,17 @@ public class Board : MonoBehaviour
         }
     }
 
+    public void ClearBoardSlotsModifiers(ModifierPersistenceType persistenceType)
+    {
+        foreach (List<Slot> row in _slots)
+        {
+            foreach (Slot slot in row)
+            {
+                slot.ClearModifiers(persistenceType);
+            }
+        }
+    }
+
     public void ApplyMovement(Direction direction, int index, int magnitude)
     {
         switch (direction)
@@ -287,11 +299,12 @@ public class Board : MonoBehaviour
                 {
                     Card card = (Card)content;
                     card.BindToSlot(newSlot);  // Bind to the new slot
-                    card.ApplyEffect(TriggerType.OnMove);
+                    card.MoveToAndSetParent(newSlot.ContentContainer.GetComponent<RectTransform>(), () => card.ApplyEffect(TriggerType.OnMove));
                 }
                 else
                 {
                     content.BindToSlot(newSlot);
+                    content.MoveToAndSetParent(newSlot.ContentContainer.GetComponent<RectTransform>());
                 }
             }
         }
@@ -325,11 +338,12 @@ public class Board : MonoBehaviour
                 {
                     Card card = (Card)content;
                     card.BindToSlot(newSlot);  // Bind to the new slot
-                    card.ApplyEffect(TriggerType.OnMove);
+                    card.MoveToAndSetParent(newSlot.ContentContainer.GetComponent<RectTransform>(), () => card.ApplyEffect(TriggerType.OnMove));
                 }
                 else
                 {
                     content.BindToSlot(newSlot);
+                    content.MoveToAndSetParent(newSlot.ContentContainer.GetComponent<RectTransform>());
                 }
             }
         }
@@ -371,12 +385,13 @@ public class Board : MonoBehaviour
                         card.BindToSlot(newSlot);  // Bind to the new slot
                         if (row != 1 || col != 1)
                         {
-                            card.ApplyEffect(TriggerType.OnMove);
+                            card.MoveToAndSetParent(newSlot.ContentContainer.GetComponent<RectTransform>(), () => card.ApplyEffect(TriggerType.OnMove));
                         }
                     }
                     else
                     {
                         content.BindToSlot(newSlot);
+                        content.MoveToAndSetParent(newSlot.ContentContainer.GetComponent<RectTransform>());
                     }
                 }
             }
@@ -420,12 +435,13 @@ public class Board : MonoBehaviour
                         card.BindToSlot(newSlot);  // Bind to the new slot
                         if (row != 1 || col != 1)
                         {
-                            card.ApplyEffect(TriggerType.OnMove);
+                            card.MoveToAndSetParent(newSlot.ContentContainer.GetComponent<RectTransform>(), () => card.ApplyEffect(TriggerType.OnMove));
                         }
                     }
                     else
                     {
                         content.BindToSlot(newSlot);
+                        content.MoveToAndSetParent(newSlot.ContentContainer.GetComponent<RectTransform>());
                     }
                 }
             }
@@ -438,39 +454,42 @@ public class Board : MonoBehaviour
         foreach (List<Slot> row in _slots)
         {
             List<Card> cards = row.Select(slot => slot.Content as Card).Where(card => card != null).Select(card => card!).ToList();
-            _cardsSnapshot.Add(cards);
+            foreach (Card card in cards)
+            {
+                _cardsSnapshot.Add(card.GetSaveData());
+            }
+            foreach (Slot slot in row)
+            {
+                _slotsSnapshot.Add(slot.GetSaveData());
+            }
         }
     }
 
     public void RestoreFromSnapshot()
     {
-        if (_cardsSnapshot.Count == 0)
-        {
-            return;
-        }
         foreach (List<Slot> row in _slots)
         {
             foreach (Slot slot in row)
             {
                 slot.Content = null;
+                slot.LoadSaveData(_slotsSnapshot.FirstOrDefault(s => s.Row == slot.Row && s.Col == slot.Col));
             }
         }
 
-        for (int row = 0; row < _unitHeight; row++)
+        foreach (CardSaveData cardData in _cardsSnapshot)
         {
-            for (int col = 0; col < _unitWidth; col++)
+            Card card = DeployedCards.FirstOrDefault(c => c.gameObject.GetInstanceID() == cardData.GUID);
+            if (card != null)
             {
-                Slot slot = _slots[row][col];
-                SlotContent card = _cardsSnapshot[row][col];
-                if (card != null)
+                Slot? slot = GetSlotAtPosition(cardData.Row, cardData.Col);
+                if (slot != null)
                 {
+                    card.LoadFromSaveData(cardData);
                     card.BindToSlot(slot);
+                    card.MoveToAndSetParent(slot.ContentContainer.GetComponent<RectTransform>());
                 }
             }
         }
-
-        _deployedCards.ForEach(card => card.ResetCardModifierState(ModifierPersistenceType.Turn));
-        _slots.ForEach(row => row.ForEach(slot => slot.ResetTemporaryState()));
     }
     #endregion
 }

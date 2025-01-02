@@ -100,6 +100,7 @@ public class DeckManager
             _battleDeck.Remove(card);
             _drawPool.Remove(card);
             card.UnbindFromSlot();
+            card.MoveToGraveyard();
         }
     }
 

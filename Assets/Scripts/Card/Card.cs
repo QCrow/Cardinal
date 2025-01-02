@@ -5,6 +5,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using TMPro;
+using DG.Tweening;
 
 /// <summary>
 /// Represents a card in the game with various attributes and behaviors.
@@ -45,7 +46,7 @@ public class Card : SlotContent, IPointerEnterHandler, IPointerExitHandler
 
     private int CalculateTotalAttack()
     {
-        if (CurrentSlot != null && CurrentSlot.GetModifierByType(SlotModifierType.NoDamage) > 0)
+        if (CurrentSlot != null && CurrentSlot.GetModifierValue(SlotModifierType.NoDamage) > 0)
         {
             return 0;
         }
@@ -181,8 +182,9 @@ public class Card : SlotContent, IPointerEnterHandler, IPointerExitHandler
         {
             canvas = _descriptionContainer.AddComponent<Canvas>();
             canvas.overrideSorting = true;
+            canvas.sortingLayerName = "UI";
         }
-        canvas.sortingOrder = 100; // Ensure on top
+        canvas.sortingOrder = 200; // Ensure on top
     }
 
     #endregion
@@ -355,6 +357,35 @@ public class Card : SlotContent, IPointerEnterHandler, IPointerExitHandler
         {
             _modifiers.Remove(persistence);
         }
+    }
+    #endregion
+
+    #region Serialization
+    public CardSaveData GetSaveData()
+    {
+        CardSaveData saveData = new CardSaveData
+        (
+            this.gameObject.GetInstanceID(),
+            CurrentSlot != null ? CurrentSlot.Row : -1,
+            CurrentSlot != null ? CurrentSlot.Col : -1,
+            ID,
+            _conditionalEffects.SelectMany(effect => effect.Value).OfType<CycleCondition>().FirstOrDefault()?.CycleValue ?? 0,
+            _modifiers.ToDictionary(pair => pair.Key, pair => pair.Value.ToDictionary(pair => pair.Key, pair => pair.Value))
+        );
+
+        return saveData;
+    }
+
+    public void LoadFromSaveData(CardSaveData saveData)
+    {
+        ID = saveData.ID;
+        _modifiers = saveData.Modifiers;
+        if (_conditionalEffects.SelectMany(effect => effect.Value).OfType<CycleCondition>().FirstOrDefault() is CycleCondition cycleCondition)
+        {
+            cycleCondition.CycleValue = saveData.CycleValue;
+        }
+        UpdateAttackValue();
+        UpdateCycleValue(saveData.CycleValue);
     }
     #endregion
 }
