@@ -166,6 +166,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 829e784289f6fa8459c4d595458ba81d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  UICamera: {fileID: 0}
   MapPanel: {fileID: 1854744633}
   BattlePanel: {fileID: 1663308051}
   ShopPanel: {fileID: 1029808745}
@@ -3165,7 +3166,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 9, y: 415.0656}
+  m_AnchoredPosition: {x: 9, y: 415.06558}
   m_SizeDelta: {x: 564, y: 487}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1172202622
@@ -5279,6 +5280,10 @@ PrefabInstance:
       value: MapObjectsUI Variant
       objectReference: {fileID: 0}
     - target: {fileID: 4814877705121799306, guid: f3d397d8780414037811524dd988a62e, type: 3}
+      propertyPath: linePrefab
+      value: 
+      objectReference: {fileID: 5857439060437771865, guid: e7c8e8fa5d8088e429499a625329800b, type: 3}
+    - target: {fileID: 4814877705121799306, guid: f3d397d8780414037811524dd988a62e, type: 3}
       propertyPath: scrollRectVertical
       value: 
       objectReference: {fileID: 1092378715}
@@ -6152,7 +6157,6 @@ RectTransform:
   - {fileID: 1421638930}
   - {fileID: 446250646}
   - {fileID: 1748875927}
-  - {fileID: 1283206005}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -6480,7 +6484,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1889112245}
-  - component: {fileID: 1889112244}
+  - component: {fileID: 1889112246}
   m_Layer: 0
   m_Name: MysteryEvent Manager
   m_TagString: Untagged
@@ -6488,31 +6492,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1889112244
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1889112243}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34fd6ade159d8ac43a2ae304037cb1a5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  eventDescriptionTMP: {fileID: 968024933}
-  optionContainer: {fileID: 1766717263}
-  optionButtonPrefab: {fileID: 6727257015164097396, guid: d7405057899f1754ab41415faa5d2b40, type: 3}
-  outcomeDescriptionTMP: {fileID: 1688598976}
-  eventDatabase: {fileID: 11400000, guid: 6fa1918c8685a774da98d47ec3fd6100, type: 2}
-  currentEvent:
-    id: 0
-    eventName: 
-    description: 
-    options: []
-  references:
-    version: 2
-    RefIds: []
 --- !u!4 &1889112245
 Transform:
   m_ObjectHideFlags: 0
@@ -6528,6 +6507,31 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1889112246
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1889112243}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa275b389ada2e4428618702bcaf0d2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  eventDescriptionTMP: {fileID: 968024933}
+  optionContainer: {fileID: 1766717263}
+  optionButtonPrefab: {fileID: 6727257015164097396, guid: d7405057899f1754ab41415faa5d2b40, type: 3}
+  outcomeDescriptionTMP: {fileID: 1688598976}
+  eventDatabase: {fileID: 11400000, guid: 6fa1918c8685a774da98d47ec3fd6100, type: 2}
+  currentEvent:
+    id: 0
+    eventName: 
+    description: 
+    options: []
+  references:
+    version: 2
+    RefIds: []
 --- !u!224 &1894775478 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3518604037694188982, guid: bb56a6d4afeb8594dbcf085b152394f1, type: 3}
@@ -6660,7 +6664,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1946015985
 Transform:
   m_ObjectHideFlags: 0
@@ -6697,6 +6701,7 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
+  Gold: 100
 --- !u!1 &1976536056
 GameObject:
   m_ObjectHideFlags: 0
