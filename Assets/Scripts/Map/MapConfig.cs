@@ -13,7 +13,7 @@ namespace Map
         [Tooltip("Nodes that will be used on layers with Randomize Nodes > 0")]
         public List<NodeType> randomNodes = new List<NodeType>
         {
-            NodeType.Mystery, NodeType.Store, NodeType.Treasure, NodeType.MinorEnemy, NodeType.RestSite
+            NodeType.MysteryEvent, NodeType.Store, NodeType.Treasure, NodeType.MinorEnemy, NodeType.RestSite
         };
 
         public int GridWidth => Mathf.Max(numOfPreBossNodes.max, numOfStartingNodes.max);

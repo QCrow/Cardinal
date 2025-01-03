@@ -36,5 +36,15 @@ public class SpecificCardRequirementCondition : BaseCondition
     }
 }
 
+[System.Serializable]
+public class NoCondition : BaseCondition
+{
+    public override bool Evaluate()
+    {
+        return true;
+    }
+}
+
+
 
 

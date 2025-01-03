@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+//using Sirenix.OdinInspector; // Make sure you have this
+using Sirenix.Serialization;
 
 [Serializable]
 public class MysteryEvent
@@ -12,12 +14,15 @@ public class MysteryEvent
     public List<EventOption> options;   // Possible choices the player can make
 }
 
-[Serializable]
+[System.Serializable]
 public class EventOption
 {
-    public string optionText;                      // Text displayed on the choice button
+    public string optionText;
+    //[SerializeReference]
     public ConditionNode rootConditionNode;
-    public List<BaseOutcome> outcomes;                 // Consequences if this option is chosen
-}
 
+    // Odin can serialize and display this polymorphic list
+    [SerializeReference]
+    public List<BaseOutcome> outcomes;
+}
 

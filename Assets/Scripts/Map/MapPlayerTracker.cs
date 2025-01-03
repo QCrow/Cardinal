@@ -92,7 +92,9 @@ namespace Map
                     break;
                 case NodeType.Boss:
                     break;
-                case NodeType.Mystery:
+                case NodeType.MysteryEvent:
+                    GameManager.Instance.ChangeGameState(GameState.MysteryEvent);
+                    MysteryEventManager.Instance.LoadRandomEvent();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

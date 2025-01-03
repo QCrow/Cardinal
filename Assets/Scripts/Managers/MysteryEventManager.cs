@@ -1,89 +1,132 @@
 using UnityEngine;
 using TMPro;
-using UnityEngine.UI; // For Button, if you're using Unity UI
+using UnityEngine.UI;
 using System.Collections.Generic;
 
 public class MysteryEventManager : MonoBehaviour
 {
     [Header("UI References")]
     [SerializeField] private TextMeshProUGUI eventDescriptionTMP;
-    [SerializeField] private Transform optionContainer;   // Parent for choice buttons
-    [SerializeField] private GameObject optionButtonPrefab; // Prefab for each choice button
+    [SerializeField] private Transform optionContainer;
+    [SerializeField] private GameObject optionButtonPrefab;
     [SerializeField] private TextMeshProUGUI outcomeDescriptionTMP;
+
+    [Header("Event Database Reference")]
+    [SerializeField] private MysteryEventDatabase eventDatabase;
 
     public MysteryEvent currentEvent;
 
-    // 1. Load the event and set up UI
+    public static MysteryEventManager Instance { get; private set; }
+
+    // Keep references to all spawned option buttons
+    private List<Button> spawnedButtons = new List<Button>();
+
+    private void Awake()
+    {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
+    }
+
+    // Load a random event from the database
+    public void LoadRandomEvent()
+    {
+        if (eventDatabase == null || eventDatabase.events == null || eventDatabase.events.Count == 0)
+        {
+            Debug.LogWarning("EventDatabase is missing or empty.");
+            return;
+        }
+
+        int randomIndex = Random.Range(0, eventDatabase.events.Count);
+        MysteryEvent randomEvent = eventDatabase.events[randomIndex];
+        LoadEvent(randomEvent);
+    }
+
+    // Load a specific event and set up UI
     public void LoadEvent(MysteryEvent newEvent)
     {
         currentEvent = newEvent;
-
-        // Clear existing UI
         ClearOptionsUI();
 
         // Display the event description
         eventDescriptionTMP.text = currentEvent.description;
+        Debug.Log("description updated");
+
+        bool anyInteractable = false; // Track if at least one option is clickable
+        spawnedButtons.Clear();
 
         // Create buttons for each option
         foreach (var option in currentEvent.options)
         {
-            // Instantiate the button prefab under optionContainer
             GameObject buttonGO = Instantiate(optionButtonPrefab, optionContainer);
-
-            // Get the Button component (or whatever script handles clicks)
             Button btn = buttonGO.GetComponent<Button>();
 
-            // Set the button text to the option's text
+            // Set button text
             TextMeshProUGUI btnText = buttonGO.GetComponentInChildren<TextMeshProUGUI>();
             if (btnText != null)
             {
                 btnText.text = option.optionText;
             }
 
-            // Determine if the option can be selected (condition check)
-            bool canSelect = (option.rootConditionNode == null)
-                             || option.rootConditionNode.Evaluate();
-
-            // Enable/Disable the button accordingly
+            // Condition check for initial interactability
+            bool canSelect = (option.rootConditionNode == null) || option.rootConditionNode.Evaluate();
             btn.interactable = canSelect;
+            if (canSelect) anyInteractable = true;
 
-            // Add listener to handle click
-            btn.onClick.AddListener(() => ChooseOption(option));
+            // Store the button
+            spawnedButtons.Add(btn);
+
+            // Pass both btn and option into the callback
+            btn.onClick.AddListener(() => ChooseOption(btn, option));
         }
 
-        // Clear any previous outcome description
+        // If no button is interactable, automatically return to map after 2s
+        if (!anyInteractable)
+        {
+            outcomeDescriptionTMP.text = "No available choices...";
+            Invoke(nameof(GoBackToMap), 2f);
+        }
+
+        // Clear any old outcome description
         outcomeDescriptionTMP.text = "";
     }
 
-    // 2. When the player picks an option
-    public void ChooseOption(EventOption option)
+    // When the player picks an option
+    public void ChooseOption(Button clickedButton, EventOption option)
     {
-        // Double-check condition in case something changed
+        // Double-check condition
         if (option.rootConditionNode != null && !option.rootConditionNode.Evaluate())
         {
-            // Option is invalid now, do nothing or show a message
-            return;
+            return; // Do nothing if conditions fail
         }
 
         // Apply outcomes
         List<string> outcomeDescriptions = new List<string>();
         foreach (var outcome in option.outcomes)
         {
-            // Apply the effect
             outcome.ApplyOutcome();
-
-            // Gather the outcome's description text
             if (!string.IsNullOrEmpty(outcome.outcomeDescription))
             {
                 outcomeDescriptions.Add(outcome.outcomeDescription);
             }
         }
 
-        // Display all outcome descriptions (joined or formatted nicely)
         outcomeDescriptionTMP.text = string.Join("\n", outcomeDescriptions);
 
-        // Optionally hide the options or proceed to next step, etc.
-        // ...
+        // Disable ALL buttons once any option is chosen
+        foreach (Button btn in spawnedButtons)
+        {
+            btn.interactable = false;
+        }
+
+        // After 2s, return to map
+        Invoke(nameof(GoBackToMap), 2f);
+    }
+
+    private void GoBackToMap()
+    {
+        GameManager.Instance.ChangeGameState(GameState.Map);
     }
 
     private void ClearOptionsUI()
@@ -93,5 +136,7 @@ public class MysteryEventManager : MonoBehaviour
         {
             Destroy(optionContainer.GetChild(i).gameObject);
         }
+
+        spawnedButtons.Clear();
     }
 }

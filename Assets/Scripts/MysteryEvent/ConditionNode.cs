@@ -8,7 +8,7 @@ public class ConditionNode
 {
     public ConditionNodeType nodeType;
 
-    [SerializeField] private BaseCondition leafCondition;
+    [SerializeReference] private BaseCondition leafCondition;
     [SerializeField] private List<ConditionNode> children;
 
     public bool Evaluate()
