@@ -88,7 +88,8 @@ namespace Map
                     break;
                 case NodeType.Store:
                     GameManager.Instance.ChangeGameState(GameState.Shop);
-                    ShopManager.Instance.InitializeShop();
+                    //TODO: Reenable this line after implementing shop
+                    // ShopManager.Instance.InitializeShop();
                     break;
                 case NodeType.Boss:
                     break;

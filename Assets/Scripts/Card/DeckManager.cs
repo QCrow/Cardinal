@@ -27,6 +27,11 @@ public class DeckManager
         }
     }
 
+    public bool HasCard(int cardID)
+    {
+        return _deck.Exists(card => card.ID == cardID);
+    }
+
     public void InitializeBeforeBattle()
     {
         // Copy the player's deck to the battle deck

@@ -42,7 +42,7 @@ public class GainCardOutcome : BaseOutcome
     {
         for (int i = 0; i < quantity; i++)
         {
-            CardManager.Instance.AddCardPermanently(cardId);
+            CardSystem.Instance.DeckManager.AddCard(cardId, true);
         }
     }
 }

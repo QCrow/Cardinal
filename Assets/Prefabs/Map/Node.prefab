@@ -82,7 +82,7 @@ SpriteRenderer:
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &3946722153856127649
@@ -269,7 +269,7 @@ SpriteRenderer:
   m_Size: {x: 5.12, y: 5.12}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &6746199761131337685
@@ -350,14 +350,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 6746199761131337685}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf54edab31c43fe4b8c6d2d5356eae1f, type: 3}
+  m_Script: {fileID: 11500000, guid: 45651fbc984c23b4b8a492c2b9319ec8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sr: {fileID: 9037504550964365079}
+  sr: {fileID: 0}
   image: {fileID: 0}
-  visitedCircle: {fileID: 2263283713793921596}
+  visitedCircle: {fileID: 0}
   circleImage: {fileID: 0}
-  visitedCircleImage: {fileID: 7600212338723090613}
+  visitedCircleImage: {fileID: 0}
 --- !u!1 &8152473846688106480
 GameObject:
   m_ObjectHideFlags: 0
