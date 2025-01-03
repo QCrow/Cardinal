@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Scripts/Shop/IPurchasable.cs.meta
+guid: bc63527c8cd85f84b93d1da7395e941b
+========
+guid: bf54edab31c43fe4b8c6d2d5356eae1f
+>>>>>>>> origin/main:Assets/Scripts/Map/MapNode.cs.meta
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

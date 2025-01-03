@@ -12,7 +12,7 @@ public class UIManager : MonoBehaviour
     public GameObject MapPanel;
     public GameObject BattlePanel;
     public GameObject ShopPanel;
-    public GameObject EventPanel;
+    public GameObject MysteryEventPanel;
 
     public Transform OverlayDisplay;
 

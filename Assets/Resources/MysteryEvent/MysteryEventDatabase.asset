@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a888c42fd634feb49b266793e1fab5b0, type: 3}
+  m_Name: MysteryEventDatabase
+  m_EditorClassIdentifier: 
+  events:
+  - id: 1
+    eventName: event1
+    description: choose one of the two gifts
+    options:
+    - optionText: Gain 50 gold (if you already have 120 gold)
+      rootConditionNode:
+        nodeType: 0
+        leafCondition:
+          rid: 6942580368024272899
+        children: []
+      outcomes:
+      - rid: 6942580368024272897
+    - optionText: Gain a random card
+      rootConditionNode:
+        nodeType: 0
+        leafCondition:
+          rid: 6942580368024272900
+        children: []
+      outcomes:
+      - rid: 6942580368024272898
+  references:
+    version: 2
+    RefIds:
+    - rid: 6942580368024272897
+      type: {class: GainGoldOutcome, ns: , asm: Assembly-CSharp}
+      data:
+        outcomeDescription: 50 gold gained
+        goldAmount: 50
+    - rid: 6942580368024272898
+      type: {class: GainCardOutcome, ns: , asm: Assembly-CSharp}
+      data:
+        outcomeDescription: card obtained
+        cardId: 1
+        quantity: 1
+    - rid: 6942580368024272899
+      type: {class: GoldRequirementCondition, ns: , asm: Assembly-CSharp}
+      data:
+        requiredGold: 120
+    - rid: 6942580368024272900
+      type: {class: NoCondition, ns: , asm: Assembly-CSharp}
+      data: 
