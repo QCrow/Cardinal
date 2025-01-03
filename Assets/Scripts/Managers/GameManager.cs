@@ -5,7 +5,7 @@ public enum GameState
     Map,
     Battle,
     Shop,
-    Event
+    MysteryEvent
 }
 
 public class GameManager : MonoBehaviour
@@ -52,20 +52,27 @@ public class GameManager : MonoBehaviour
                 UIManager.Instance.MapPanel.SetActive(true);
                 UIManager.Instance.BattlePanel.SetActive(false);
                 UIManager.Instance.ShopPanel.SetActive(false);
+                UIManager.Instance.MysteryEventPanel.SetActive(false);
                 break;
             case GameState.Battle:
                 CanMove = false;
                 UIManager.Instance.MapPanel.SetActive(false);
                 UIManager.Instance.BattlePanel.SetActive(true);
                 UIManager.Instance.ShopPanel.SetActive(false);
+                UIManager.Instance.MysteryEventPanel.SetActive(false);
                 break;
             case GameState.Shop:
                 CanMove = false;
                 UIManager.Instance.MapPanel.SetActive(false);
                 UIManager.Instance.BattlePanel.SetActive(false);
                 UIManager.Instance.ShopPanel.SetActive(true);
+                UIManager.Instance.MysteryEventPanel.SetActive(false);
                 break;
-            case GameState.Event:
+            case GameState.MysteryEvent:
+                UIManager.Instance.MapPanel.SetActive(false);
+                UIManager.Instance.BattlePanel.SetActive(false);
+                UIManager.Instance.ShopPanel.SetActive(false);
+                UIManager.Instance.MysteryEventPanel.SetActive(true);
                 break;
         }
     }
