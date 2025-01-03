@@ -47,7 +47,7 @@ public class PositionCondition : ConditionalEffect
 
     public override void ApplyEffect()
     {
-        if (Card.Slot.IsPosition(Position))
+        if (Card.CurrentSlot.IsPosition(Position))
         {
             base.ApplyEffect();
         }
@@ -55,7 +55,7 @@ public class PositionCondition : ConditionalEffect
 
     public override void RevertEffect()
     {
-        if (Card.Slot.IsPosition(Position))
+        if (Card.CurrentSlot.IsPosition(Position))
         {
             base.RevertEffect();
         }
@@ -131,28 +131,34 @@ public class TargetWithFilterCondition : ConditionalEffect
 public class CycleCondition : ConditionalEffect
 {
     private readonly int _cycleCount;
-    private int _currentCycle;
+    public int CycleValue;
 
     public CycleCondition(Card card, List<Effect> effects, int cycleCount) : base(card, effects)
     {
         card.UpdateCycleValue(cycleCount);
         _cycleCount = cycleCount;
-        _currentCycle = cycleCount;
+        CycleValue = cycleCount;
     }
 
     public override void ApplyEffect()
     {
-        _currentCycle--;
-        if (_currentCycle <= 0)
+        CycleValue--;
+        if (CycleValue <= 0)
         {
-            _currentCycle = _cycleCount;
+            CycleValue = _cycleCount;
             base.ApplyEffect();
         }
-        Card.UpdateCycleValue(_currentCycle);
+        Card.UpdateCycleValue(CycleValue);
     }
 
     public override void RevertEffect()
     {
         throw new System.NotImplementedException("Effect for CycleCondition cannot be reverted.");
+    }
+
+    public void ResetCycle()
+    {
+        CycleValue = _cycleCount;
+        Card.UpdateCycleValue(CycleValue);
     }
 }

@@ -1,316 +1,391 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using System.Linq;
+using TMPro;
+using DG.Tweening;
 
-public class Card : SerializedMonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+/// <summary>
+/// Represents a card in the game with various attributes and behaviors.
+/// </summary>
+public class Card : SlotContent, IPointerEnterHandler, IPointerExitHandler
 {
     #region Card Base Data
-    public int ID;
-    public RarityType Rarity;
-    public string Name;
-    public int Price;
-    public TMPro.TMP_Text _amountInDeck;
-    public int BaseAttack;
-    public bool isSold = false;
-    public bool isInShop = false;
 
-    public Dictionary<TriggerType, List<ConditionalEffect>> ConditionalEffects = new();
+    [BoxGroup("Card Base Data")]
+    public int ID { get; private set; }
+
+    [BoxGroup("Card Base Data")]
+    public CardRarityType Rarity { get; private set; }
+
+    [BoxGroup("Card Base Data")]
+    public string CardName { get; private set; }
+
+    [BoxGroup("Card Base Data")]
+    public int BaseAttack { get; private set; }
+
+    // Removed: Amount in deck, Price, isSold, isInShop
+    // These are to be moved to a dedicated decorator class (IPurchasable)
+
+    [BoxGroup("Card Base Data")]
+    private Dictionary<TriggerType, List<ConditionalEffect>> _conditionalEffects = new();
+
     #endregion
 
     #region Card Runtime State
-    public Slot Slot = null;
-    [SerializeField] private Dictionary<CardModifierType, int> _permanentModifiers = new();
 
-    [SerializeField] private Dictionary<CardModifierType, int> _temporaryModifiers = new();
+    // Modifier storage with persistence levels
+    private Dictionary<ModifierPersistenceType, Dictionary<CardModifierType, int>> _modifiers = new();
 
-    // The total attack of the card, including base attack, temporary damage, and modifiers
-    public int TotalAttack => GetTotalAttack();
-    private int GetTotalAttack()
+    /// <summary>
+    /// Gets the total attack value of the card, considering base attack and modifiers.
+    /// </summary>
+    public int TotalAttack => CalculateTotalAttack();
+
+    private int CalculateTotalAttack()
     {
-        if (Slot != null && Slot.GetModifierByType(SlotModifierType.NoDamage) > 0)
+        if (CurrentSlot != null && CurrentSlot.GetModifierValue(SlotModifierType.NoDamage) > 0)
         {
             return 0;
         }
-        return Math.Max(0, BaseAttack + GetModifierByType(CardModifierType.Strength) - GetModifierByType(CardModifierType.Weakness));
+
+        int strength = GetModifierValue(CardModifierType.Strength);
+        int weakness = GetModifierValue(CardModifierType.Weakness);
+        return Math.Max(0, BaseAttack + strength - weakness);
     }
+
+    /// <summary>
+    /// Gets the total modifier value of a specific type, considering all persistence levels.
+    /// </summary>
+    /// <param name="type">The type of modifier to get the value of.</param>
+    public int GetModifierValue(CardModifierType type)
+    {
+        int total = 0;
+        foreach (var persistenceDict in _modifiers.Values)
+        {
+            if (persistenceDict.TryGetValue(type, out int value))
+            {
+                total += value;
+            }
+        }
+        return total;
+    }
+
     #endregion
 
-    #region Game Object References
-    [SerializeField] private TMPro.TMP_Text _cardNameText;
+    #region UI References
+
+    [BoxGroup("UI References")]
+    [SerializeField] private TMP_Text _cardNameText;
+
+    [BoxGroup("UI References")]
     [SerializeField] private GameObject _descriptionContainer;
-    [SerializeField] private TMPro.TMP_Text _descriptionText;
-    [SerializeField] private TMPro.TMP_Text _attackValueText;
+
+    [BoxGroup("UI References")]
+    [SerializeField] private TMP_Text _descriptionText;
+
+    [BoxGroup("UI References")]
+    [SerializeField] private TMP_Text _attackValueText;
+
+    [BoxGroup("UI References")]
     [SerializeField] private GameObject _cycleContainer;
-    [SerializeField] private TMPro.TMP_Text _currentCycleValueText;
-    [SerializeField] private TMPro.TMP_Text _price;
-    [SerializeField] private TMPro.TMP_Text SoldLabel;
+
+    [BoxGroup("UI References")]
+    [SerializeField] private TMP_Text _currentCycleValueText;
+
     #endregion
 
+    #region Unity Lifecycle
+
+    private void OnEnable()
+    {
+        HideDescription();
+    }
+
+    #endregion
+
+    #region Initialization
+
+    /// <summary>
+    /// Initializes the card with data from a scriptable object and conditional effects.
+    /// </summary>
+    /// <param name="cardScriptable">The scriptable object containing card data.</param>
+    /// <param name="conditionalEffects">The conditional effects associated with the card.</param>
     public void Initialize(CardScriptable cardScriptable, Dictionary<TriggerType, List<ConditionalEffect>> conditionalEffects)
     {
         ID = cardScriptable.ID;
         Rarity = cardScriptable.Rarity;
-        Name = cardScriptable.Name;
+        CardName = cardScriptable.Name;
         BaseAttack = cardScriptable.BaseAttack;
-        ConditionalEffects = conditionalEffects;
+        _conditionalEffects = conditionalEffects;
 
-        _cycleContainer.SetActive(false);
-        // if (conditionalEffects.TryGetValue(TriggerType.OnAttack, out List<ConditionalEffect> cycleEffects))
-        // {
-        //     foreach (ConditionalEffect cycleEffect in cycleEffects)
-        //     {
-        //         if (cycleEffect.GetType() == typeof(CycleCondition))
-        //         {
-        //             _cycleContainer.SetActive(true);
-        //         }
-        //     }
-        // }
-        // If there is any CycleCondition in the conditional effects, enable the cycle container
-        if (conditionalEffects.SelectMany(x => x.Value).OfType<CycleCondition>().Any())
-        {
-            _cycleContainer.SetActive(true);
-        }
-        _cardNameText.text = Name;
-        _descriptionText.text = cardScriptable.Description;
+        SetupCycleContainer();
+        SetupUI(cardScriptable);
+    }
+
+    private void SetupCycleContainer()
+    {
+        // Check if any of the conditional effects are cycle conditions under all triggers
+        bool hasCycleCondition = _conditionalEffects
+            .SelectMany(effect => effect.Value)
+            .OfType<CycleCondition>()
+            .Any();
+
+        _cycleContainer.SetActive(hasCycleCondition);
+    }
+
+    private void SetupUI(CardScriptable cardScriptable)
+    {
+        _cardNameText.text = CardName;
+        _descriptionText.text = cardScriptable.Description; // TODO: Make this into a description class with tooltips
         _attackValueText.text = TotalAttack.ToString();
     }
 
-    #region Interaction
-    private void OnEnable()
-    {
-        _descriptionContainer.SetActive(false);
-    }
+    #endregion
 
+    #region UI Update Methods
+
+    /// <summary>
+    /// Updates the attack value displayed on the card.
+    /// </summary>
     public void UpdateAttackValue()
     {
         _attackValueText.text = TotalAttack.ToString();
     }
 
+    /// <summary>
+    /// Updates the cycle value displayed on the card.
+    /// </summary>
+    /// <param name="currentCycle">The current cycle value.</param>
     public void UpdateCycleValue(int currentCycle)
     {
         _currentCycleValueText.text = currentCycle.ToString();
     }
 
-    public void UpdatePriceValue()
-    {
-        // Update the price value text
-        _price.text = $"{Price}";
-
-        // Move the PriceText component up slightly (adjust y value as needed)
-        RectTransform priceRect = _price.GetComponent<RectTransform>();
-        if (priceRect != null)
-        {
-            priceRect.anchoredPosition += new Vector2(0, 10);  // Move 10 units up
-        }
-    }
-
-    public void OnPointerEnter(PointerEventData eventData)
+    private void ShowDescription()
     {
         _descriptionContainer.SetActive(true);
-        Canvas canvas = _descriptionContainer.GetComponent<Canvas>();
-        if (canvas == null)
-        {
-            canvas = _descriptionContainer.AddComponent<Canvas>();
-            canvas.overrideSorting = true;
-        }
-        canvas.sortingOrder = 100; // Set a high sorting order to ensure it appears on top
+        EnsureDescriptionCanvas();
     }
 
-    public void OnPointerExit(PointerEventData eventData)
+    private void HideDescription()
     {
         _descriptionContainer.SetActive(false);
     }
 
-    public void OnPointerClick(PointerEventData eventData)
+    private void EnsureDescriptionCanvas()
     {
-        if (!isInShop) return;
-        TryPurchase();
+        // Ensure the description container has a canvas component
+        if (!_descriptionContainer.TryGetComponent<Canvas>(out var canvas))
+        {
+            canvas = _descriptionContainer.AddComponent<Canvas>();
+            canvas.overrideSorting = true;
+            canvas.sortingLayerName = "UI";
+        }
+        canvas.sortingOrder = 200; // Ensure on top
     }
+
     #endregion
 
-    #region Game Logic
-    private void TryPurchase()
+    #region Event Handlers
+
+    public void OnPointerEnter(PointerEventData eventData)
     {
-        int playerGold = ShopManager.Instance.Gold;  // Get current player gold
-
-        if (isSold)
-        {
-            Debug.Log($"{Name} has already been sold.");
-            return;  // Exit if the card is already sold
-        }
-
-        if (playerGold >= Price)
-        {
-            ShopManager.Instance.SpendGold(Price);  // Deduct gold
-            Debug.Log($"Purchased {Name} for {Price} Gold.");
-
-            // Optionally: Add card to player's deck or inventory
-            CardManager.Instance.AddCardPermanently(ID);
-
-            isSold = true;
-            isInShop = false;
-            SoldLabel.gameObject.SetActive(true);
-        }
-        else
-        {
-            Debug.Log("Not enough gold to purchase this card.");
-        }
+        ShowDescription();
     }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        HideDescription();
+    }
+
+
+    #endregion
+
+    #region Effect Application
+
+    /// <summary>
+    /// Applies effects based on a trigger.
+    /// </summary>
+    /// <param name="trigger">The trigger type.</param>
     public void ApplyEffect(TriggerType trigger)
     {
-        if (!ConditionalEffects.ContainsKey(trigger)) return;
-        foreach (ConditionalEffect conditionalEffect in ConditionalEffects[trigger])
+        if (!_conditionalEffects.TryGetValue(trigger, out List<ConditionalEffect> effects))
+            return;
+
+        foreach (var effect in effects)
         {
-            conditionalEffect.ApplyEffect();
+            effect.ApplyEffect();
         }
-    }
-
-    public void RevertEffect(TriggerType trigger)
-    {
-        if (!ConditionalEffects.ContainsKey(trigger)) return;
-        foreach (ConditionalEffect conditionalEffect in ConditionalEffects[trigger])
-        {
-            conditionalEffect.RevertEffect();
-        }
-    }
-
-    public void BindToSlot(Slot slot)
-    {
-        if (slot.Card != null)
-        {
-            slot.Card.UnbindFromSlot();
-        }
-        Slot = slot;
-        slot.Card = this;
-        transform.SetParent(slot.ContentContainer.transform);
-        RectTransform rectTransform = GetComponent<RectTransform>();
-        if (rectTransform != null)
-        {
-            rectTransform.anchorMin = new Vector2(0, 0);
-            rectTransform.anchorMax = new Vector2(1, 1);
-            rectTransform.offsetMin = Vector2.zero;
-            rectTransform.offsetMax = Vector2.zero;
-            rectTransform.localScale = Vector3.one;
-            rectTransform.localPosition = new Vector3(rectTransform.localPosition.x, rectTransform.localPosition.y, 0);
-        }
-    }
-
-    public void UnbindFromSlot()
-    {
-        Slot.Card = null;
-        Slot = null;
-        transform.SetParent(CardManager.Instance.Graveyard.transform);
-        transform.localPosition = Vector3.zero;
-    }
-
-    public void Remove()
-    {
-        UnbindFromSlot();
-        CardManager.Instance.RemoveCard(this);
-    }
-
-    public void Destroy()
-    {
-        UnbindFromSlot();
-        CardManager.Instance.DestroyCard(this);
-        Destroy(gameObject);
-    }
-
-    public Card Transform(int cardID, bool isPermanent = false)
-    {
-        if (isPermanent)
-        {
-            return CardManager.Instance.TransformCardPermanently(this, cardID);
-        }
-        else
-        {
-            return CardManager.Instance.TransformCardTemporarily(this, cardID);
-        }
-    }
-
-    public void ResetTemporaryState()
-    {
-        _temporaryModifiers.Clear();
-    }
-
-    public void ResetAllState()
-    {
-        _permanentModifiers.Clear();
-        _temporaryModifiers.Clear();
-    }
-
-    public void AddModifier(CardModifierType type, int amount, bool isPermanent)
-    {
-        if (isPermanent)
-        {
-            if (!_permanentModifiers.ContainsKey(type))
-            {
-                _permanentModifiers[type] = amount;
-            }
-            else
-            {
-                _permanentModifiers[type] += amount;
-            }
-        }
-        else
-        {
-            if (!_temporaryModifiers.ContainsKey(type))
-            {
-                _temporaryModifiers[type] = amount;
-            }
-            else
-            {
-                _temporaryModifiers[type] += amount;
-            }
-        }
-    }
-
-    public void RemoveModifier(CardModifierType type, int amount, bool isPermanent)
-    {
-        if (isPermanent)
-        {
-            if (_permanentModifiers.ContainsKey(type))
-            {
-                _permanentModifiers[type] -= amount;
-                if (_permanentModifiers[type] <= 0)
-                {
-                    _permanentModifiers.Remove(type);
-                }
-            }
-        }
-        else
-        {
-            if (_temporaryModifiers.ContainsKey(type))
-            {
-                _temporaryModifiers[type] -= amount;
-                if (_temporaryModifiers[type] <= 0)
-                {
-                    _temporaryModifiers.Remove(type);
-                }
-            }
-        }
-    }
-
-    public void DisableCycleContainer()
-    {
-        _cycleContainer.SetActive(false);
     }
 
     /// <summary>
-    /// Get the total modifier value of a specific type
+    /// Reverts effects based on a trigger.
     /// </summary>
-    /// <param name="type">
-    /// The type of modifier to get the value of
-    /// </param>
-    /// <returns>
-    /// The total modifier value of the specified type, 0 if no modifier of that type exists
-    /// </returns>
-    public int GetModifierByType(CardModifierType type)
+    /// <param name="trigger">The trigger type.</param>
+    public void RevertEffect(TriggerType trigger)
     {
-        return (_permanentModifiers.TryGetValue(type, out int value) ? value : 0) + (_temporaryModifiers.TryGetValue(type, out value) ? value : 0);
+        if (!_conditionalEffects.TryGetValue(trigger, out List<ConditionalEffect> effects))
+            return;
+
+        foreach (var effect in effects)
+        {
+            effect.RevertEffect();
+        }
+    }
+
+    #endregion
+
+    #region Slot Interaction
+
+    public override void BindToSlot(Slot slot)
+    {
+        base.BindToSlot(slot);
+        UpdateAttackValue();
+    }
+
+    #endregion
+
+    #region State Management
+    /// <summary>
+    /// Resets all card's modifiers under a specified persistence level.
+    /// </summary>
+    /// <param name="persistence"> The persistence level to reset.</param>
+    public void ResetCardModifierState(ModifierPersistenceType persistence)
+    {
+        // Determine which modifier persistence levels need to be cleared
+        List<ModifierPersistenceType> persistencesToClear = persistence switch
+        {
+            ModifierPersistenceType.Turn => new List<ModifierPersistenceType>
+        {
+                ModifierPersistenceType.Turn
+        },
+            ModifierPersistenceType.Battle => new List<ModifierPersistenceType>
+        {
+            ModifierPersistenceType.Turn,
+            ModifierPersistenceType.Battle
+        },
+            ModifierPersistenceType.Chapter => new List<ModifierPersistenceType>
+        {
+            ModifierPersistenceType.Turn,
+            ModifierPersistenceType.Battle,
+            ModifierPersistenceType.Chapter
+        },
+            ModifierPersistenceType.Permanent => new List<ModifierPersistenceType>
+        {
+            ModifierPersistenceType.Turn,
+            ModifierPersistenceType.Battle,
+            ModifierPersistenceType.Chapter,
+            ModifierPersistenceType.Permanent
+        },
+            _ => new List<ModifierPersistenceType>() // Default case, if needed
+        };
+
+        // Clear the determined modifier persistence levels
+        foreach (var p in persistencesToClear)
+        {
+            ClearModifiers(p);
+        }
+
+        // If the persistence type is Chapter or Permanent, reset cycle conditions if active
+        if (persistence is ModifierPersistenceType.Chapter or ModifierPersistenceType.Permanent)
+        {
+            if (_cycleContainer.activeSelf)
+            {
+                foreach (var condition in _conditionalEffects.SelectMany(effect => effect.Value).OfType<CycleCondition>())
+                {
+                    condition.ResetCycle();
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Adds a modifier to the card with a specified persistence.
+    /// </summary>
+    /// <param name="type">The type of modifier.</param>
+    /// <param name="amount">The amount of the modifier.</param>
+    /// <param name="persistence">The persistence level of the modifier.</param>
+    public void AddModifier(CardModifierType type, int amount, ModifierPersistenceType persistence)
+    {
+        if (!_modifiers.ContainsKey(persistence))
+        {
+            _modifiers[persistence] = new Dictionary<CardModifierType, int>();
+        }
+
+        if (_modifiers[persistence].ContainsKey(type))
+        {
+            _modifiers[persistence][type] += amount;
+        }
+        else
+        {
+            _modifiers[persistence][type] = amount;
+        }
+
+        UpdateAttackValue();
+    }
+
+    /// <summary>
+    /// Removes a modifier from the card based on its type and persistence.
+    /// </summary>
+    /// <param name="type">The type of modifier.</param>
+    /// <param name="amount">The amount to remove.</param>
+    /// <param name="persistence">The persistence level of the modifier.</param>
+    public void RemoveModifier(CardModifierType type, int amount, ModifierPersistenceType persistence)
+    {
+        if (_modifiers.ContainsKey(persistence) && _modifiers[persistence].ContainsKey(type))
+        {
+            _modifiers[persistence][type] -= amount;
+            if (_modifiers[persistence][type] <= 0)
+            {
+                _modifiers[persistence].Remove(type);
+                if (_modifiers[persistence].Count == 0)
+                {
+                    _modifiers.Remove(persistence);
+                }
+            }
+
+            UpdateAttackValue();
+        }
+    }
+
+    private void ClearModifiers(ModifierPersistenceType persistence)
+    {
+        if (_modifiers.ContainsKey(persistence))
+        {
+            _modifiers.Remove(persistence);
+        }
+    }
+    #endregion
+
+    #region Serialization
+    public CardSaveData GetSaveData()
+    {
+        CardSaveData saveData = new CardSaveData
+        (
+            this.gameObject.GetInstanceID(),
+            CurrentSlot != null ? CurrentSlot.Row : -1,
+            CurrentSlot != null ? CurrentSlot.Col : -1,
+            ID,
+            _conditionalEffects.SelectMany(effect => effect.Value).OfType<CycleCondition>().FirstOrDefault()?.CycleValue ?? 0,
+            _modifiers.ToDictionary(pair => pair.Key, pair => pair.Value.ToDictionary(pair => pair.Key, pair => pair.Value))
+        );
+
+        return saveData;
+    }
+
+    public void LoadFromSaveData(CardSaveData saveData)
+    {
+        ID = saveData.ID;
+        _modifiers = saveData.Modifiers;
+        if (_conditionalEffects.SelectMany(effect => effect.Value).OfType<CycleCondition>().FirstOrDefault() is CycleCondition cycleCondition)
+        {
+            cycleCondition.CycleValue = saveData.CycleValue;
+        }
+        UpdateAttackValue();
+        UpdateCycleValue(saveData.CycleValue);
     }
     #endregion
 }

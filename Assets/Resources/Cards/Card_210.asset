@@ -48,13 +48,13 @@ MonoBehaviour:
       ApplyOption: 0
       CardModifier: 3
       SlotModifier: 0
-      CardID: 0
       Value:
         IsVariable: 1
-        isPermanent: 0
+        IsPermanent: 0
+        PersistenceType: 0
         VariableType: 0
         Target:
-          TargetRange: 12
+          TargetRange: 13
           TargetFilter:
             Type: 4
             ID: 0

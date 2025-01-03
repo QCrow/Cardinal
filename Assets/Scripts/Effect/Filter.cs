@@ -1,6 +1,5 @@
 using System;
 using Sirenix.OdinInspector;
-using UnityEngine;
 
 public enum FilterType
 {
@@ -21,7 +20,7 @@ public class Filter
     [ShowIf("Type", FilterType.Name)]
     public string Name;
     [ShowIf("Type", FilterType.Rarity)]
-    public RarityType Rarity;
+    public CardRarityType Rarity;
     [ShowIf("Type", FilterType.NameContains)]
     public string NameContains;
 
@@ -30,9 +29,9 @@ public class Filter
         return Type switch
         {
             FilterType.ID => card.ID == ID,
-            FilterType.Name => card.Name == Name,
+            FilterType.Name => card.CardName == Name,
             FilterType.Rarity => card.Rarity == Rarity,
-            FilterType.NameContains => card.Name.Contains(NameContains),
+            FilterType.NameContains => card.CardName.Contains(NameContains),
             _ => false,
         };
     }

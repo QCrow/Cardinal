@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Scripts/Shop/IPurchasable.cs.meta
+guid: 45651fbc984c23b4b8a492c2b9319ec8
+========
 guid: bf54edab31c43fe4b8c6d2d5356eae1f
+>>>>>>>> origin/main:Assets/Scripts/Map/MapNode.cs.meta
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2

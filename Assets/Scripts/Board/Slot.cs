@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+
 using Sirenix.OdinInspector;
 
 public class Slot : SerializedMonoBehaviour
@@ -22,16 +23,15 @@ public class Slot : SerializedMonoBehaviour
     public Slot Right => Board.Instance.GetSlotAtPosition(Row, Col + 1);
     #endregion
 
-    [SerializeField] private Card _card;
-    public Card Card { get => _card; set => _card = value; }
+    public SlotContent Content;
 
-    [SerializeField] private Dictionary<SlotModifierType, int> _permanentModifiers = new();
-    [SerializeField] private Dictionary<SlotModifierType, int> _temporaryModifiers = new();
+    [SerializeField]
+    private Dictionary<ModifierPersistenceType, Dictionary<SlotModifierType, int>> _modifiers = new();
 
     public bool IsPosition(PositionType position)
     {
         // Mobilization modifier allows the slot to be considered as any position
-        if (GetModifierByType(SlotModifierType.Mobilization) > 0)
+        if (GetModifierValue(SlotModifierType.Mobilization) > 0)
         {
             return true;
         }
@@ -47,67 +47,127 @@ public class Slot : SerializedMonoBehaviour
     }
 
     #region Modifiers
-    public void AddModifier(SlotModifierType type, int amount, bool isPermanent)
+    /// <summary>
+    /// Gets the total modifier value of a specific type, considering all persistence levels.
+    /// </summary>
+    /// <param name="type">The type of modifier to get the value of.</param>
+    public int GetModifierValue(SlotModifierType type)
     {
-        if (isPermanent)
+        int total = 0;
+        foreach (var persistenceDict in _modifiers.Values)
         {
-            if (!_permanentModifiers.ContainsKey(type))
+            if (persistenceDict.TryGetValue(type, out int value))
             {
-                _permanentModifiers[type] = amount;
+                total += value;
             }
-            else
-            {
-                _permanentModifiers[type] += amount;
-            }
+        }
+        return total;
+    }
+
+    /// <summary>
+    /// Resets all card's modifiers under a specified persistence level.
+    /// </summary>
+    /// <param name="persistence"> The persistence level to reset.</param>
+    public void ResetCardModifierState(ModifierPersistenceType persistence)
+    {
+        // Determine which modifier persistence levels need to be cleared
+        List<ModifierPersistenceType> persistencesToClear = persistence switch
+        {
+            ModifierPersistenceType.Turn => new List<ModifierPersistenceType>
+        {
+                ModifierPersistenceType.Turn
+        },
+            ModifierPersistenceType.Battle => new List<ModifierPersistenceType>
+        {
+            ModifierPersistenceType.Turn,
+            ModifierPersistenceType.Battle
+        },
+            ModifierPersistenceType.Chapter => new List<ModifierPersistenceType>
+        {
+            ModifierPersistenceType.Turn,
+            ModifierPersistenceType.Battle,
+            ModifierPersistenceType.Chapter
+        },
+            ModifierPersistenceType.Permanent => new List<ModifierPersistenceType>
+        {
+            ModifierPersistenceType.Turn,
+            ModifierPersistenceType.Battle,
+            ModifierPersistenceType.Chapter,
+            ModifierPersistenceType.Permanent
+        },
+            _ => new List<ModifierPersistenceType>() // Default case, if needed
+        };
+
+        // Clear the determined modifier persistence levels
+        foreach (var p in persistencesToClear)
+        {
+            ClearModifiers(p);
+        }
+    }
+
+    /// <summary>
+    /// Adds a modifier to the card with a specified persistence.
+    /// </summary>
+    /// <param name="type">The type of modifier.</param>
+    /// <param name="amount">The amount of the modifier.</param>
+    /// <param name="persistence">The persistence level of the modifier.</param>
+    public void AddModifier(SlotModifierType type, int amount, ModifierPersistenceType persistence)
+    {
+        if (!_modifiers.ContainsKey(persistence))
+        {
+            _modifiers[persistence] = new Dictionary<SlotModifierType, int>();
+        }
+
+        if (_modifiers[persistence].ContainsKey(type))
+        {
+            _modifiers[persistence][type] += amount;
         }
         else
         {
-            if (!_temporaryModifiers.ContainsKey(type))
-            {
-                _temporaryModifiers[type] = amount;
-            }
-            else
-            {
-                _temporaryModifiers[type] += amount;
-            }
+            _modifiers[persistence][type] = amount;
         }
     }
 
-    public void RemoveModifier(SlotModifierType type, int amount, bool isPermanent)
+    /// <summary>
+    /// Removes a modifier from the card based on its type and persistence.
+    /// </summary>
+    /// <param name="type">The type of modifier.</param>
+    /// <param name="amount">The amount to remove.</param>
+    /// <param name="persistence">The persistence level of the modifier.</param>
+    public void RemoveModifier(SlotModifierType type, int amount, ModifierPersistenceType persistence)
     {
-        if (isPermanent)
+        if (_modifiers.ContainsKey(persistence) && _modifiers[persistence].ContainsKey(type))
         {
-            if (_permanentModifiers.ContainsKey(type))
+            _modifiers[persistence][type] -= amount;
+            if (_modifiers[persistence][type] <= 0)
             {
-                _permanentModifiers[type] -= amount;
-                if (_permanentModifiers[type] <= 0)
+                _modifiers[persistence].Remove(type);
+                if (_modifiers[persistence].Count == 0)
                 {
-                    _permanentModifiers.Remove(type);
-                }
-            }
-        }
-        else
-        {
-            if (_temporaryModifiers.ContainsKey(type))
-            {
-                _temporaryModifiers[type] -= amount;
-                if (_temporaryModifiers[type] <= 0)
-                {
-                    _temporaryModifiers.Remove(type);
+                    _modifiers.Remove(persistence);
                 }
             }
         }
     }
 
-    public int GetModifierByType(SlotModifierType type)
+    public void ClearModifiers(ModifierPersistenceType persistence)
     {
-        return (_permanentModifiers.TryGetValue(type, out int permanentValue) ? permanentValue : 0) +
-               (_temporaryModifiers.TryGetValue(type, out int temporaryValue) ? temporaryValue : 0);
+        if (_modifiers.ContainsKey(persistence))
+        {
+            _modifiers.Remove(persistence);
+        }
+    }
+    #endregion
+
+    #region Serialization
+    public SlotSaveData GetSaveData()
+    {
+        return new SlotSaveData(Row, Col, _modifiers);
     }
 
-    public void ResetTemporaryState()
+    public void LoadSaveData(SlotSaveData saveData)
     {
-        _temporaryModifiers.Clear();
+        _modifiers = saveData.Modifiers;
     }
     #endregion
 }

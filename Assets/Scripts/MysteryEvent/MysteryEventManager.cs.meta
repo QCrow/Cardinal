@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Scripts/Board/SlotContent.cs.meta
+guid: fa275b389ada2e4428618702bcaf0d2e
+========
+guid: 34fd6ade159d8ac43a2ae304037cb1a5
+>>>>>>>> origin/main:Assets/Scripts/Services/MysteryEventManager.cs.meta
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

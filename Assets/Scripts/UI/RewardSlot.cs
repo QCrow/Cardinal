@@ -1,4 +1,3 @@
-using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -32,28 +31,17 @@ public class RewardSlot : MonoBehaviour
             _cycleContainer.SetActive(true);
             _rewardCycle.text = rewardCycle.ToString();
         }
-
     }
 
-    public void SetReward(Reward reward)
+    public void SetReward(CardReward reward)
     {
-        CardScriptable cs = CardManager.Instance.GetCardScriptableByID(reward.RewardID);
-        if (cs.Conditions.Find(x => x.Condition == ConditionType.Cycle) != null)
-        {
-            reward.RewardCycle = cs.Conditions.Find(x => x.Condition == ConditionType.Cycle).CycleCount;
-        }
-        else
-        {
-            reward.RewardCycle = 0;
-        }
-
         SetReward(reward.RewardID, reward.RewardName, reward.RewardText, reward.RewardAttack, reward.RewardCycle);
     }
 
     public void OnClick()
     {
-        CardManager.Instance.AddCardPermanently(_rewardID);
+        CardSystem.Instance.DeckManager.AddCard(_rewardID);
         GameManager.Instance.ChangeGameState(GameState.Map); // TODO: TO BE CHANGED
-        //Map.Instance.GoNext();
+        // Map.Instance.GoNext();
     }
 }

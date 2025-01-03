@@ -47,10 +47,10 @@ MonoBehaviour:
       ApplyOption: 0
       CardModifier: 1
       SlotModifier: 1
-      CardID: 0
       Value:
         IsVariable: 0
-        isPermanent: 0
+        IsPermanent: 0
+        PersistenceType: 0
         VariableType: 0
         Target:
           TargetRange: 0

@@ -23,10 +23,6 @@ public class SerializableEffect
     [Tooltip("Type of the applied modifier.")]
     public SlotModifierType SlotModifier;
 
-    [ShowIf(nameof(IsKeywordAddCard))]
-    [Tooltip("The ID of the card to add.")]
-    public int CardID;
-
     [ShowIf(nameof(HasValueCheck))]
     [BoxGroup("Value")]
     [HideLabel]
@@ -57,12 +53,12 @@ public class SerializableEffect
 
     private bool HasValueCheck()
     {
-        return Keyword == EffectType.Apply || Keyword == EffectType.AddCard || Keyword == EffectType.GainPermanentDamageAndReset || Keyword == EffectType.Transform;
+        return Keyword == EffectType.Apply || Keyword == EffectType.RemoveCard || Keyword == EffectType.AddCard || Keyword == EffectType.GainPermanentDamageAndReset || Keyword == EffectType.Transform;
     }
 
     private bool IsTargetedCheck()
     {
-        return Keyword == EffectType.Apply || Keyword == EffectType.Destroy || Keyword == EffectType.GainPermanentDamageAndReset || Keyword == EffectType.Transform;
+        return Keyword == EffectType.Apply || Keyword == EffectType.RemoveCard || Keyword == EffectType.GainPermanentDamageAndReset || Keyword == EffectType.Transform;
     }
 
     private bool TargetCheck()

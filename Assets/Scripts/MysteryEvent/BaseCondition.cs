@@ -24,15 +24,10 @@ public class GoldRequirementCondition : BaseCondition
 public class SpecificCardRequirementCondition : BaseCondition
 {
     public int cardId;
-    public int requiredCount;
 
     public override bool Evaluate()
     {
-        int count = CardManager.Instance.GetGroupedDeck()
-                                       .TryGetValue(cardId, out var cardCount)
-                                       ? cardCount
-                                       : 0;
-        return count >= requiredCount;
+        return CardSystem.Instance.DeckManager.HasCard(cardId);
     }
 }
 

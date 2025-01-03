@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Scripts/Board/SlotSaveData.cs.meta
+guid: 2229b64d47104a6418abad88c14afd97
+========
 guid: a2a6789c45fad5548a5736daec070577
+>>>>>>>> origin/main:Assets/Scripts/Map/Map.cs.meta
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Scripts/Board/SlotSaveData.cs.meta
+guid: 3c083c0f7b1b41348aff3a17cf90dbca
+========
+guid: a2a6789c45fad5548a5736daec070577
+>>>>>>>> origin/main:Assets/Scripts/Map/Map.cs.meta
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

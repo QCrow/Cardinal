@@ -31,7 +31,8 @@ public class Board : MonoBehaviour
         get { return _deployedCards; }
         set { SetDeployedCards(value); }
     }
-    private List<List<Card>> _cardsSnapshot = new();  // List of snapshots of the board
+    private List<CardSaveData> _cardsSnapshot = new();  // List of snapshots of the board
+    private List<SlotSaveData> _slotsSnapshot = new();  // List of snapshots of the slots
 
     private RectTransform _rectTransform;  // Used to adjust the size of the board
 
@@ -70,7 +71,7 @@ public class Board : MonoBehaviour
         int childIndex = 0;
         for (int row = 0; row < _unitHeight; row++)
         {
-            List<Slot> slotRow = new List<Slot>();
+            List<Slot> slotRow = new();
             for (int col = 0; col < _unitWidth; col++)
             {
                 // Get the child slot at the corresponding index
@@ -144,7 +145,7 @@ public class Board : MonoBehaviour
     public Slot? GetRandomEmptySlot()
     {
         List<Slot> allSlots = _slots.SelectMany(row => row).ToList();
-        List<Slot> emptySlots = allSlots.Where(slot => slot.Card == null).ToList();
+        List<Slot> emptySlots = allSlots.Where(slot => slot.Content == null).ToList();
 
         if (emptySlots.Count == 0)
         {
@@ -186,10 +187,10 @@ public class Board : MonoBehaviour
         SortDeployedCards();
     }
 
-    public void SyncDeployedCards()
+    public void UpdateDeployedCards()
     {
         List<Slot> allSlots = _slots.SelectMany(row => row).ToList();
-        List<Card> cards = allSlots.Select(slot => slot.Card).Where(card => card != null).ToList();
+        List<Card> cards = allSlots.Select(slot => slot.Content as Card).Where(card => card != null).Select(card => card!).ToList();
         _deployedCards = cards;
         SortDeployedCards();
     }
@@ -198,23 +199,23 @@ public class Board : MonoBehaviour
     {
         _deployedCards.Sort((card1, card2) =>
         {
-            int rowComparison = card1.Slot.Row.CompareTo(card2.Slot.Row);
+            int rowComparison = card1.CurrentSlot.Row.CompareTo(card2.CurrentSlot.Row);
             if (rowComparison == 0)
             {
-                return card1.Slot.Col.CompareTo(card2.Slot.Col);
+                return card1.CurrentSlot.Col.CompareTo(card2.CurrentSlot.Col);
             }
             return rowComparison;
         });
     }
 
-    public Card? GetCardAtPosition(int row, int col)
+    public SlotContent? GetContentAtPosition(int row, int col)
     {
         if (row < 0 || col < 0 || row >= _unitHeight || col >= _unitWidth)
         {
             return null;  // Return null for invalid positions
         }
 
-        return _slots[row][col].Card;
+        return _slots[row][col].Content;
     }
 
     /// <summary>
@@ -226,12 +227,21 @@ public class Board : MonoBehaviour
         {
             foreach (Slot slot in row)
             {
-                if (slot.Card != null)
+                if (slot.Content != null)
                 {
-                    slot.Card.ResetTemporaryState();
-                    slot.Card.UnbindFromSlot();
+                    slot.Content.UnbindFromSlot();
                 }
-                slot.ResetTemporaryState();
+            }
+        }
+    }
+
+    public void ClearBoardSlotsModifiers(ModifierPersistenceType persistenceType)
+    {
+        foreach (List<Slot> row in _slots)
+        {
+            foreach (Slot slot in row)
+            {
+                slot.ClearModifiers(persistenceType);
             }
         }
     }
@@ -241,96 +251,114 @@ public class Board : MonoBehaviour
         switch (direction)
         {
             case Direction.Up:
-                ShiftCardsOnColumn(index, -magnitude);
+                ShiftSlotContentsOnColumn(index, -magnitude);
                 break;
             case Direction.Down:
-                ShiftCardsOnColumn(index, magnitude);
+                ShiftSlotContentsOnColumn(index, magnitude);
                 break;
             case Direction.Left:
-                ShiftCardsOnRow(index, -magnitude);
+                ShiftSlotContentsOnRow(index, -magnitude);
                 break;
             case Direction.Right:
-                ShiftCardsOnRow(index, magnitude);
+                ShiftSlotContentsOnRow(index, magnitude);
                 break;
             case Direction.Clockwise:
-                RotateCardsClockwise();
+                RotateSlotContentsClockwise();
                 break;
             case Direction.CounterClockwise:
-                RotateCardsCounterClockwise();
+                RotateSlotContentsCounterClockwise();
                 break;
         }
     }
 
-    public void ShiftCardsOnRow(int row, int shiftMagnitude)
+    public void ShiftSlotContentsOnRow(int row, int shiftMagnitude)
     {
-        Card?[] tempRow = new Card?[3];  // Temporary storage for cards in the row
+        SlotContent?[] tempRow = new SlotContent?[3];  // Temporary storage for cards in the row
 
         // First pass: store the new positions of the cards in the tempRow
-        List<Card> cards = GetRow(row).Select(slot => slot.Card).Where(card => card != null).ToList();
-        foreach (Card card in cards)
+        List<SlotContent> contents = GetRow(row).Select(slot => slot.Content).Where(card => card != null).ToList();
+        foreach (SlotContent content in contents)
         {
-            int col = card.Slot.Col;
+            int col = content.CurrentSlot.Col;
             int newCol = (col + shiftMagnitude + 3) % 3;
 
             // Store the card in its new position in the tempRow
-            tempRow[newCol] = card;
-            card.UnbindFromSlot();  // Unbind from the current slot
+            tempRow[newCol] = content;
+            content.UnbindFromSlot();  // Unbind from the current slot
         }
 
         // Second pass: Unbind and reattach the cards to their new slots
         for (int col = 0; col < 3; col++)
         {
             Slot? newSlot = GetSlotAtPosition(row, col);
-            Card? card = tempRow[col];
+            SlotContent? content = tempRow[col];
 
-            if (card != null && newSlot != null)
+            if (content != null && newSlot != null)
             {
-                card.BindToSlot(newSlot);  // Bind to the new slot
-                card.ApplyEffect(TriggerType.OnMove);
+                if (content is Card)
+                {
+                    Card card = (Card)content;
+                    card.BindToSlot(newSlot);  // Bind to the new slot
+                    card.MoveToAndSetParent(newSlot.ContentContainer.GetComponent<RectTransform>(), () => card.ApplyEffect(TriggerType.OnMove));
+                }
+                else
+                {
+                    content.BindToSlot(newSlot);
+                    content.MoveToAndSetParent(newSlot.ContentContainer.GetComponent<RectTransform>());
+                }
             }
         }
     }
 
-    public void ShiftCardsOnColumn(int col, int shiftMagnitude)
+    public void ShiftSlotContentsOnColumn(int col, int shiftMagnitude)
     {
-        Card?[] tempCol = new Card?[3];  // Temporary storage for cards in the column
+        SlotContent?[] tempCol = new SlotContent?[3];  // Temporary storage for cards in the column
 
         // First pass: store the new positions of the cards in the tempCol
-        List<Card> cards = GetColumn(col).Select(slot => slot.Card).Where(card => card != null).ToList();
-        foreach (Card card in cards)
+        List<SlotContent> contents = GetColumn(col).Select(slot => slot.Content).Where(card => card != null).ToList();
+        foreach (SlotContent content in contents)
         {
-            int row = card.Slot.Row;
+            int row = content.CurrentSlot.Row;
             int newRow = (row + shiftMagnitude + 3) % 3;
 
             // Store the card in its new position in the tempCol
-            tempCol[newRow] = card;
-            card.UnbindFromSlot();  // Unbind from the current slot
+            tempCol[newRow] = content;
+            content.UnbindFromSlot();  // Unbind from the current slot
         }
 
         // Second pass: Unbind and reattach the cards to their new slots
         for (int row = 0; row < 3; row++)
         {
             Slot? newSlot = GetSlotAtPosition(row, col);
-            Card? card = tempCol[row];
+            SlotContent? content = tempCol[row];
 
-            if (card != null && newSlot != null)
+            if (content != null && newSlot != null)
             {
-                card.BindToSlot(newSlot);  // Bind to the new slot
-                card.ApplyEffect(TriggerType.OnMove);
+                if (content is Card)
+                {
+                    Card card = (Card)content;
+                    card.BindToSlot(newSlot);  // Bind to the new slot
+                    card.MoveToAndSetParent(newSlot.ContentContainer.GetComponent<RectTransform>(), () => card.ApplyEffect(TriggerType.OnMove));
+                }
+                else
+                {
+                    content.BindToSlot(newSlot);
+                    content.MoveToAndSetParent(newSlot.ContentContainer.GetComponent<RectTransform>());
+                }
             }
         }
     }
 
-    public void RotateCardsClockwise()
+    public void RotateSlotContentsClockwise()
     {
-        Card?[,] tempGrid = new Card?[3, 3];  // Temporary storage for cards
+        SlotContent?[,] tempGrid = new SlotContent?[3, 3];  // Temporary storage for cards
 
         // First pass: store the new positions of the cards in the tempGrid
-        List<Card> cards = _slots.SelectMany(row => row).Select(slot => slot.Card).Where(card => card != null).ToList();
-        foreach (Card card in cards)
+        List<SlotContent> cards = _slots.SelectMany(row => row).Select(slot => slot.Content).Where(card => card != null).ToList();
+        foreach (SlotContent card in cards)
         {
-            int currentRow = card.Slot.Row;
-            int currentCol = card.Slot.Col;
+            int currentRow = card.CurrentSlot.Row;
+            int currentCol = card.CurrentSlot.Col;
 
             // Calculate the new position after 90-degree clockwise rotation
             int newRow = currentCol;
@@ -347,38 +375,48 @@ public class Board : MonoBehaviour
             for (int col = 0; col < 3; col++)
             {
                 Slot? newSlot = GetSlotAtPosition(row, col);
-                Card? card = tempGrid[row, col];
+                SlotContent? content = tempGrid[row, col];
 
-                if (card != null && newSlot != null)
+                if (content != null && newSlot != null)
                 {
-                    card.BindToSlot(newSlot);  // Bind to the new slot
-                    if (row != 1 || col != 1)
+                    if (content is Card)
                     {
-                        card.ApplyEffect(TriggerType.OnMove); // Apply OnMove effect for all cards except the center card
+                        Card card = (Card)content;
+                        card.BindToSlot(newSlot);  // Bind to the new slot
+                        if (row != 1 || col != 1)
+                        {
+                            card.MoveToAndSetParent(newSlot.ContentContainer.GetComponent<RectTransform>(), () => card.ApplyEffect(TriggerType.OnMove));
+                        }
+                    }
+                    else
+                    {
+                        content.BindToSlot(newSlot);
+                        content.MoveToAndSetParent(newSlot.ContentContainer.GetComponent<RectTransform>());
                     }
                 }
             }
         }
     }
 
-    public void RotateCardsCounterClockwise()
+    public void RotateSlotContentsCounterClockwise()
     {
-        Card?[,] tempGrid = new Card?[3, 3];  // Temporary storage for cards
+        SlotContent?[,] tempGrid = new SlotContent?[3, 3];  // Temporary storage for cards
 
         // First pass: store the new positions of the cards in the tempGrid
-        List<Card> cards = _slots.SelectMany(row => row).Select(slot => slot.Card).Where(card => card != null).ToList();
-        foreach (Card card in cards)
+        List<SlotContent> contents = _slots.SelectMany(row => row).Select(slot => slot.Content).Where(card => card != null).ToList();
+
+        foreach (SlotContent content in contents)
         {
-            int currentRow = card.Slot.Row;
-            int currentCol = card.Slot.Col;
+            int currentRow = content.CurrentSlot.Row;
+            int currentCol = content.CurrentSlot.Col;
 
             // Calculate the new position after 90-degree counterclockwise rotation
             int newRow = 2 - currentCol;
             int newCol = currentRow;
 
             // Store the card in its new position in the tempGrid
-            tempGrid[newRow, newCol] = card;
-            card.UnbindFromSlot();  // Unbind from the current slot
+            tempGrid[newRow, newCol] = content;
+            content.UnbindFromSlot();  // Unbind from the current slot
         }
 
         // Second pass: Unbind and reattach the cards to their new slots
@@ -387,14 +425,23 @@ public class Board : MonoBehaviour
             for (int col = 0; col < 3; col++)
             {
                 Slot? newSlot = GetSlotAtPosition(row, col);
-                Card? card = tempGrid[row, col];
+                SlotContent? content = tempGrid[row, col];
 
-                if (card != null && newSlot != null)
+                if (content != null && newSlot != null)
                 {
-                    card.BindToSlot(newSlot);  // Bind to the new slot
-                    if (row != 1 || col != 1)
+                    if (content is Card)
                     {
-                        card.ApplyEffect(TriggerType.OnMove); // Apply OnMove effect for all cards except the center card
+                        Card card = (Card)content;
+                        card.BindToSlot(newSlot);  // Bind to the new slot
+                        if (row != 1 || col != 1)
+                        {
+                            card.MoveToAndSetParent(newSlot.ContentContainer.GetComponent<RectTransform>(), () => card.ApplyEffect(TriggerType.OnMove));
+                        }
+                    }
+                    else
+                    {
+                        content.BindToSlot(newSlot);
+                        content.MoveToAndSetParent(newSlot.ContentContainer.GetComponent<RectTransform>());
                     }
                 }
             }
@@ -406,120 +453,41 @@ public class Board : MonoBehaviour
         _cardsSnapshot.Clear();
         foreach (List<Slot> row in _slots)
         {
-            List<Card> cards = row.Select(slot => slot.Card).ToList();
-            _cardsSnapshot.Add(cards);
+            List<Card> cards = row.Select(slot => slot.Content as Card).Where(card => card != null).Select(card => card!).ToList();
+            foreach (Card card in cards)
+            {
+                _cardsSnapshot.Add(card.GetSaveData());
+            }
+            foreach (Slot slot in row)
+            {
+                _slotsSnapshot.Add(slot.GetSaveData());
+            }
         }
     }
 
     public void RestoreFromSnapshot()
     {
-        if (_cardsSnapshot.Count == 0)
-        {
-            return;
-        }
         foreach (List<Slot> row in _slots)
         {
             foreach (Slot slot in row)
             {
-                slot.Card = null;
+                slot.Content = null;
+                slot.LoadSaveData(_slotsSnapshot.FirstOrDefault(s => s.Row == slot.Row && s.Col == slot.Col));
             }
         }
 
-        for (int row = 0; row < _unitHeight; row++)
+        foreach (CardSaveData cardData in _cardsSnapshot)
         {
-            for (int col = 0; col < _unitWidth; col++)
+            Card card = DeployedCards.FirstOrDefault(c => c.gameObject.GetInstanceID() == cardData.GUID);
+            if (card != null)
             {
-                Slot slot = _slots[row][col];
-                Card card = _cardsSnapshot[row][col];
-                if (card != null)
+                Slot? slot = GetSlotAtPosition(cardData.Row, cardData.Col);
+                if (slot != null)
                 {
+                    card.LoadFromSaveData(cardData);
                     card.BindToSlot(slot);
+                    card.MoveToAndSetParent(slot.ContentContainer.GetComponent<RectTransform>());
                 }
-            }
-        }
-
-        _deployedCards.ForEach(card => card.ResetTemporaryState());
-        _slots.ForEach(row => row.ForEach(slot => slot.ResetTemporaryState()));
-    }
-    #endregion
-
-    #region Archive
-    // public void SetClusterAtPosition(int row, int col)
-    // {
-    //     if (row < 0 || col < 0 || row >= _unitHeight || col >= _unitWidth)
-    //     {
-    //         return;  // Return null for invalid positions
-    //     }
-    // }
-
-    // public int GetClusterSize(int row, int col, HashSet<(int, int)> visited)
-    // {
-    //     // Check for out-of-bounds or invalid positions
-    //     if (row < 0 || col < 0 || row >= _unitHeight || col >= _unitWidth)
-    //     {
-    //         return 0;
-    //     }
-
-    //     // Check if the slot has already been visited
-    //     if (visited.Contains((row, col)))
-    //     {
-    //         return 0;
-    //     }
-
-    //     // Mark the current position as visited
-    //     visited.Add((row, col));
-
-    //     Card card = _slots[row][col].Card;
-    //     if (card == null || !HasCluster(card))
-    //     {
-    //         return 0;
-    //     }
-
-    //     // Recursively calculate cluster size
-    //     return 1
-    //         + GetClusterSize(row + 1, col, visited)
-    //         + GetClusterSize(row - 1, col, visited)
-    //         + GetClusterSize(row, col + 1, visited)
-    //         + GetClusterSize(row, col - 1, visited);
-    // }
-
-    // private bool HasCluster(Card card)
-    // {
-    //     // Iterate through each list of conditions in the dictionary
-    //     foreach (var conditionList in card.ConditionalEffects.Values)
-    //     {
-    //         // Check if any condition in the list has the ConditionType of Cluster
-    //         if (conditionList.Any(condition => condition is ClusterCondition))
-    //         {
-    //             return true;
-    //         }
-    //     }
-    //     return false;
-    // }
-    #endregion
-
-    #region Debugging
-    private void OnDrawGizmos()
-    {
-        if (_slots == null) return;  // Return if the slots haven't been initialized yet
-
-        Gizmos.color = Color.green;  // Set gizmo color
-
-        for (int row = 0; row < _unitHeight; row++)
-        {
-            for (int col = 0; col < _unitWidth; col++)
-            {
-                Slot slot = _slots[row][col];
-                Vector3 slotPosition = slot.transform.position;  // Get the world position of the slot
-#if UNITY_EDITOR
-                GUIStyle style = new();
-                style.normal.textColor = Color.black;  // Set the label color to black
-                style.fontStyle = FontStyle.Bold;      // Make the font bold
-                style.fontSize = 16;                   // Increase the font size
-
-                // Display the row and column as text at the slot's position with the custom style
-                Handles.Label(slotPosition, $"({row}, {col})", style);
-#endif
             }
         }
     }
