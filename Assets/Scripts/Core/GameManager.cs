@@ -1,3 +1,4 @@
+using Map;
 using UnityEngine;
 
 public enum GameState
@@ -49,27 +50,32 @@ public class GameManager : MonoBehaviour
         {
             case GameState.Map:
                 CanMove = true;
-                UIManager.Instance.MapPanel.SetActive(true);
+                NavBarManager.Instance.MoveMapOnScreen();
+                //UIManager.Instance.MapPanel.SetActive(true);
                 UIManager.Instance.BattlePanel.SetActive(false);
                 UIManager.Instance.ShopPanel.SetActive(false);
                 UIManager.Instance.MysteryEventPanel.SetActive(false);
+                MapPlayerTracker.Instance.UnlockNodes();
                 break;
             case GameState.Battle:
                 CanMove = false;
-                UIManager.Instance.MapPanel.SetActive(false);
+                //UIManager.Instance.MapPanel.SetActive(false);
+                NavBarManager.Instance.MoveMapOffScreen();
                 UIManager.Instance.BattlePanel.SetActive(true);
                 UIManager.Instance.ShopPanel.SetActive(false);
                 UIManager.Instance.MysteryEventPanel.SetActive(false);
                 break;
             case GameState.Shop:
                 CanMove = false;
-                UIManager.Instance.MapPanel.SetActive(false);
+                //UIManager.Instance.MapPanel.SetActive(false);
+                NavBarManager.Instance.MoveMapOffScreen();
                 UIManager.Instance.BattlePanel.SetActive(false);
                 UIManager.Instance.ShopPanel.SetActive(true);
                 UIManager.Instance.MysteryEventPanel.SetActive(false);
                 break;
             case GameState.MysteryEvent:
-                UIManager.Instance.MapPanel.SetActive(false);
+                //UIManager.Instance.MapPanel.SetActive(false);
+                NavBarManager.Instance.MoveMapOffScreen();
                 UIManager.Instance.BattlePanel.SetActive(false);
                 UIManager.Instance.ShopPanel.SetActive(false);
                 UIManager.Instance.MysteryEventPanel.SetActive(true);

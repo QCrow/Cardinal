@@ -62,6 +62,10 @@ namespace Map
             DOTween.Sequence().AppendInterval(enterNodeDelay).OnComplete(() => EnterNode(mapNode));
         }
 
+        public void UnlockNodes()
+        {
+            Locked = false;
+        }
 
         private static void EnterNode(MapNode mapNode)
         {
@@ -83,15 +87,19 @@ namespace Map
                     BattleManager.Instance.StartBattleAgainstEnemy("EliteEnemy");
                     break;
                 case NodeType.RestSite:
+                    GameManager.Instance.ChangeGameState(GameState.Map);
                     break;
                 case NodeType.Treasure:
+                    GameManager.Instance.ChangeGameState(GameState.Map);
                     break;
                 case NodeType.Store:
-                    GameManager.Instance.ChangeGameState(GameState.Shop);
+                    GameManager.Instance.ChangeGameState(GameState.Map);
+                    // GameManager.Instance.ChangeGameState(GameState.Shop);
                     //TODO: Reenable this line after implementing shop
                     // ShopManager.Instance.InitializeShop();
                     break;
                 case NodeType.Boss:
+                    GameManager.Instance.ChangeGameState(GameState.Map);
                     break;
                 case NodeType.MysteryEvent:
                     GameManager.Instance.ChangeGameState(GameState.MysteryEvent);
