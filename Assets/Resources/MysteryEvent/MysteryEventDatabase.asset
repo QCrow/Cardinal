@@ -14,43 +14,105 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   events:
   - id: 1
-    eventName: event1
-    description: choose one of the two gifts
+    eventName: "\u8346\u68D8\u4E4B\u5899"
+    description: "\u5728\u8FD9\u7247\u4ECE\u65E0\u4EBA\u6253\u7406\u7684\u6797\u5730\u91CC\uFF0C\u690D\u7269\u4EEC\u7EB5\u60C5\u751F\u957F\uFF0C\u968F\u610F\u8513\u5EF6\uFF0C\u4EFF\u4F5B\u6CA1\u6709\u4EFB\u4F55\u963B\u788D\u80FD\u675F\u7F1A\u5B83\u4EEC\u3002\n\u7136\u800C\uFF0C\u5C31\u5728\u4F60\u9762\u524D\uFF0C\u5374\u51FA\u73B0\u4E86\u4E00\u9053\u8BE1\u5F02\u7684\u8346\u68D8\u5899\uFF1A\u90A3\u4E9B\u5E26\u523A\u7684\u85E4\u8513\u4E0D\u518D\u6742\u4E71\u7EA0\u7F20\uFF0C\u53CD\u800C\u50CF\u88AB\u67D0\u79CD\u529B\u91CF\u523B\u610F\u5B89\u6392\u8FC7\u4E00\u822C\uFF0C\u9F50\u6574\u5730\u94FA\u5C55\u5F00\u6765\uFF0C\u6784\u7B51\u6210\u4E00\u9762\u5929\u7136\u7684\u5C4F\u969C\uFF0C\u7262\u7262\u5730\u963B\u6321\u4E86\u524D\u65B9\u7684\u53BB\u8DEF\u3002"
     options:
-    - optionText: Gain 50 gold (if you already have 120 gold)
+    - optionText: "\u62E8\u5F00\u8346\u68D8"
       rootConditionNode:
         nodeType: 0
         leafCondition:
-          rid: 6942580368024272899
+          rid: 6942580413519101952
         children: []
       outcomes:
-      - rid: 6942580368024272897
-    - optionText: Gain a random card
+      - rid: 6942580413519101965
+      - rid: 6942580413519101953
+    - optionText: "\u7ED5\u8DEF\u800C\u884C"
       rootConditionNode:
         nodeType: 0
         leafCondition:
-          rid: 6942580368024272900
+          rid: 6942580413519101954
         children: []
       outcomes:
-      - rid: 6942580368024272898
+      - rid: 6942580413519101955
+  - id: 2
+    eventName: "\u6797\u4E2D\u79D8\u5883"
+    description: "\u4F60\u8270\u96BE\u5730\u7A7F\u8FC7\u8346\u68D8\uFF0C\u8EAB\u4E0A\u88AB\u523A\u5F97\u8840\u8FF9\u6591\u6591\uFF0C\u5374\u5728\u53E6\u4E00\u4FA7\u53D1\u73B0\u4E00\u5EA7\u53E4\u8001\u7684\u5723\u575B\u3002 
+      \n\u5723\u575B\u4E0A\u523B\u7740\u96BE\u4EE5\u8FA8\u8BC6\u7684\u7B26\u6587\uFF0C\u4F9B\u53F0\u4E0A\u653E\u7F6E\u7740\u4E00\u4E2A\u91D1\u5C5E\u8D28\u611F\u7684\u76D2\u5B50\uFF0C\u6563\u53D1\u7740\u4EE4\u4EBA\u4E0D\u5B89\u7684\u6C1B\u56F4\u3002\u5468\u56F4\u8FD8\u6563\u843D\u7740\u5C11\u91CF\u4F9B\u5949\u7528\u7684\u7269\u54C1\u3002"
+    options:
+    - optionText: "\u62FF\u8D70\u663E\u773C\u7684\u76D2\u5B50"
+      rootConditionNode:
+        nodeType: 0
+        leafCondition:
+          rid: 6942580413519101962
+        children: []
+      outcomes:
+      - rid: 6942580413519101968
+    - optionText: "\u62FF\u8D70\u8FB9\u4E0A\u7684\u8D21\u54C1"
+      rootConditionNode:
+        nodeType: 0
+        leafCondition:
+          rid: 6942580413519101963
+        children: []
+      outcomes:
+      - rid: 6942580413519101969
+    - optionText: "\u6211\u5168\u90E8\u90FD\u8981\uFF01"
+      rootConditionNode:
+        nodeType: 0
+        leafCondition:
+          rid: 6942580413519101964
+        children: []
+      outcomes:
+      - rid: 6942580413519101970
+      - rid: 6942580413519101971
   references:
     version: 2
     RefIds:
-    - rid: 6942580368024272897
-      type: {class: GainGoldOutcome, ns: , asm: Assembly-CSharp}
-      data:
-        outcomeDescription: 50 gold gained
-        goldAmount: 50
-    - rid: 6942580368024272898
-      type: {class: GainCardOutcome, ns: , asm: Assembly-CSharp}
-      data:
-        outcomeDescription: card obtained
-        cardId: 1
-        quantity: 1
-    - rid: 6942580368024272899
-      type: {class: GoldRequirementCondition, ns: , asm: Assembly-CSharp}
-      data:
-        requiredGold: 120
-    - rid: 6942580368024272900
+    - rid: 6942580413519101952
       type: {class: NoCondition, ns: , asm: Assembly-CSharp}
       data: 
+    - rid: 6942580413519101953
+      type: {class: LoadEventOutcome, ns: , asm: Assembly-CSharp}
+      data:
+        outcomeDescription: "\u8FDB\u5165\u6797\u4E2D\u79D8\u5883"
+        eventId: 2
+    - rid: 6942580413519101954
+      type: {class: NoCondition, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 6942580413519101955
+      type: {class: NoOutcome, ns: , asm: Assembly-CSharp}
+      data:
+        outcomeDescription: "\u770B\u7740\u950B\u5229\u7684\u8346\u68D8\uFF0C\u4F60\u6253\u6D88\u4E86\u7EE7\u7EED\u524D\u8FDB\u7684\u5FF5\u5934\u3002\n\u6BD5\u7ADF\u4F60\u672C\u6765\u4E5F\u4E0D\u719F\u6089\u6C38\u591C\u68EE\u6797\uFF0C\u8FD8\u662F\u522B\u5192\u4E0D\u5FC5\u8981\u7684\u98CE\u9669\u4E86\u3002"
+    - rid: 6942580413519101962
+      type: {class: NoCondition, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 6942580413519101963
+      type: {class: NoCondition, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 6942580413519101964
+      type: {class: NoCondition, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 6942580413519101965
+      type: {class: LoseHPOutcome, ns: , asm: Assembly-CSharp}
+      data:
+        outcomeDescription: "\u751F\u547D\u503C\u51CF5"
+        healthAmount: 5
+    - rid: 6942580413519101968
+      type: {class: GainArtifactOutcome, ns: , asm: Assembly-CSharp}
+      data:
+        outcomeDescription: "\u4F60\u5C0F\u5FC3\u7FFC\u7FFC\u5730\u5C06\u76D2\u5B50\u6367\u5728\u624B\u5FC3\uFF0C\u4EFF\u4F5B\u80FD\u611F\u53D7\u5230\u5176\u4E2D\u6697\u6D8C\u7684\u529B\u91CF\u5728\u8F7B\u5FAE\u9707\u52A8\u3002\n\u4E0D\u7965\u7684\u9884\u611F\u7B3C\u7F69\u5FC3\u5934\uFF0C\u4F46\u4F60\u5F3A\u538B\u4E0B\u7591\u8651\uFF0C\u7EE7\u7EED\u8E0F\u4E0A\u524D\u8DEF\u3002 "
+        artifactID: 1
+    - rid: 6942580413519101969
+      type: {class: GainGoldOutcome, ns: , asm: Assembly-CSharp}
+      data:
+        outcomeDescription: "\u4F60\u5C06\u5723\u575B\u4E0A\u7684\u8D21\u54C1\u6536\u5165\u53E3\u888B\uFF0C\u4F60\u7684\u65C5\u7A0B\u6682\u65F6\u5F97\u5230\u4E86\u8865\u7ED9\u3002  "
+        goldAmount: 50
+    - rid: 6942580413519101970
+      type: {class: GainArtifactOutcome, ns: , asm: Assembly-CSharp}
+      data:
+        outcomeDescription: "\u6B32\u671B\u8BA9\u4F60\u5C06\u5723\u575B\u4E0A\u7684\u4E00\u5207\u90FD\u6536\u5165\u56CA\u4E2D\u3002\n\u624B\u4E2D\u7684\u76D2\u5B50\u53D1\u51FA\u7EC6\u5FAE\u800C\u523A\u8033\u7684\u9E23\u54CD\uFF0C\u4F3C\u4E4E\u5BF9\u4F60\u7684\u8D2A\u5FF5\u611F\u5230\u201C\u8D5E\u8BB8\u201D\u3002\n\u4E00\u80A1\u9634\u51B7\u7684\u5BD2\u610F\u5728\u4F60\u80CC\u540E\u6084\u7136\u6C47\u805A\u2026\u2026"
+        artifactID: 1
+    - rid: 6942580413519101971
+      type: {class: GainGoldOutcome, ns: , asm: Assembly-CSharp}
+      data:
+        outcomeDescription: 
+        goldAmount: 50

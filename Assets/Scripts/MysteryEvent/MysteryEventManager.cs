@@ -12,7 +12,7 @@ public class MysteryEventManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI outcomeDescriptionTMP;
 
     [Header("Event Database Reference")]
-    [SerializeField] private MysteryEventDatabase eventDatabase;
+    public MysteryEventDatabase eventDatabase;
 
     public MysteryEvent currentEvent;
 
@@ -92,6 +92,30 @@ public class MysteryEventManager : MonoBehaviour
         outcomeDescriptionTMP.text = "";
     }
 
+    // Load an event by its ID
+    public void LoadEventById(int eventId)
+    {
+        if (eventDatabase == null || eventDatabase.events == null || eventDatabase.events.Count == 0)
+        {
+            Debug.LogWarning("EventDatabase is missing or empty.");
+            return;
+        }
+
+        // Find the event with the specified ID
+        MysteryEvent targetEvent = eventDatabase.events.Find(e => e.id == eventId);
+
+        if (targetEvent != null)
+        {
+            // Load the found event
+            LoadEvent(targetEvent);
+        }
+        else
+        {
+            Debug.LogWarning($"Event with ID {eventId} not found in the database.");
+        }
+    }
+
+
     // When the player picks an option
     public void ChooseOption(Button clickedButton, EventOption option)
     {
@@ -100,6 +124,9 @@ public class MysteryEventManager : MonoBehaviour
         {
             return; // Do nothing if conditions fail
         }
+
+        // Check if there's a LoadEventOutcome
+        bool hasLoadEventOutcome = option.outcomes.Exists(o => o is LoadEventOutcome);
 
         // Apply outcomes
         List<string> outcomeDescriptions = new List<string>();
@@ -114,15 +141,19 @@ public class MysteryEventManager : MonoBehaviour
 
         outcomeDescriptionTMP.text = string.Join("\n", outcomeDescriptions);
 
-        // Disable ALL buttons once any option is chosen
-        foreach (Button btn in spawnedButtons)
+        // If there's no LoadEventOutcome, go back to map after 2s
+        if (!hasLoadEventOutcome)
         {
-            btn.interactable = false;
-        }
+            // Disable ALL buttons once any option is chosen
+            foreach (Button btn in spawnedButtons)
+            {
+                btn.interactable = false;
+            }
 
-        // After 2s, return to map
-        Invoke(nameof(GoBackToMap), 2f);
+            Invoke(nameof(GoBackToMap), 2f);
+        }
     }
+
 
     private void GoBackToMap()
     {

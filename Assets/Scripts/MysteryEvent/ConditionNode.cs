@@ -9,7 +9,7 @@ public class ConditionNode
     public ConditionNodeType nodeType;
 
     [SerializeReference] private BaseCondition leafCondition;
-    [SerializeField] private List<ConditionNode> children;
+    [SerializeReference] private List<ConditionNode> children;
 
     public bool Evaluate()
     {

@@ -103,7 +103,8 @@ namespace Map
                     break;
                 case NodeType.MysteryEvent:
                     GameManager.Instance.ChangeGameState(GameState.MysteryEvent);
-                    MysteryEventManager.Instance.LoadRandomEvent();
+                    //MysteryEventManager.Instance.LoadRandomEvent();
+                    MysteryEventManager.Instance.LoadEventById(1);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

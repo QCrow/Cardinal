@@ -15,11 +15,11 @@ public class GainGoldOutcome : BaseOutcome
 
     public override void ApplyOutcome()
     {
-        ShopManager.Instance.Gold += goldAmount;
+        // Use PlayerManager to increase gold
+        PlayerManager.Instance.IncreaseGold(goldAmount);
     }
 }
 
-// 2) Lose Gold
 [Serializable]
 public class LoseGoldOutcome : BaseOutcome
 {
@@ -27,9 +27,11 @@ public class LoseGoldOutcome : BaseOutcome
 
     public override void ApplyOutcome()
     {
-        ShopManager.Instance.Gold = Mathf.Max(0, ShopManager.Instance.Gold - goldAmount);
+        // Use PlayerManager to decrease gold
+        PlayerManager.Instance.DecreaseGold(goldAmount);
     }
 }
+
 
 // 3) Gain Card
 [Serializable]
@@ -44,5 +46,76 @@ public class GainCardOutcome : BaseOutcome
         {
             CardSystem.Instance.DeckManager.AddCard(cardId, true);
         }
+    }
+}
+
+[Serializable]
+public class LoadEventOutcome : BaseOutcome
+{
+    public int eventId; // The ID of the event to load
+
+    public override void ApplyOutcome()
+    {
+        // Use the LoadEventById method from the MysteryEventManager
+        MysteryEventManager.Instance.LoadEventById(eventId);
+    }
+}
+
+
+
+[Serializable]
+public class NoOutcome : BaseOutcome
+{
+    public override void ApplyOutcome()
+    {
+        // Does nothing
+    }
+}
+
+[Serializable]
+public class GainHPOutcome : BaseOutcome
+{
+    public int healthAmount;
+
+    public override void ApplyOutcome()
+    {
+        // Use PlayerManager to increase health
+        PlayerManager.Instance.IncreaseHealth(healthAmount);
+    }
+}
+
+[Serializable]
+public class LoseHPOutcome : BaseOutcome
+{
+    public int healthAmount;
+
+    public override void ApplyOutcome()
+    {
+        // Use PlayerManager to decrease health
+        PlayerManager.Instance.DecreaseHealth(healthAmount);
+    }
+}
+
+[Serializable]
+public class GainArtifactOutcome : BaseOutcome
+{
+    public int artifactID; // The ID of the artifact to add
+
+    public override void ApplyOutcome()
+    {
+        // Assumes PlayerManager (or ArtifactManager) has a method to add an artifact by ID
+        ArtifactManager.Instance.ObtainArtifactById(artifactID);
+    }
+}
+
+[Serializable]
+public class LoseArtifactOutcome : BaseOutcome
+{
+    public int artifactID; // The ID of the artifact to remove
+
+    public override void ApplyOutcome()
+    {
+        // Assumes PlayerManager (or ArtifactManager) has a method to remove an artifact by ID
+        ArtifactManager.Instance.RemoveArtifactById(artifactID);
     }
 }

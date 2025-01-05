@@ -69,6 +69,20 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    public void ChangeMoveCount(int amount)
+    {
+        _moveCountPerTurn += amount;
+
+        // Optionally clamp to 0 so it never goes negative
+        if (_moveCountPerTurn < 0)
+        {
+            _moveCountPerTurn = 0;
+        }
+        ResetMoveCounter();
+        // Debug log for clarity
+        Debug.Log($"Move count changed by {amount}. New moveCountPerTurn = {_moveCountPerTurn}.");
+    }
+
     public void StartBattleAgainstEnemy(EnemyScriptable enemyScriptable)
     {
         EnemyMaxHealth = enemyScriptable.MaxHealth;

@@ -8,14 +8,25 @@ public abstract class SlotContent : MonoBehaviour
 
     protected virtual void Awake()
     {
-        if (!TryGetComponent<Canvas>(out var canvas))
+        if (TryGetComponent<Canvas>(out var canvas))
         {
-            canvas = gameObject.AddComponent<Canvas>();
-            canvas.sortingLayerName = "UI";
+            // If the object already has a Canvas, adjust settings if needed
+            canvas.overrideSorting = false; // Let the parent Canvas control sorting
         }
-        canvas.overrideSorting = true;
-        canvas.sortingOrder = 100;
+        else
+        {
+            // Do not add a Canvas unless absolutely required
+            // Remove this block if you don't need the Canvas
+            canvas = gameObject.AddComponent<Canvas>();
+            canvas.overrideSorting = false;
+        }
+
+        if (TryGetComponent<RectTransform>(out var rectTransform))
+        {
+            rectTransform.localScale = Vector3.one;
+        }
     }
+
 
     /// <summary>
     /// Binds the content to a specified slot.
@@ -32,8 +43,8 @@ public abstract class SlotContent : MonoBehaviour
 
         CurrentSlot = slot;
         slot.Content = this;
-        // transform.SetParent(slot.ContentContainer.transform);
-        // ResetTransform();
+        transform.SetParent(slot.ContentContainer.transform);
+        ResetTransform();
     }
 
     /// <summary>

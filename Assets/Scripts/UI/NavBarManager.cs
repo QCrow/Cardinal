@@ -20,7 +20,7 @@ public class NavBarManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // Optional: Persist across scenes
+            //DontDestroyOnLoad(gameObject); // Optional: Persist across scenes
         }
         else
         {
