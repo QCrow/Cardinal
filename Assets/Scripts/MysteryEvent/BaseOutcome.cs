@@ -119,3 +119,23 @@ public class LoseArtifactOutcome : BaseOutcome
         ArtifactManager.Instance.RemoveArtifactById(artifactID);
     }
 }
+
+[Serializable]
+public class UnlockEventOutcome : BaseOutcome
+{
+    public int eventId; // The ID of the event to unlock
+
+    public override void ApplyOutcome()
+    {
+        if (!MysteryEventManager.Instance.availableEventIds.Contains(eventId))
+        {
+            MysteryEventManager.Instance.availableEventIds.Add(eventId);
+            Debug.Log($"[UnlockEventEffect] Event ID {eventId} unlocked.");
+        }
+        else
+        {
+            Debug.Log($"[UnlockEventEffect] Event ID {eventId} is already unlocked.");
+        }
+    }
+}
+

@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Linq;
 
 public class MysteryEventManager : MonoBehaviour
 {
@@ -13,6 +14,8 @@ public class MysteryEventManager : MonoBehaviour
 
     [Header("Event Database Reference")]
     public MysteryEventDatabase eventDatabase;
+
+    public List<int> availableEventIds = new List<int>();
 
     public MysteryEvent currentEvent;
 
@@ -30,18 +33,58 @@ public class MysteryEventManager : MonoBehaviour
     }
 
     // Load a random event from the database
-    public void LoadRandomEvent()
+    public void LoadRandomEventByWeight()
     {
+        Random.InitState(GameManager.Instance.seed); // Initialize the random number generator with the given seed
+
         if (eventDatabase == null || eventDatabase.events == null || eventDatabase.events.Count == 0)
         {
             Debug.LogWarning("EventDatabase is missing or empty.");
             return;
         }
 
-        int randomIndex = Random.Range(0, eventDatabase.events.Count);
-        MysteryEvent randomEvent = eventDatabase.events[randomIndex];
-        LoadEvent(randomEvent);
+        // Filter the events based on unlocked IDs
+        List<MysteryEvent> unlockedEvents = eventDatabase.events
+            .Where(e => availableEventIds.Contains(e.id))
+            .ToList();
+
+        if (unlockedEvents.Count == 0)
+        {
+            Debug.LogWarning("No unlocked events are available.");
+            return;
+        }
+
+        // Calculate the total weight of unlocked events
+        int totalWeight = unlockedEvents.Sum(e => e.weight);
+        Debug.Log("Total weight of unlocked events: " + totalWeight);
+
+        if (totalWeight <= 0)
+        {
+            Debug.LogWarning("Total weight is zero or negative. Cannot load random event.");
+            return;
+        }
+
+        // Generate a random value between 0 and total weight
+        int randomValue = Random.Range(0, totalWeight);
+        Debug.Log("Random value: " + randomValue);
+
+        // Find the event corresponding to the random value
+        int cumulativeWeight = 0;
+        foreach (MysteryEvent mysteryEvent in unlockedEvents)
+        {
+            cumulativeWeight += mysteryEvent.weight;
+            if (randomValue < cumulativeWeight)
+            {
+                LoadEvent(mysteryEvent);
+                availableEventIds.Remove(mysteryEvent.id);
+                Debug.Log($"Event ID {mysteryEvent.id} removed from unlockedEventIds.");
+                return;
+            }
+        }
+
+        Debug.LogError("Failed to select a random event. This should never happen if weights are correct.");
     }
+
 
     // Load a specific event and set up UI
     public void LoadEvent(MysteryEvent newEvent)

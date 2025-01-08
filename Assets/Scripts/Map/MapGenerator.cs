@@ -13,8 +13,12 @@ namespace Map
         // ALL nodes by layer:
         private static readonly List<List<Node>> nodes = new List<List<Node>>();
 
-        public static Map GetMap(MapConfig conf)
+        //[SerializeField] private static int seed = 12345;
+
+        public static Map GetMap(MapConfig conf, int seed)
         {
+            Random.InitState(seed); // <-- All subsequent Random calls are now deterministic from 'seed'.
+
             if (conf == null)
             {
                 Debug.LogWarning("Config was null in MapGenerator.Generate()");
@@ -41,10 +45,24 @@ namespace Map
             // select all the nodes with connections:
             List<Node> nodesList = nodes.SelectMany(n => n).Where(n => n.incoming.Count > 0 || n.outgoing.Count > 0).ToList();
 
-            // pick a random name of the boss level for this map:
-            string bossNodeName = config.nodeBlueprints.Where(b => b.nodeType == NodeType.Boss).ToList().Random().name;
-            Debug.Log("Boss is: "+bossNodeName);
-            return new Map(conf.name, bossNodeName, nodesList, new List<Vector2Int>());
+            List<Node> lastLayerNodes = nodes[nodes.Count - 1];
+
+            Node lastNode = lastLayerNodes[lastLayerNodes.Count - 1];
+
+            Debug.Log("Last node is: "+ lastNode.blueprintName);
+            return new Map(conf.name, lastNode, nodesList, new List<Vector2Int>());
+        }
+
+        public static bool IsLastNode(Node node)
+        {
+            if (node == null || nodes.Count == 0) return false;
+
+            // Get the last node in the map
+            List<Node> lastLayerNodes = nodes[nodes.Count - 1];
+            Node lastNode = lastLayerNodes[lastLayerNodes.Count - 2];
+
+            // Compare the given node with the last node
+            return node == lastNode;
         }
 
         private static void GenerateLayerDistances()
@@ -61,37 +79,79 @@ namespace Map
             return layerDistances.Take(layerIndex + 1).Sum();
         }
 
+        //private static void PlaceLayer(int layerIndex)
+        //{
+        //    MapLayer layer = config.layers[layerIndex];
+        //    List<Node> nodesOnThisLayer = new List<Node>();
+
+        //    // offset of this layer to make all the nodes centered:
+        //    float offset = layer.nodesApartDistance * config.GridWidth / 2f;
+
+        //    //Debug.Log(config.GridWidth);
+        //    for (int i = 0; i < config.GridWidth; i++)
+        //    {
+        //        var supportedRandomNodeTypes =
+        //            config.randomNodes.Where(t => config.nodeBlueprints.Any(b => b.nodeType == t)).ToList();
+        //        NodeType nodeType = Random.Range(0f, 1f) < layer.randomizeNodes && supportedRandomNodeTypes.Count > 0
+        //            ? supportedRandomNodeTypes.Random()
+        //            : layer.nodeType;
+
+        //        if(config.nodeBlueprints.Where(b => b.nodeType == nodeType).ToList().Count == 0)
+        //        {
+        //            Debug.Log(nodeType.ToString());
+        //        }
+        //        string blueprintName = config.nodeBlueprints.Where(b => b.nodeType == nodeType).ToList().Random().name;
+        //        Node node = new Node(nodeType, blueprintName, new Vector2Int(i, layerIndex))
+        //        {
+        //            position = new Vector2(-offset + i * layer.nodesApartDistance, GetDistanceToLayer(layerIndex))
+        //        };
+        //        nodesOnThisLayer.Add(node);
+        //    }
+
+        //    nodes.Add(nodesOnThisLayer);
+        //}
+
         private static void PlaceLayer(int layerIndex)
         {
             MapLayer layer = config.layers[layerIndex];
             List<Node> nodesOnThisLayer = new List<Node>();
 
-            // offset of this layer to make all the nodes centered:
+            // Offset of this layer to make all the nodes centered:
             float offset = layer.nodesApartDistance * config.GridWidth / 2f;
 
-            //Debug.Log(config.GridWidth);
-            for (int i = 0; i < config.GridWidth; i++)
+            // Loop through each slot in the grid width
+            for (int i = 0; i < config.GridWidth; i++) 
             {
-                var supportedRandomNodeTypes =
-                    config.randomNodes.Where(t => config.nodeBlueprints.Any(b => b.nodeType == t)).ToList();
+                // Use Layer.randomNodes if defined; otherwise, fallback to config.randomNodes
+                var supportedRandomNodeTypes = layer.randomNodes != null && layer.randomNodes.Count > 0
+                    ? layer.randomNodes.Where(t => config.nodeBlueprints.Any(b => b.nodeType == t)).ToList()
+                    : config.randomNodes.Where(t => config.nodeBlueprints.Any(b => b.nodeType == t)).ToList();
+
+                // Determine the node type: either random or default node type for the layer
                 NodeType nodeType = Random.Range(0f, 1f) < layer.randomizeNodes && supportedRandomNodeTypes.Count > 0
                     ? supportedRandomNodeTypes.Random()
                     : layer.nodeType;
 
-                if(config.nodeBlueprints.Where(b => b.nodeType == nodeType).ToList().Count == 0)
+                // Fallback: ensure a blueprint exists for the node type
+                if (config.nodeBlueprints.Where(b => b.nodeType == nodeType).ToList().Count == 0)
                 {
-                    Debug.Log(nodeType.ToString());
+                    Debug.LogWarning($"No blueprint found for node type {nodeType}. Skipping.");
+                    continue;
                 }
+
+                // Select a blueprint and create the node
                 string blueprintName = config.nodeBlueprints.Where(b => b.nodeType == nodeType).ToList().Random().name;
                 Node node = new Node(nodeType, blueprintName, new Vector2Int(i, layerIndex))
                 {
                     position = new Vector2(-offset + i * layer.nodesApartDistance, GetDistanceToLayer(layerIndex))
                 };
+
                 nodesOnThisLayer.Add(node);
             }
 
             nodes.Add(nodesOnThisLayer);
         }
+
 
         private static void RandomizeNodePositions()
         {
@@ -107,8 +167,8 @@ namespace Map
                 foreach (Node node in list)
                 {
                     float xRnd = Random.Range(-0.5f, 0.5f);
-                    float yRnd = Random.Range(-0.5f, 0.5f);
-
+                    //float yRnd = Random.Range(-0.5f, 0.5f);
+                    float yRnd = 0f;
                     float x = xRnd * layer.nodesApartDistance;
                     float y = yRnd < 0 ? distToPreviousLayer * yRnd : distToNextLayer * yRnd;
 

@@ -1,4 +1,6 @@
 using Map;
+using Sirenix.OdinInspector;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum GameState
@@ -12,6 +14,8 @@ public enum GameState
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
+
+    public int seed;
 
     public bool CanMove
     {
@@ -52,6 +56,11 @@ public class GameManager : MonoBehaviour
                 CanMove = true;
                 NavBarManager.Instance.MoveMapOnScreen();
                 //UIManager.Instance.MapPanel.SetActive(true);
+                if(MapManager.Instance.IsCurrentNodeLast()){
+                    CurrentLevel += 1;
+                    MapManager.Instance.LoadMap();
+                }
+                //check if its last node, if so load next level with seed
                 UIManager.Instance.BattlePanel.SetActive(false);
                 UIManager.Instance.ShopPanel.SetActive(false);
                 UIManager.Instance.MysteryEventPanel.SetActive(false);

@@ -10,6 +10,7 @@ public class MysteryEvent
     public int id;                      // Unique ID for this event
     public string eventName;            // Title or short name of the event
     [TextArea] public string description;  // Story or main text
+    public int weight;
 
     public List<EventOption> options;   // Possible choices the player can make
 }

@@ -133,5 +133,31 @@ public class UnlockPlotEffect : BaseEffect
     }
 }
 
+[System.Serializable]
+public class UnlockEventEffect : BaseEffect
+{
+    [Header("Event ID to Unlock")]
+    public int eventId;
+
+    public override void Activate()
+    {
+        if (!MysteryEventManager.Instance.availableEventIds.Contains(eventId))
+        {
+            MysteryEventManager.Instance.availableEventIds.Add(eventId);
+            Debug.Log($"[UnlockEventEffect] Event ID {eventId} unlocked.");
+        }
+        else
+        {
+            Debug.Log($"[UnlockEventEffect] Event ID {eventId} is already unlocked.");
+        }
+    }
+
+    public override void Deactivate()
+    {
+        
+    }
+}
+
+
 
 

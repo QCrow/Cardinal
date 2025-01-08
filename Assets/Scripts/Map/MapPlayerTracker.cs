@@ -54,6 +54,7 @@ namespace Map
         {
             Locked = lockAfterSelecting;
             mapManager.CurrentMap.path.Add(mapNode.Node.point);
+            mapManager.SetCurrentNode(mapNode.Node); // Update the current node in MapManager
             mapManager.SaveMap();
             view.SetAttainableNodes();
             view.SetLineColors();
@@ -103,8 +104,7 @@ namespace Map
                     break;
                 case NodeType.MysteryEvent:
                     GameManager.Instance.ChangeGameState(GameState.MysteryEvent);
-                    //MysteryEventManager.Instance.LoadRandomEvent();
-                    MysteryEventManager.Instance.LoadEventById(1);
+                    MysteryEventManager.Instance.LoadRandomEventByWeight();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
