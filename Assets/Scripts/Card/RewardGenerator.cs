@@ -10,6 +10,9 @@ public class CardRewardGenerator
     // Configuration containing rarity weights for each level
     private CardRandomGenerationConfig _randomGenerationConfig;
 
+    private int CardRewardSeed;
+
+    private bool seedInitialized = false;
     /// <summary>
     /// Constructor to initialize the CardRewardGenerator with a given configuration.
     /// </summary>
@@ -51,6 +54,13 @@ public class CardRewardGenerator
     /// <returns>A generated card reward.</returns>
     private CardReward GenerateCardReward(int level)
     {
+        if (!seedInitialized)
+        {
+            CardRewardSeed = GameManager.Instance.seed;
+            seedInitialized = true;
+        }
+        CardRewardSeed = GameManager.Instance.GetDerivedSeedWithPosition(CardRewardSeed, 104729, 49999);
+        Random.InitState(CardRewardSeed);
         // Validate level and adjust if necessary
         if (level >= _randomGenerationConfig.CardRarityWeightsPerLevel.Count)
         {

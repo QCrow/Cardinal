@@ -34,12 +34,31 @@ public class GameManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            
             DontDestroyOnLoad(gameObject);
         }
         else
         {
             Destroy(gameObject);
         }
+    }
+
+    private void Start()
+    {
+        InitializeSeeds();
+    }
+
+    private void InitializeSeeds()
+    {
+        CardSystem.Instance.DeckManager.CardShuffleSeed = seed * 37 + 11; // Derive the initial seed for DeckManager
+    }
+
+    public int GetDerivedSeedWithPosition(int baseSeed, int multiplier, int offset)
+    {
+        var position = MapManager.Instance.CurrentNode.position;
+        // Use the node's position (x, y) as part of the seed derivation
+        int positionInfluence = Mathf.FloorToInt(position.x * 1000 + position.y * 1000); // Scale position values
+        return baseSeed * multiplier + offset + positionInfluence;
     }
 
     #region Game State
@@ -58,6 +77,7 @@ public class GameManager : MonoBehaviour
                 //UIManager.Instance.MapPanel.SetActive(true);
                 if(MapManager.Instance.IsCurrentNodeLast()){
                     CurrentLevel += 1;
+                    //TODO: if certain event can only appear in level 2, add them when update level
                     MapManager.Instance.LoadMap();
                 }
                 //check if its last node, if so load next level with seed

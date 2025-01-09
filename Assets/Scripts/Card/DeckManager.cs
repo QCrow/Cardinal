@@ -11,6 +11,8 @@ public class DeckManager
     // The deck used for drawing cards during a battle, which is refilled every turn
     private List<Card> _drawPool = new();
 
+    public int CardShuffleSeed;
+
     public DeckManager(List<Card> startingDeck)
     {
         _deck = startingDeck;
@@ -52,15 +54,17 @@ public class DeckManager
 
     public void ShuffleDrawPool()
     {
+        CardShuffleSeed = GameManager.Instance.GetDerivedSeedWithPosition(CardShuffleSeed, 15485863, 99991);
+        Random.InitState(CardShuffleSeed);
         // Copy the battle deck to the draw pool
         _drawPool = new List<Card>(_battleDeck);
 
-        System.Random random = new();
+        //System.Random random = new();
 
         // Fisher-Yates shuffle algorithm
         for (int i = _drawPool.Count - 1; i > 0; i--)
         {
-            int j = random.Next(0, i + 1);
+            int j = Random.Range(0, i + 1);
             (_drawPool[i], _drawPool[j]) = (_drawPool[j], _drawPool[i]);
         }
     }

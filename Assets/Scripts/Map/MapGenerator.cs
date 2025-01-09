@@ -13,11 +13,9 @@ namespace Map
         // ALL nodes by layer:
         private static readonly List<List<Node>> nodes = new List<List<Node>>();
 
-        //[SerializeField] private static int seed = 12345;
-
-        public static Map GetMap(MapConfig conf, int seed)
+        public static Map GetMap(MapConfig conf)
         {
-            Random.InitState(seed); // <-- All subsequent Random calls are now deterministic from 'seed'.
+            Random.InitState(GameManager.Instance.seed);
 
             if (conf == null)
             {

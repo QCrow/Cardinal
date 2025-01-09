@@ -54,13 +54,13 @@ namespace Map
             // {
             //     GenerateNewMap();
             // }
-            GenerateNewMap(GameManager.Instance.CurrentLevel, GameManager.Instance.seed);
+            GenerateNewMap(GameManager.Instance.CurrentLevel);
             CurrentNode = CurrentMap.GetNode(CurrentMap.path.LastOrDefault()); // Initialize current node
         }
 
-        public void GenerateNewMap(int level, int seed)
+        public void GenerateNewMap(int level)
         {
-            Map map = MapGenerator.GetMap(configs[level-1], seed);
+            Map map = MapGenerator.GetMap(configs[level-1]);
             CurrentMap = map;
             //Debug.Log(map.lastNodeName);
             Debug.Log(map.ToJson());

@@ -36,6 +36,8 @@ public class Board : MonoBehaviour
 
     private RectTransform _rectTransform;  // Used to adjust the size of the board
 
+    public int SlotSeed;
+
     private void Awake()
     {
         if (_instance == null)
@@ -64,6 +66,7 @@ public class Board : MonoBehaviour
         // gridLayout.cellSize = new Vector2(_slotWidth, _slotHeight);
         // gridLayout.spacing = new Vector2(_slotGap, _slotGap);
 
+        SlotSeed = GameManager.Instance.seed;
         // Initialize the list of slots
         _slots = new List<List<Slot>>();
 
@@ -144,6 +147,9 @@ public class Board : MonoBehaviour
     /// </returns>
     public Slot? GetRandomEmptySlot()
     {
+        //int SlotRandomSeed = GameManager.Instance.seed
+        SlotSeed = GameManager.Instance.GetDerivedSeedWithPosition(SlotSeed, 524287, 65537);
+        Random.InitState(SlotSeed);
         List<Slot> allSlots = _slots.SelectMany(row => row).ToList();
         List<Slot> emptySlots = allSlots.Where(slot => slot.Content == null).ToList();
 
