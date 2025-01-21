@@ -16,7 +16,7 @@ public class GoldRequirementCondition : BaseCondition
 
     public override bool Evaluate()
     {
-        return ShopManager.Instance.Gold >= requiredGold;
+        return PlayerManager.Instance.CurrentGold >= requiredGold;
     }
 }
 

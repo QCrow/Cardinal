@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using Sirenix.OdinInspector; // Make sure Odin Inspector is installed and referenced
+using System.Collections.Generic;
 
 namespace Map
 {
@@ -24,5 +25,7 @@ namespace Map
         [Tooltip("Chance to get a random node that is different from the default node on this layer")]
         [Range(0f, 1f)]
         public float randomizeNodes;
+
+        public List<NodeType> randomNodes;
     }
 }

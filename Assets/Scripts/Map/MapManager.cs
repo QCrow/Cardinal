@@ -8,14 +8,28 @@ namespace Map
 {
     public class MapManager : MonoBehaviour
     {
-        public MapConfig config;
+        public static MapManager Instance { get; private set; }
+        public List<MapConfig> configs;
         public MapView view;
 
         public Map CurrentMap { get; private set; }
+        public Node CurrentNode { get; private set; } // Track the current node
 
         private void Start()
         {
             LoadMap();
+        }
+
+        private void Awake()
+        {
+            if (Instance == null)
+            {
+                Instance = this;
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
 
         public void LoadMap(){
@@ -40,14 +54,15 @@ namespace Map
             // {
             //     GenerateNewMap();
             // }
-            GenerateNewMap();
+            GenerateNewMap(GameManager.Instance.CurrentLevel);
+            CurrentNode = CurrentMap.GetNode(CurrentMap.path.LastOrDefault()); // Initialize current node
         }
 
-        public void GenerateNewMap()
+        public void GenerateNewMap(int level)
         {
-            Map map = MapGenerator.GetMap(config);
+            Map map = MapGenerator.GetMap(configs[level-1]);
             CurrentMap = map;
-            Debug.Log(map.bossNodeName);
+            //Debug.Log(map.lastNodeName);
             Debug.Log(map.ToJson());
             view.ShowMap(map);
         }
@@ -60,6 +75,16 @@ namespace Map
                 new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
             PlayerPrefs.SetString("Map", json);
             PlayerPrefs.Save();
+        }
+
+        public bool IsCurrentNodeLast()
+        {
+            return MapGenerator.IsLastNode(CurrentNode);
+        }
+
+        public void SetCurrentNode(Node node)
+        {
+            CurrentNode = node;
         }
 
         private void OnApplicationQuit()

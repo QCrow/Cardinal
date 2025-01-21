@@ -7,7 +7,7 @@ public class ShopManager : SerializedMonoBehaviour
 {
     // // Singleton instance
     public static ShopManager Instance { get; private set; }
-    public int Gold = 100;
+    //public int Gold = 100;
     // [SerializeField] private GameObject shopItemsContainer; // GridLayoutGroup container
     // [SerializeField] private TMP_Text playerGoldText;        // UI to display player's gold
     // public Dictionary<CardRarityType, int> rarityPrices = new()  // Rarity prices stored here
