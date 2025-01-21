@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: EliteEnemy
   m_EditorClassIdentifier: 
   MaxHealth: 410
+  Attack: 20
   Description: Elite Enemy
   EffectType: 2

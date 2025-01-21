@@ -35,6 +35,7 @@ public class NavBarManager : MonoBehaviour
         }
     }
 
+    // TODO: @StevenTian0 Fix the issue of the map not moving off-screen when the game is not in 2K resolution
     // Moves the map canvas off-screen initially
     public void MoveMapOffScreen()
     {

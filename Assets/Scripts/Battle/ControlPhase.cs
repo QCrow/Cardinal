@@ -4,14 +4,8 @@ public class ControlPhase : IBattlePhase
 {
     public void OnEnter()
     {
-        // Set up the UI for Redeploy
-        BattleManager.Instance.ResetButtonTextField.text = "RESET";
-
-        // BattleManager.Instance.RedeployButton.interactable = true;
-        BattleManager.Instance.ToggleRedeployButton(true);
-
-        // Set up the UI for Attack
-        BattleManager.Instance.ToggleAttackButton(true);
+        BattleManager.Instance.ResetButton.interactable = true;
+        BattleManager.Instance.ControlButtonTextField.text = "ATTACK";
 
         // Set up the UI for Move
         BattleManager.Instance.ResetMoveCounter();

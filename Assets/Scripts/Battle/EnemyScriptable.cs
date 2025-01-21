@@ -5,6 +5,9 @@ public class EnemyScriptable : ScriptableObject
 {
     public int MaxHealth;
 
+    //? Might need to change this to allow a more complex enemy attack pattern or behavior
+    public int Attack;
+
     [TextArea(3, 10)]
     public string Description;
 
