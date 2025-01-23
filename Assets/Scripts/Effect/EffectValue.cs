@@ -23,12 +23,12 @@ public class EffectValue
 
     public int BaseValue = 1;
 
-    public int GetValue(Card card)
+    public int GetValue(CardView card)
     {
         return IsVariable ? GetVariableValue(card) * BaseValue : BaseValue;
     }
 
-    private int GetVariableValue(Card card)
+    private int GetVariableValue(CardView card)
     {
         return VariableType switch
         {

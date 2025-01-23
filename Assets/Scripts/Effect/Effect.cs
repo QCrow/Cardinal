@@ -3,9 +3,9 @@ using UnityEngine;
 
 public abstract class Effect
 {
-    protected Card _card;
+    protected CardView _card;
 
-    public Effect(Card card)
+    public Effect(CardView card)
     {
         _card = card;
     }
@@ -38,7 +38,7 @@ public class AddCardModifierEffect : Effect
     private readonly bool _isTargeted;
     private readonly Target _target;
 
-    public AddCardModifierEffect(Card card, CardModifierType modifierType, EffectValue value, bool isTargeted = false, Target target = null) : base(card)
+    public AddCardModifierEffect(CardView card, CardModifierType modifierType, EffectValue value, bool isTargeted = false, Target target = null) : base(card)
     {
         if (modifierType is CardModifierType.None)
         {
@@ -54,7 +54,7 @@ public class AddCardModifierEffect : Effect
     {
         if (_isTargeted)
         {
-            List<Card> cards = _target.GetAvailableCardTargets(_card);
+            List<CardView> cards = _target.GetAvailableCardTargets(_card);
             Debug.Log(cards.Count);
             cards.ForEach(target => target.AddModifier(_modifierType, _value.GetValue(_card), _value.PersistenceType));
         }
@@ -90,7 +90,7 @@ public class AddSlotModifierEffect : Effect
     private readonly bool _isTargeted;
     private readonly Target _target;
 
-    public AddSlotModifierEffect(Card card, SlotModifierType modifierType, EffectValue value, bool isTargeted = false, Target target = null) : base(card)
+    public AddSlotModifierEffect(CardView card, SlotModifierType modifierType, EffectValue value, bool isTargeted = false, Target target = null) : base(card)
     {
         if (modifierType is SlotModifierType.None)
         {
@@ -144,7 +144,7 @@ public class RemoveEffect : Effect
     private readonly Target _target;
     private readonly bool _isPermanent;
 
-    public RemoveEffect(Card card, EffectValue effectValue, bool isTargeted = false, Target target = null) : base(card)
+    public RemoveEffect(CardView card, EffectValue effectValue, bool isTargeted = false, Target target = null) : base(card)
     {
         _isTargeted = isTargeted;
         _target = target;
@@ -174,7 +174,7 @@ public class AddCardEffect : Effect
     private readonly int _cardID;
     private readonly bool _isPermanent;
 
-    public AddCardEffect(Card card, EffectValue effectValue) : base(card)
+    public AddCardEffect(CardView card, EffectValue effectValue) : base(card)
     {
         _cardID = effectValue.GetValue(card);
         _isPermanent = effectValue.IsPermanent;
@@ -198,7 +198,7 @@ public class TransformEffect : Effect
     private readonly bool _isTargeted;
     private readonly Target _target;
 
-    public TransformEffect(Card card, EffectValue effectValue, bool isTargeted, Target target) : base(card)
+    public TransformEffect(CardView card, EffectValue effectValue, bool isTargeted, Target target) : base(card)
     {
         _cardID = effectValue.GetValue(card);
         _isPermanent = effectValue.IsPermanent;
@@ -212,14 +212,14 @@ public class TransformEffect : Effect
         {
             _target.GetAvailableCardTargets(_card).ForEach(target =>
             {
-                Card newCard = CardSystem.Instance.DeckManager.TransformCard(target, _cardID, _isPermanent);
+                CardView newCard = CardSystem.Instance.DeckManager.TransformCard(target, _cardID, _isPermanent);
                 newCard.ApplyEffect(TriggerType.WhileInPlay);
             }
         );
         }
         else
         {
-            Card newCard = CardSystem.Instance.DeckManager.TransformCard(_card, _cardID, _isPermanent);
+            CardView newCard = CardSystem.Instance.DeckManager.TransformCard(_card, _cardID, _isPermanent);
             newCard.ApplyEffect(TriggerType.WhileInPlay);
         }
     }
@@ -236,7 +236,7 @@ public class GainPermanentDamageAndResetEffect : Effect
     private int _count = 0;
     private readonly Target _target;
 
-    public GainPermanentDamageAndResetEffect(Card card, EffectValue effectValue, Target target) : base(card)
+    public GainPermanentDamageAndResetEffect(CardView card, EffectValue effectValue, Target target) : base(card)
     {
         _value = effectValue.GetValue(card);
         _target = target;
@@ -265,7 +265,7 @@ public class GainPermanentDamageAndResetEffect : Effect
 
 public class MonoEffect : Effect
 {
-    public MonoEffect(Card card) : base(card)
+    public MonoEffect(CardView card) : base(card)
     { }
 
     public override void Apply()
@@ -275,7 +275,7 @@ public class MonoEffect : Effect
             if (card == _card) return;
             Slot slot = card.CurrentSlot;
             CardSystem.Instance.DeckManager.RemoveCard(card, false);
-            Card voidCard = CardSystem.Instance.DeckManager.AddCard(0, false);
+            CardView voidCard = CardSystem.Instance.DeckManager.AddCard(0, false);
             voidCard.BindToSlot(slot);
         });
 

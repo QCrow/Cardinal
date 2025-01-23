@@ -31,7 +31,7 @@ public class Slot : SerializedMonoBehaviour
     public bool IsPosition(PositionType position)
     {
         // Mobilization modifier allows the slot to be considered as any position
-        if (GetModifierValue(SlotModifierType.Mobilization) > 0)
+        if (GetModifierValue(SlotModifierType.Assistance) > 0)
         {
             return true;
         }
@@ -68,7 +68,7 @@ public class Slot : SerializedMonoBehaviour
     /// Resets all card's modifiers under a specified persistence level.
     /// </summary>
     /// <param name="persistence"> The persistence level to reset.</param>
-    public void ResetCardModifierState(ModifierPersistenceType persistence)
+    public void ResetSlotModifierState(ModifierPersistenceType persistence)
     {
         // Determine which modifier persistence levels need to be cleared
         List<ModifierPersistenceType> persistencesToClear = persistence switch
@@ -82,17 +82,10 @@ public class Slot : SerializedMonoBehaviour
             ModifierPersistenceType.Turn,
             ModifierPersistenceType.Battle
         },
-            ModifierPersistenceType.Chapter => new List<ModifierPersistenceType>
-        {
-            ModifierPersistenceType.Turn,
-            ModifierPersistenceType.Battle,
-            ModifierPersistenceType.Chapter
-        },
             ModifierPersistenceType.Permanent => new List<ModifierPersistenceType>
         {
             ModifierPersistenceType.Turn,
             ModifierPersistenceType.Battle,
-            ModifierPersistenceType.Chapter,
             ModifierPersistenceType.Permanent
         },
             _ => new List<ModifierPersistenceType>() // Default case, if needed

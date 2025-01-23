@@ -35,14 +35,14 @@ public class Target
         TargetFilter = targetFilter;
     }
 
-    private List<Card> TargetSlotsToCards(List<Slot> slots)
+    private List<CardView> TargetSlotsToCards(List<Slot> slots)
     {
-        return slots.ConvertAll(slot => slot.Content as Card).Where(card => card != null).ToList();
+        return slots.ConvertAll(slot => slot.Content as CardView).Where(card => card != null).ToList();
     }
 
-    public List<Card> GetAvailableCardTargets(Card src)
+    public List<CardView> GetAvailableCardTargets(CardView src)
     {
-        List<Card> targets = new();
+        List<CardView> targets = new();
         List<Slot> slots = new();
         switch (TargetRange)
         {
@@ -87,7 +87,7 @@ public class Target
         return targets;
     }
 
-    public List<Slot> GetAvailableSlotTargets(Card src)
+    public List<Slot> GetAvailableSlotTargets(CardView src)
     {
         List<Slot> slots = new();
         switch (TargetRange)

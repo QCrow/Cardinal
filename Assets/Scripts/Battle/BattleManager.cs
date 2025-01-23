@@ -20,6 +20,8 @@ public class BattleManager : MonoBehaviour
 
     [SerializeField] private TMP_Text _bossDescriptionText;
 
+    private int _shieldValue;
+
     [Header("Attack")]
     [SerializeField] private TMP_Text _totalAttackText;
 
@@ -209,7 +211,7 @@ public class BattleManager : MonoBehaviour
         CardSystem.Instance.DeckManager.ShuffleDrawPool();
         ResetMoveCounter();
 
-        List<Card> _cards = new();
+        List<CardView> _cards = new();
 
 
         // Place cards randomly on the board
@@ -219,7 +221,7 @@ public class BattleManager : MonoBehaviour
             if (slot == null) break;
 
             // Instantiate the card and bind it to the slot
-            Card card = CardSystem.Instance.DeckManager.DrawCard();
+            CardView card = CardSystem.Instance.DeckManager.DrawCard();
             if (card == null) break;
 
             card.ResetCardModifierState(ModifierPersistenceType.Turn);
@@ -255,10 +257,6 @@ public class BattleManager : MonoBehaviour
         Board.Instance.DeployedCards.ForEach(card =>
         {
             card.ApplyEffect(TriggerType.OnAttack);
-
-            // Strike count is the number of times the card will attack, determined by the MultiStrike modifier
-            int strikeCount = card.GetModifierValue(CardModifierType.MultiStrike) > 0 ? card.GetModifierValue(CardModifierType.MultiStrike) : 1;
-            for (int i = 0; i < strikeCount; i++) InflictDamage(card.TotalAttack);
         });
 
         Board.Instance.DeployedCards.ForEach(card =>
@@ -269,12 +267,17 @@ public class BattleManager : MonoBehaviour
         Board.Instance.DeployedCards.ForEach(card => card.UpdateAttackValue());
     }
 
-    private void InflictDamage(int damage)
+    public void DealDamage(int damage)
     {
         LastDealtDamage += damage;
         EnemyCurrentHealth -= damage;
 
         UpdateEnemyHealth();
+    }
+
+    public void GainShield(int shieldValue)
+    {
+        _shieldValue += shieldValue;
     }
 
     private void UpdateEnemyHealth()
@@ -284,12 +287,12 @@ public class BattleManager : MonoBehaviour
 
     public void ApplyWhileInPlayEffects()
     {
-        foreach (Card card in Board.Instance.DeployedCards)
+        foreach (CardView card in Board.Instance.DeployedCards)
         {
             card.ApplyEffect(TriggerType.PrioWhileInPlay);
         }
 
-        foreach (Card card in Board.Instance.DeployedCards)
+        foreach (CardView card in Board.Instance.DeployedCards)
         {
             card.ApplyEffect(TriggerType.WhileInPlay);
         }
@@ -299,12 +302,12 @@ public class BattleManager : MonoBehaviour
 
     public void RevertWhileInPlayEffects()
     {
-        foreach (Card card in Board.Instance.DeployedCards)
+        foreach (CardView card in Board.Instance.DeployedCards)
         {
             card.RevertEffect(TriggerType.WhileInPlay);
         }
 
-        foreach (Card card in Board.Instance.DeployedCards)
+        foreach (CardView card in Board.Instance.DeployedCards)
         {
             card.RevertEffect(TriggerType.PrioWhileInPlay);
         }

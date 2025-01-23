@@ -1,24 +1,26 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class DeckManager
+public class DeckSystem
 {
+
+
     // The player's deck, that carries over between battles and chapters
-    private List<Card> _deck = new();
+    private List<CardView> _deck = new();
     // The deck temporarily used during a battle, with temporarily added/removed/transformed cards
-    private List<Card> _battleDeck = new();
+    private List<CardView> _battleDeck = new();
 
     // The deck used for drawing cards during a battle, which is refilled every turn
-    private List<Card> _drawPool = new();
+    private List<CardView> _drawPool = new();
 
     public int CardShuffleSeed;
 
-    public DeckManager(List<Card> startingDeck)
+    public DeckSystem(List<CardView> startingDeck)
     {
         _deck = startingDeck;
     }
 
-    public DeckManager(Dictionary<int, int> startingDeck)
+    public DeckSystem(Dictionary<int, int> startingDeck)
     {
         foreach (KeyValuePair<int, int> cardEntry in startingDeck)
         {
@@ -37,7 +39,7 @@ public class DeckManager
     public void InitializeBeforeBattle()
     {
         // Copy the player's deck to the battle deck
-        _battleDeck = new List<Card>(_deck);
+        _battleDeck = new List<CardView>(_deck);
 
         // Shuffle the draw pool
         ShuffleDrawPool();
@@ -46,7 +48,7 @@ public class DeckManager
     public void ResetAfterBattle()
     {
         // Reset all card modifiers to their default state in the deck
-        foreach (Card card in _deck)
+        foreach (CardView card in _deck)
         {
             card.ResetCardModifierState(ModifierPersistenceType.Battle);
         }
@@ -57,7 +59,7 @@ public class DeckManager
         CardShuffleSeed = GameManager.Instance.GetDerivedSeedWithPosition(CardShuffleSeed, 15485863, 99991);
         Random.InitState(CardShuffleSeed);
         // Copy the battle deck to the draw pool
-        _drawPool = new List<Card>(_battleDeck);
+        _drawPool = new List<CardView>(_battleDeck);
 
         //System.Random random = new();
 
@@ -69,23 +71,23 @@ public class DeckManager
         }
     }
 
-    public Card DrawCard()
+    public CardView DrawCard()
     {
         if (_drawPool.Count == 0) return null;
 
-        Card card = _drawPool[0];
+        CardView card = _drawPool[0];
         _drawPool.RemoveAt(0);
         return card;
     }
 
-    public Card AddCard(int cardID, bool isPermanent = false)
+    public CardView AddCard(int cardID, bool isPermanent = false)
     {
-        Card card = CardSystem.Instance.CardRepository.InstantiateCard(cardID);
+        CardView card = CardSystem.Instance.CardRepository.InstantiateCard(cardID);
         AddCard(card, isPermanent);
         return card;
     }
 
-    public Card AddCard(Card card, bool isPermanent = false)
+    public CardView AddCard(CardView card, bool isPermanent = false)
     {
         if (isPermanent)
         {
@@ -95,7 +97,7 @@ public class DeckManager
         return card;
     }
 
-    public void RemoveCard(Card card, bool isPermanent = false)
+    public void RemoveCard(CardView card, bool isPermanent = false)
     {
         if (isPermanent)
         {
@@ -113,10 +115,10 @@ public class DeckManager
         }
     }
 
-    public Card TransformCard(Card card, int cardID, bool isPermanent = false)
+    public CardView TransformCard(CardView card, int cardID, bool isPermanent = false)
     {
         // Create the new card with the specified ID
-        Card newCard = CardSystem.Instance.CardRepository.InstantiateCard(cardID);
+        CardView newCard = CardSystem.Instance.CardRepository.InstantiateCard(cardID);
 
         // Check if the transformed card is already on the board
         if (card.CurrentSlot != null)

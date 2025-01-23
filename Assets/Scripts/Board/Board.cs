@@ -25,8 +25,8 @@ public class Board : MonoBehaviour
 
     private List<List<Slot>> _slots;  // 2D list to store slot references
 
-    private List<Card> _deployedCards;  // List of cards currently deployed on the board
-    public List<Card> DeployedCards
+    private List<CardView> _deployedCards;  // List of cards currently deployed on the board
+    public List<CardView> DeployedCards
     {
         get { return _deployedCards; }
         set { SetDeployedCards(value); }
@@ -187,7 +187,7 @@ public class Board : MonoBehaviour
     #endregion
 
     #region Card Management
-    private void SetDeployedCards(List<Card> cards)
+    private void SetDeployedCards(List<CardView> cards)
     {
         _deployedCards = cards;
         SortDeployedCards();
@@ -196,7 +196,7 @@ public class Board : MonoBehaviour
     public void UpdateDeployedCards()
     {
         List<Slot> allSlots = _slots.SelectMany(row => row).ToList();
-        List<Card> cards = allSlots.Select(slot => slot.Content as Card).Where(card => card != null).Select(card => card!).ToList();
+        List<CardView> cards = allSlots.Select(slot => slot.Content as CardView).Where(card => card != null).Select(card => card!).ToList();
         _deployedCards = cards;
         SortDeployedCards();
     }
@@ -301,9 +301,9 @@ public class Board : MonoBehaviour
 
             if (content != null && newSlot != null)
             {
-                if (content is Card)
+                if (content is CardView)
                 {
-                    Card card = (Card)content;
+                    CardView card = (CardView)content;
                     card.BindToSlot(newSlot);  // Bind to the new slot
                     card.MoveToAndSetParent(newSlot.ContentContainer.GetComponent<RectTransform>(), () => card.ApplyEffect(TriggerType.OnMove));
                 }
@@ -340,9 +340,9 @@ public class Board : MonoBehaviour
 
             if (content != null && newSlot != null)
             {
-                if (content is Card)
+                if (content is CardView)
                 {
-                    Card card = (Card)content;
+                    CardView card = (CardView)content;
                     card.BindToSlot(newSlot);  // Bind to the new slot
                     card.MoveToAndSetParent(newSlot.ContentContainer.GetComponent<RectTransform>(), () => card.ApplyEffect(TriggerType.OnMove));
                 }
@@ -385,9 +385,9 @@ public class Board : MonoBehaviour
 
                 if (content != null && newSlot != null)
                 {
-                    if (content is Card)
+                    if (content is CardView)
                     {
-                        Card card = (Card)content;
+                        CardView card = (CardView)content;
                         card.BindToSlot(newSlot);  // Bind to the new slot
                         if (row != 1 || col != 1)
                         {
@@ -435,9 +435,9 @@ public class Board : MonoBehaviour
 
                 if (content != null && newSlot != null)
                 {
-                    if (content is Card)
+                    if (content is CardView)
                     {
-                        Card card = (Card)content;
+                        CardView card = (CardView)content;
                         card.BindToSlot(newSlot);  // Bind to the new slot
                         if (row != 1 || col != 1)
                         {
@@ -459,8 +459,8 @@ public class Board : MonoBehaviour
         _cardsSnapshot.Clear();
         foreach (List<Slot> row in _slots)
         {
-            List<Card> cards = row.Select(slot => slot.Content as Card).Where(card => card != null).Select(card => card!).ToList();
-            foreach (Card card in cards)
+            List<CardView> cards = row.Select(slot => slot.Content as CardView).Where(card => card != null).Select(card => card!).ToList();
+            foreach (CardView card in cards)
             {
                 _cardsSnapshot.Add(card.GetSaveData());
             }
@@ -484,7 +484,7 @@ public class Board : MonoBehaviour
 
         foreach (CardSaveData cardData in _cardsSnapshot)
         {
-            Card card = DeployedCards.FirstOrDefault(c => c.gameObject.GetInstanceID() == cardData.GUID);
+            CardView card = DeployedCards.FirstOrDefault(c => c.gameObject.GetInstanceID() == cardData.GUID);
             if (card != null)
             {
                 Slot? slot = GetSlotAtPosition(cardData.Row, cardData.Col);

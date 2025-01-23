@@ -8,7 +8,8 @@ public enum TriggerType
     OnAttack,
     AfterAttack,
     OnDeath,
-    OnMove
+    OnMove,
+    OnActivation
 }
 
 public enum EffectType
@@ -25,15 +26,14 @@ public enum EffectType
 public enum CardModifierType
 {
     None, // Only used for default value
-    Strength,
-    Weakness,
-    MultiStrike
+    Damage,
+    Shield
 }
 
 public enum SlotModifierType
 {
     None, // Only used for default value
-    Mobilization,
+    Assistance,
     NoDamage
 }
 

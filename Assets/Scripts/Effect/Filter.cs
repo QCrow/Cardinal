@@ -24,7 +24,7 @@ public class Filter
     [ShowIf("Type", FilterType.NameContains)]
     public string NameContains;
 
-    public bool IsMatch(Card card)
+    public bool IsMatch(CardView card)
     {
         return Type switch
         {

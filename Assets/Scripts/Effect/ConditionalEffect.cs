@@ -2,10 +2,10 @@ using System.Collections.Generic;
 
 public abstract class ConditionalEffect
 {
-    public Card Card; // Card that the effect is attached to
+    public CardView Card; // Card that the effect is attached to
     protected List<Effect> _effects;
 
-    public ConditionalEffect(Card card, List<Effect> effects)
+    public ConditionalEffect(CardView card, List<Effect> effects)
     {
         Card = card;
         _effects = effects;
@@ -23,7 +23,7 @@ public abstract class ConditionalEffect
 
 public class ConstantEffect : ConditionalEffect
 {
-    public ConstantEffect(Card card, List<Effect> effects) : base(card, effects) { }
+    public ConstantEffect(CardView card, List<Effect> effects) : base(card, effects) { }
 
     public override void ApplyEffect()
     {
@@ -40,7 +40,7 @@ public class PositionCondition : ConditionalEffect
 {
     public PositionType Position;
 
-    public PositionCondition(Card card, List<Effect> effects, PositionType position) : base(card, effects)
+    public PositionCondition(CardView card, List<Effect> effects, PositionType position) : base(card, effects)
     {
         Position = position;
     }
@@ -68,7 +68,7 @@ public class TargetWithFilterCondition : ConditionalEffect
     private readonly CheckType _check;
     private readonly int _minimum;
 
-    public TargetWithFilterCondition(Card card, List<Effect> effects, Target targetField, CheckType check, int minimum) : base(card, effects)
+    public TargetWithFilterCondition(CardView card, List<Effect> effects, Target targetField, CheckType check, int minimum) : base(card, effects)
     {
         TargetField = targetField;
         _check = check;
@@ -77,7 +77,7 @@ public class TargetWithFilterCondition : ConditionalEffect
 
     public override void ApplyEffect()
     {
-        List<Card> targets = TargetField.GetAvailableCardTargets(Card);
+        List<CardView> targets = TargetField.GetAvailableCardTargets(Card);
         switch (_check)
         {
             case CheckType.Exists:
@@ -103,7 +103,7 @@ public class TargetWithFilterCondition : ConditionalEffect
 
     public override void RevertEffect()
     {
-        List<Card> targets = TargetField.GetAvailableCardTargets(Card);
+        List<CardView> targets = TargetField.GetAvailableCardTargets(Card);
         switch (_check)
         {
             case CheckType.Exists:
@@ -133,7 +133,7 @@ public class CycleCondition : ConditionalEffect
     private readonly int _cycleCount;
     public int CycleValue;
 
-    public CycleCondition(Card card, List<Effect> effects, int cycleCount) : base(card, effects)
+    public CycleCondition(CardView card, List<Effect> effects, int cycleCount) : base(card, effects)
     {
         card.UpdateCycleValue(cycleCount);
         _cycleCount = cycleCount;

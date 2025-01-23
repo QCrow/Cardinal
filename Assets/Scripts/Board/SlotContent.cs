@@ -1,6 +1,5 @@
 using UnityEngine;
 using DG.Tweening;
-using System.Collections;
 
 public abstract class SlotContent : MonoBehaviour
 {
@@ -60,7 +59,7 @@ public abstract class SlotContent : MonoBehaviour
     }
 
     /// <summary>
-    /// Moves the card to the graveyard.
+    /// Moves the content to the graveyard.
     /// </summary>
     public void MoveToGraveyard()
     {
