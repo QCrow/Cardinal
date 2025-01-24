@@ -54,7 +54,7 @@ public class BattleManager : MonoBehaviour
     private void Start()
     {
         ControlButton.onClick.AddListener(OnControlButtonPressed);
-        ResetButton.onClick.AddListener(OnResetButtonPressed);
+        // ResetButton.onClick.AddListener(OnResetButtonPressed);
     }
 
     private void Update()
@@ -106,10 +106,10 @@ public class BattleManager : MonoBehaviour
 
         IEnumerator WaitForDeckManager()
         {
-            yield return new WaitUntil(() => CardSystem.Instance.DeckManager != null);
+            yield return new WaitUntil(() => PlayerManager.Instance.Decks != null);
         }
 
-        CardSystem.Instance.DeckManager.InitializeBeforeBattle();
+        PlayerManager.Instance.Decks.InitializeBeforeBattle();
 
         _bossDescriptionText.text = enemyScriptable.Description;
         ChangePhase(new WaitPhase());
@@ -121,11 +121,11 @@ public class BattleManager : MonoBehaviour
         StartBattleAgainstEnemy(enemyScriptable);
     }
 
-    public void SetTotalAttack()
-    {
-        int totalAttack = Board.Instance.DeployedCards.Where(card => card != null).Sum(card => card.TotalAttack);
-        _totalAttackText.text = $"{totalAttack}";
-    }
+    // public void SetTotalAttack()
+    // {
+    //     int totalAttack = Board.Instance.DeployedCards.Where(card => card != null).Sum(card => card.TotalAttack);
+    //     _totalAttackText.text = $"{totalAttack}";
+    // }
 
     public void ChangePhase(IBattlePhase newBattlePhase)
     {
@@ -154,7 +154,6 @@ public class BattleManager : MonoBehaviour
             GameManager.Instance.CanMove = false;
         }
         UpdateMoveCounterDisplay();
-        SetTotalAttack();
     }
 
     public void OnControlButtonPressed()
@@ -185,33 +184,25 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    public void OnResetButtonPressed()
-    {
-        if (CurrentBattlePhase is ControlPhase)
-        {
-            Board.Instance.DeployedCards.ForEach(card => card.ResetCardModifierState(ModifierPersistenceType.Turn));
-            Board.Instance.ClearBoardSlotsModifiers(ModifierPersistenceType.Turn);
-            Board.Instance.RestoreFromSnapshot();
+    // public void OnResetButtonPressed()
+    // {
+    //     Board.Instance.DeployedCards.ForEach(card => card.ResetCardModifierState(ModifierPersistenceType.Turn));
+    //     Board.Instance.ClearBoardSlotsModifiers(ModifierPersistenceType.Turn);
+    //     Board.Instance.RestoreFromSnapshot();
 
-            ApplyWhileInPlayEffects();
+    //     ApplyWhileInPlayEffects();
 
-            ResetMoveCounter();
-        }
-        else
-        {
-            Deploy();
-            ChangePhase(new ControlPhase());
-        }
-    }
+    //     ResetMoveCounter();
+    // }
 
     private void Deploy()
     {
         Board.Instance.ClearBoard();
         Board.Instance.ClearBoardSlotsModifiers(ModifierPersistenceType.Turn);
-        CardSystem.Instance.DeckManager.ShuffleDrawPool();
+        PlayerManager.Instance.Decks.ShuffleDrawPool();
         ResetMoveCounter();
 
-        List<CardView> _cards = new();
+        List<CardInstance> _cards = new();
 
 
         // Place cards randomly on the board
@@ -221,7 +212,7 @@ public class BattleManager : MonoBehaviour
             if (slot == null) break;
 
             // Instantiate the card and bind it to the slot
-            CardView card = CardSystem.Instance.DeckManager.DrawCard();
+            CardInstance card = PlayerManager.Instance.Decks.DrawCard();
             if (card == null) break;
 
             card.ResetCardModifierState(ModifierPersistenceType.Turn);
@@ -229,16 +220,13 @@ public class BattleManager : MonoBehaviour
             card.MoveToAndSetParent(slot.ContentContainer.GetComponent<RectTransform>());
 
             // Apply the deploy trigger effects
-            card.ApplyEffect(TriggerType.OnDeploy);
+            card.ActivateCardEffect(TriggerType.OnDeploy);
             _cards.Add(card);
         }
         Board.Instance.DeployedCards = _cards;
-        Board.Instance.SaveSnapshot();
+        // Board.Instance.SaveSnapshot();
 
         ApplyWhileInPlayEffects();
-
-        Board.Instance.DeployedCards.ForEach(card => card.UpdateAttackValue());
-        SetTotalAttack();
     }
 
     private void UpdateMoveCounterDisplay()
@@ -251,20 +239,18 @@ public class BattleManager : MonoBehaviour
         LastDealtDamage = 0;
         Board.Instance.DeployedCards.ForEach(card =>
         {
-            card.ApplyEffect(TriggerType.BeforeAttack);
+            card.ActivateCardEffect(TriggerType.BeforeAttack);
         });
 
         Board.Instance.DeployedCards.ForEach(card =>
         {
-            card.ApplyEffect(TriggerType.OnAttack);
+            card.ActivateCardEffect(TriggerType.OnAttack);
         });
 
         Board.Instance.DeployedCards.ForEach(card =>
         {
-            card.ApplyEffect(TriggerType.AfterAttack);
+            card.ActivateCardEffect(TriggerType.AfterAttack);
         });
-
-        Board.Instance.DeployedCards.ForEach(card => card.UpdateAttackValue());
     }
 
     public void DealDamage(int damage)
@@ -287,29 +273,27 @@ public class BattleManager : MonoBehaviour
 
     public void ApplyWhileInPlayEffects()
     {
-        foreach (CardView card in Board.Instance.DeployedCards)
+        foreach (CardInstance card in Board.Instance.DeployedCards)
         {
-            card.ApplyEffect(TriggerType.PrioWhileInPlay);
+            card.ActivateCardEffect(TriggerType.PrioWhileInPlay);
         }
 
-        foreach (CardView card in Board.Instance.DeployedCards)
+        foreach (CardInstance card in Board.Instance.DeployedCards)
         {
-            card.ApplyEffect(TriggerType.WhileInPlay);
-        }
-
-        Board.Instance.DeployedCards.ForEach(card => card.UpdateAttackValue());
-    }
-
-    public void RevertWhileInPlayEffects()
-    {
-        foreach (CardView card in Board.Instance.DeployedCards)
-        {
-            card.RevertEffect(TriggerType.WhileInPlay);
-        }
-
-        foreach (CardView card in Board.Instance.DeployedCards)
-        {
-            card.RevertEffect(TriggerType.PrioWhileInPlay);
+            card.ActivateCardEffect(TriggerType.WhileInPlay);
         }
     }
+
+    // public void RevertWhileInPlayEffects()
+    // {
+    //     foreach (CardView card in Board.Instance.DeployedCards)
+    //     {
+    //         card.RevertEffect(TriggerType.WhileInPlay);
+    //     }
+
+    //     foreach (CardView card in Board.Instance.DeployedCards)
+    //     {
+    //         card.RevertEffect(TriggerType.PrioWhileInPlay);
+    //     }
+    // }
 }

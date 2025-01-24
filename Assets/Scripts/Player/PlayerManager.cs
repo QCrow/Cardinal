@@ -1,11 +1,15 @@
 using UnityEngine;
 using TMPro;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 
-public class PlayerManager : MonoBehaviour
+public class PlayerManager : SerializedMonoBehaviour
 {
     // Singleton Instance
     public static PlayerManager Instance { get; private set; }
+    public DeckSystem Decks;
+
+    [SerializeField] private Dictionary<int, int> _startingDeck = new();
 
     [Header("Initial Player Stats")]
     [SerializeField] private int initialHealth = 100; // Default health value
@@ -38,6 +42,8 @@ public class PlayerManager : MonoBehaviour
 
     private void Start()
     {
+        Decks = new DeckSystem(_startingDeck);
+
         // Initialize PlayerData with the specified values
         PlayerData.SetHealth(initialHealth);
         PlayerData.SetGold(initialGold);

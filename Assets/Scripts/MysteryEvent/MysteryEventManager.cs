@@ -35,7 +35,7 @@ public class MysteryEventManager : MonoBehaviour
     // Load a random event from the database
     public void LoadRandomEventByWeight()
     {
-        Random.InitState(GameManager.Instance.seed); // Initialize the random number generator with the given seed
+        Random.InitState(GameManager.Instance.Seed); // Initialize the random number generator with the given seed
 
         if (eventDatabase == null || eventDatabase.events == null || eventDatabase.events.Count == 0)
         {

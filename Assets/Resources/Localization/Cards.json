@@ -1,0 +1,32 @@
+{
+  "data": {
+    "en": {
+      "1": {
+        "name": "Journeyman",
+        "description": "<keyword>Front</keyword>: Deal <Damage> damage. <keyword>Back</keyword>: Gain <Shield> shield."
+      },
+      "2": {
+        "name": "Apprentice",
+        "description": "<keyword>Skill</keyword>: For this turn, give the slot under me <keyword>Assistance</keyword>.\n<keyword>Cooldown</keyword>: <Cooldown>"
+      },
+      "3": {
+        "name": "Scout",
+        "description": "Deal <Damage> damage. When moved, gain <Damage Scaling> damage up for 1 turn."
+      }
+    },
+    "cn": {
+      "1": {
+        "name": "旅行者",
+        "description": "<keyword>前排</keyword>：造成<Damage>伤害。<keyword>后排</keyword>：获得<Shield>护盾。"
+      },
+      "2": {
+        "name": "学徒",
+        "description": "<keyword>权能</keyword>：此回合，给予我下方的槽位<keyword>协助</keyword>。\n<keyword>冷却</keyword>：1"
+      },
+      "3": {
+        "name": "斥候",
+        "description": "造成<Damage>伤害。移动时，获得<Damage Scaling>伤害加成，持续1回合。"
+      }
+    }
+  }
+}

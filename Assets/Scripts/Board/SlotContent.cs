@@ -7,23 +7,23 @@ public abstract class SlotContent : MonoBehaviour
 
     protected virtual void Awake()
     {
-        if (TryGetComponent<Canvas>(out var canvas))
-        {
-            // If the object already has a Canvas, adjust settings if needed
-            canvas.overrideSorting = false; // Let the parent Canvas control sorting
-        }
-        else
-        {
-            // Do not add a Canvas unless absolutely required
-            // Remove this block if you don't need the Canvas
-            canvas = gameObject.AddComponent<Canvas>();
-            canvas.overrideSorting = false;
-        }
+        // if (TryGetComponent<Canvas>(out var canvas))
+        // {
+        //     // If the object already has a Canvas, adjust settings if needed
+        //     canvas.overrideSorting = false; // Let the parent Canvas control sorting
+        // }
+        // else
+        // {
+        //     // Do not add a Canvas unless absolutely required
+        //     // Remove this block if you don't need the Canvas
+        //     canvas = gameObject.AddComponent<Canvas>();
+        //     canvas.overrideSorting = false;
+        // }
 
-        if (TryGetComponent<RectTransform>(out var rectTransform))
-        {
-            rectTransform.localScale = Vector3.one;
-        }
+        // if (TryGetComponent<RectTransform>(out var rectTransform))
+        // {
+        //     rectTransform.localScale = Vector3.one;
+        // }
     }
 
 
@@ -63,7 +63,7 @@ public abstract class SlotContent : MonoBehaviour
     /// </summary>
     public void MoveToGraveyard()
     {
-        transform.SetParent(CardSystem.Instance.Graveyard.transform);
+        transform.SetParent(CardSystem.Instance.GraveyardTransform.transform);
         ResetTransform();
     }
 

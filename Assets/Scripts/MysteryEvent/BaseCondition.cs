@@ -27,7 +27,7 @@ public class SpecificCardRequirementCondition : BaseCondition
 
     public override bool Evaluate()
     {
-        return CardSystem.Instance.DeckManager.HasCard(cardId);
+        return PlayerManager.Instance.Decks.HasCard(cardId);
     }
 }
 

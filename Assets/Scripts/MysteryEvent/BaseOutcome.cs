@@ -44,7 +44,7 @@ public class GainCardOutcome : BaseOutcome
     {
         for (int i = 0; i < quantity; i++)
         {
-            CardSystem.Instance.DeckManager.AddCard(cardId, true);
+            PlayerManager.Instance.Decks.AddCard(cardId, true);
         }
     }
 }

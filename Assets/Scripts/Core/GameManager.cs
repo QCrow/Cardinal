@@ -1,5 +1,6 @@
 using Map;
 using Sirenix.OdinInspector;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,7 +16,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    public int seed;
+    public int Seed;
 
     public bool CanMove
     {
@@ -34,7 +35,6 @@ public class GameManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -45,12 +45,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        InitializeSeeds();
-    }
 
-    private void InitializeSeeds()
-    {
-        CardSystem.Instance.DeckManager.CardShuffleSeed = seed * 37 + 11; // Derive the initial seed for DeckManager
     }
 
     public int GetDerivedSeedWithPosition(int baseSeed, int multiplier, int offset)
@@ -75,7 +70,8 @@ public class GameManager : MonoBehaviour
                 CanMove = true;
                 NavBarManager.Instance.MoveMapOnScreen();
                 //UIManager.Instance.MapPanel.SetActive(true);
-                if(MapManager.Instance.IsCurrentNodeLast()){
+                if (MapManager.Instance.IsCurrentNodeLast())
+                {
                     CurrentLevel += 1;
                     //TODO: if certain event can only appear in level 2, add them when update level
                     MapManager.Instance.LoadMap();

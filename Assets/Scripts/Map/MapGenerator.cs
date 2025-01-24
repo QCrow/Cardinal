@@ -15,7 +15,7 @@ namespace Map
 
         public static Map GetMap(MapConfig conf)
         {
-            Random.InitState(GameManager.Instance.seed);
+            Random.InitState(GameManager.Instance.Seed);
 
             if (conf == null)
             {
@@ -28,7 +28,6 @@ namespace Map
 
             GenerateLayerDistances();
 
-            Debug.Log(conf.layers.Count);
             for (int i = 0; i < conf.layers.Count; i++)
                 PlaceLayer(i);
 
@@ -46,8 +45,6 @@ namespace Map
             List<Node> lastLayerNodes = nodes[nodes.Count - 1];
 
             Node lastNode = lastLayerNodes[lastLayerNodes.Count - 1];
-
-            Debug.Log("Last node is: "+ lastNode.blueprintName);
             return new Map(conf.name, lastNode, nodesList, new List<Vector2Int>());
         }
 
@@ -118,7 +115,7 @@ namespace Map
             float offset = layer.nodesApartDistance * config.GridWidth / 2f;
 
             // Loop through each slot in the grid width
-            for (int i = 0; i < config.GridWidth; i++) 
+            for (int i = 0; i < config.GridWidth; i++)
             {
                 // Use Layer.randomNodes if defined; otherwise, fallback to config.randomNodes
                 var supportedRandomNodeTypes = layer.randomNodes != null && layer.randomNodes.Count > 0

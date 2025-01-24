@@ -19,10 +19,10 @@ public class ControlPhase : IBattlePhase
 
     public void ApplyMovement(Direction direction, int index, int magnitude)
     {
-        BattleManager.Instance.RevertWhileInPlayEffects();
+        // BattleManager.Instance.RevertWhileInPlayEffects();
         BattleManager.Instance.DecrementMoveCounter();
         Board.Instance.ApplyMovement(direction, index, magnitude);
-        BattleManager.Instance.ApplyWhileInPlayEffects();
-        BattleManager.Instance.SetTotalAttack();
+        // BattleManager.Instance.ApplyWhileInPlayEffects();
+        // BattleManager.Instance.SetTotalAttack();
     }
 }

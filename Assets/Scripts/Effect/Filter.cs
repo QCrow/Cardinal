@@ -1,38 +1,38 @@
-using System;
-using Sirenix.OdinInspector;
+// using System;
+// using Sirenix.OdinInspector;
 
-public enum FilterType
-{
-    None,
-    ID,
-    Name,
-    Rarity,
-    NameContains,
-}
+// public enum FilterType
+// {
+//     None,
+//     ID,
+//     Name,
+//     Rarity,
+//     NameContains,
+// }
 
 
-[Serializable]
-public class Filter
-{
-    public FilterType Type;
-    [ShowIf("Type", FilterType.ID)]
-    public int ID;
-    [ShowIf("Type", FilterType.Name)]
-    public string Name;
-    [ShowIf("Type", FilterType.Rarity)]
-    public CardRarityType Rarity;
-    [ShowIf("Type", FilterType.NameContains)]
-    public string NameContains;
+// [Serializable]
+// public class Filter
+// {
+//     public FilterType Type;
+//     [ShowIf("Type", FilterType.ID)]
+//     public int ID;
+//     [ShowIf("Type", FilterType.Name)]
+//     public string Name;
+//     [ShowIf("Type", FilterType.Rarity)]
+//     public CardRarityType Rarity;
+//     [ShowIf("Type", FilterType.NameContains)]
+//     public string NameContains;
 
-    public bool IsMatch(CardView card)
-    {
-        return Type switch
-        {
-            FilterType.ID => card.ID == ID,
-            FilterType.Name => card.CardName == Name,
-            FilterType.Rarity => card.Rarity == Rarity,
-            FilterType.NameContains => card.CardName.Contains(NameContains),
-            _ => false,
-        };
-    }
-}
+//     public bool IsMatch(CardInstance card)
+//     {
+//         return Type switch
+//         {
+//             FilterType.ID => card.ID == ID,
+//             FilterType.Name => card.CardName == Name,
+//             FilterType.Rarity => card.Rarity == Rarity,
+//             FilterType.NameContains => card.CardName.Contains(NameContains),
+//             _ => false,
+//         };
+//     }
+// }

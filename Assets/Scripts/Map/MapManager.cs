@@ -32,7 +32,8 @@ namespace Map
             }
         }
 
-        public void LoadMap(){
+        public void LoadMap()
+        {
             // if (PlayerPrefs.HasKey("Map"))
             // {
             //     string mapJson = PlayerPrefs.GetString("Map");
@@ -60,10 +61,9 @@ namespace Map
 
         public void GenerateNewMap(int level)
         {
-            Map map = MapGenerator.GetMap(configs[level-1]);
+            Map map = MapGenerator.GetMap(configs[level - 1]);
             CurrentMap = map;
             //Debug.Log(map.lastNodeName);
-            Debug.Log(map.ToJson());
             view.ShowMap(map);
         }
 

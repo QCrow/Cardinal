@@ -8,7 +8,7 @@ using UnityEngine;
 public class CardRewardGenerator
 {
     // Configuration containing rarity weights for each level
-    private CardRandomGenerationConfig _randomGenerationConfig;
+    private CardGenConfig _randomGenerationConfig;
 
     private int CardRewardSeed;
 
@@ -17,7 +17,7 @@ public class CardRewardGenerator
     /// Constructor to initialize the CardRewardGenerator with a given configuration.
     /// </summary>
     /// <param name="randomGenerationConfig">Configuration for card rarity weights per level.</param>
-    public CardRewardGenerator(CardRandomGenerationConfig randomGenerationConfig)
+    public CardRewardGenerator(CardGenConfig randomGenerationConfig)
     {
         _randomGenerationConfig = randomGenerationConfig;
     }
@@ -56,7 +56,7 @@ public class CardRewardGenerator
     {
         if (!seedInitialized)
         {
-            CardRewardSeed = GameManager.Instance.seed;
+            CardRewardSeed = GameManager.Instance.Seed;
             seedInitialized = true;
         }
         CardRewardSeed = GameManager.Instance.GetDerivedSeedWithPosition(CardRewardSeed, 104729, 49999);
@@ -95,16 +95,14 @@ public class CardRewardGenerator
         if (cardIDs.Count == 0)
         {
             Debug.LogError($"No cards found for rarity {rarity}. Using a common card.");
-            cardIDs = CardSystem.Instance.CardRepository.CardsByRarity[CardRarityType.Common];
+            cardIDs = CardLibrary.CardsByRarity[CardRarityType.Common];
         }
 
         // Select a random card ID from the list
         int randomIndex = Random.Range(0, cardIDs.Count);
         int cardID = cardIDs[randomIndex];
 
-        // Retrieve the CardScriptable and create a CardReward
-        var scriptable = CardSystem.Instance.CardRepository.GetCardScriptableByID(cardID);
-        return new CardReward(scriptable);
+        return new CardReward(cardID);
     }
 
     /// <summary>
@@ -114,20 +112,12 @@ public class CardRewardGenerator
     /// <returns>A list of card IDs for the specified rarity.</returns>
     private List<int> GetCardIDsByRarity(CardRarityType rarity)
     {
-        if (rarity == CardRarityType.Unique && CardSystem.Instance.CardRepository.UniqueCardPool.Count > 0)
+        if (!CardLibrary.CardsByRarity.TryGetValue(rarity, out var cardIDs))
         {
-            HashSet<int> pool = CardSystem.Instance.CardRepository.UniqueCardPool;
-            return new List<int>(pool);
+            Debug.LogWarning($"No cards found for rarity {rarity}. Using a common card.");
+            cardIDs = CardLibrary.CardsByRarity[CardRarityType.Common];
         }
-        else
-        {
-            if (!CardSystem.Instance.CardRepository.CardsByRarity.TryGetValue(rarity, out var cardIDs))
-            {
-                Debug.LogWarning($"No cards found for rarity {rarity}. Using a common card.");
-                cardIDs = CardSystem.Instance.CardRepository.CardsByRarity[CardRarityType.Common];
-            }
-            return cardIDs;
-        }
+        return cardIDs;
     }
 
     #endregion

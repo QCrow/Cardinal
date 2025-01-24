@@ -1,24 +1,50 @@
+using Sirenix.OdinInspector;
+using UnityEngine;
+using TMPro;
+using UnityEngine.EventSystems;
 using System.Collections.Generic;
+using UnityEditor.Localization.Editor;
+using System.Collections;
 
-public class CardInstance
+public class CardInstance : SlotContent, IPointerEnterHandler, IPointerExitHandler
 {
-    // The card instance data, containing base values, tags and logic
     public AbstractCard Template { get; private set; }
-    public Slot CurrentSlot { get; set; }
 
     public int TokenCount;
     public int ChargeCount;
     public int Cooldown;
 
     // Modifier storage with persistence levels
-    private Dictionary<ModifierPersistenceType, Dictionary<CardModifierType, int>> _modifiers = new();
+    protected Dictionary<ModifierPersistenceType, Dictionary<CardModifierType, int>> _modifiers = new();
 
-    public CardInstance(AbstractCard template)
+
+    #region UI References
+    [BoxGroup("UI References")]
+    [SerializeField] private TMP_Text _cardNameText;
+
+    [BoxGroup("UI References")]
+    [SerializeField] private GameObject _descriptionContainer;
+
+    [BoxGroup("UI References")]
+    [SerializeField] private TMP_Text _descriptionText;
+    #endregion
+
+    public void Initialize(AbstractCard template)
     {
         Template = template;
-        TokenCount = 0;
-        ChargeCount = 0;
-        Cooldown = 0;
+        Debug.Log(Template.ID);
+        string cardName = LocalizationHandler.Instance.GetCardName(Template.ID);
+        _cardNameText.text = cardName;
+
+        string description = LocalizationHandler.Instance.GetCardDescription(Template.ID);
+        description = LocalizationHandler.Instance.ParseDynamicDescription(description, this);
+        _descriptionText.text = description;
+    }
+
+    public void Initialize(CardInstance cardInstance)
+    {
+        _modifiers = new Dictionary<ModifierPersistenceType, Dictionary<CardModifierType, int>>(cardInstance._modifiers);
+        Initialize(cardInstance.Template);
     }
 
     /// <summary>
@@ -53,6 +79,8 @@ public class CardInstance
         {
             _modifiers[persistence][type] = amount;
         }
+
+        UpdateDescription();
     }
 
     /// <summary>
@@ -75,13 +103,92 @@ public class CardInstance
                 }
             }
         }
+
+        UpdateDescription();
     }
 
-    private void ClearModifiers(ModifierPersistenceType persistence)
+    public void ResetCardModifierState(ModifierPersistenceType persistence)
     {
         if (_modifiers.ContainsKey(persistence))
         {
             _modifiers.Remove(persistence);
         }
+
+        UpdateDescription();
+    }
+
+    private void UpdateDescription()
+    {
+        string description = LocalizationHandler.Instance.GetCardDescription(Template.ID);
+        description = LocalizationHandler.Instance.ParseDynamicDescription(description, this);
+        _descriptionText.text = description;
+    }
+
+    public int GetEffectiveValue(string key)
+    {
+        switch (key)
+        {
+            case "Damage":
+                return Template.BaseValues[key] + GetModifierValue(CardModifierType.Damage);
+            case "Shield":
+                return Template.BaseValues[key] + GetModifierValue(CardModifierType.Shield);
+            case "Cooldown":
+                return Template.BaseValues[key];
+            case "Damage Scaling":
+                return Template.BaseValues[key];
+            default:
+                Debug.LogError($"Key {key} from localization is not found.");
+                return 0;
+        }
+    }
+
+    public void ActivateCardEffect(TriggerType trigger)
+    {
+        Template.ActivateCardEffect(trigger, this);
+    }
+
+    public override void BindToSlot(Slot slot)
+    {
+        base.BindToSlot(slot);
+    }
+
+    public override void UnbindFromSlot()
+    {
+        base.UnbindFromSlot();
+    }
+
+    private void OnEnable()
+    {
+        HideDescription();
+    }
+
+    private void ShowDescription()
+    {
+        Canvas canvas = _descriptionContainer.GetComponent<Canvas>();
+        if (canvas == null)
+        {
+            canvas = _descriptionContainer.AddComponent<Canvas>();
+        }
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.overrideSorting = true;
+        canvas.sortingLayerName = "UI";
+        canvas.sortingOrder = 500;
+
+        _descriptionContainer.SetActive(true);
+    }
+
+    private void HideDescription()
+    {
+        _descriptionContainer.SetActive(false);
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        ShowDescription();
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        HideDescription();
     }
 }

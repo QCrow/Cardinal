@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-public class HerbalistCard : AbstractCard
+public class ApprenticeCard : AbstractCard
 {
     private static readonly Dictionary<string, int> V =
     new()
@@ -13,7 +13,7 @@ public class HerbalistCard : AbstractCard
         "Skill"
     };
 
-    public HerbalistCard() : base(2, CardRarityType.Starter, V, T, true) { }
+    public ApprenticeCard() : base(2, CardRarityType.Starter, V, T, true) { }
 
     public override void ActivateCardEffect(TriggerType trigger, CardInstance instance)
     {

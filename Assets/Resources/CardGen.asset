@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56c7c6246609d064e9b7497fb658c9ac, type: 3}
-  m_Name: CardRandomGenerationConfig
+  m_Script: {fileID: 11500000, guid: cadbc1114eeda0741a9ff15b24094075, type: 3}
+  m_Name: CardGen
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -56,7 +56,7 @@ MonoBehaviour:
       Data: 2
     - Name: $v
       Entry: 3
-      Data: 60
+      Data: 155
     - Name: 
       Entry: 8
       Data: 
@@ -68,7 +68,7 @@ MonoBehaviour:
       Data: 3
     - Name: $v
       Entry: 3
-      Data: 30
+      Data: 16
     - Name: 
       Entry: 8
       Data: 
