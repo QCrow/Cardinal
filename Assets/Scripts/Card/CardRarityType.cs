@@ -4,7 +4,6 @@ public enum CardRarityType
     Starter,
     Common,
     Rare,
-    Epic,
     Mythic,
     Unique
 }

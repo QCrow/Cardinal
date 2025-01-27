@@ -164,17 +164,19 @@ public class CardInstance : SlotContent, IPointerEnterHandler, IPointerExitHandl
 
     private void ShowDescription()
     {
-        Canvas canvas = _descriptionContainer.GetComponent<Canvas>();
-        if (canvas == null)
-        {
-            canvas = _descriptionContainer.AddComponent<Canvas>();
-        }
-        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvas.overrideSorting = true;
-        canvas.sortingLayerName = "UI";
-        canvas.sortingOrder = 500;
-
         _descriptionContainer.SetActive(true);
+        StartCoroutine(SetSortingOrder());
+        IEnumerator SetSortingOrder()
+        {
+            yield return null;
+            if (!_descriptionContainer.TryGetComponent<Canvas>(out var canvas))
+            {
+                canvas = _descriptionContainer.AddComponent<Canvas>();
+                canvas.overrideSorting = true;
+                canvas.sortingLayerName = "UI";
+            }
+            canvas.sortingOrder = 200; // Ensure on top
+        }
     }
 
     private void HideDescription()
