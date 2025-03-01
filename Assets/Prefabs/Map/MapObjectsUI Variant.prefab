@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 439aa1ae4c5207e4fbeaab9e526bd8d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  config: {fileID: 11400000, guid: 19bf411c79e522b4b8e54f82b0140314, type: 2}
+  configs: []
   view: {fileID: 4814877705121799306}
 --- !u!1 &3339309020592985745
 GameObject:
@@ -96,7 +96,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 19bf411c79e522b4b8e54f82b0140314, type: 2}
   nodePrefab: {fileID: 5037388882644343366, guid: d1c61babba3d845e89d15d136ce9793b, type: 3}
   orientationOffset: -4
-  background: {fileID: 21300000, guid: ee8d8e911ac04fb4781d59ef692472f2, type: 3}
+  background: {fileID: 21300000, guid: f85105b16b566df40a67718ca468e2ed, type: 3}
   backgroundColor:
     serializedVersion: 2
     rgba: 4294967295

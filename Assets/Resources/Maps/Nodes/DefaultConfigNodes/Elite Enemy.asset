@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51eb2222c8d842f4b8e903c8413aecfb, type: 3}
   m_Name: Elite Enemy
   m_EditorClassIdentifier: 
-  sprite: {fileID: 21300000, guid: 38a5b1d8fe5c1114d9628a34a7255403, type: 3}
+  sprite: {fileID: 21300000, guid: e16c00e943d421c4985c7add2f485e48, type: 3}
   nodeType: 1

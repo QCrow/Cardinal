@@ -143,7 +143,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -358813249, guid: 9fe82643c3adaac47a04ff8e7b20a0d4, type: 3}
+  m_Sprite: {fileID: 21300000, guid: a29ceadb681bb994896545087688effc, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -174,13 +174,13 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes:
-    - Name: _permanentModifiers
+    - Name: _modifiers
       Entry: 7
-      Data: 0|System.Collections.Generic.Dictionary`2[[SlotModifierType, Assembly-CSharp],[System.Int32,
-        mscorlib]], mscorlib
+      Data: 0|System.Collections.Generic.Dictionary`2[[ModifierPersistenceType, Assembly-CSharp],[System.Collections.Generic.Dictionary`2[[SlotModifierType,
+        Assembly-CSharp],[System.Int32, mscorlib]], mscorlib]], mscorlib
     - Name: comparer
       Entry: 7
-      Data: 1|System.Collections.Generic.EnumEqualityComparer`1[[SlotModifierType,
+      Data: 1|System.Collections.Generic.EnumEqualityComparer`1[[ModifierPersistenceType,
         Assembly-CSharp]], mscorlib
     - Name: 
       Entry: 12
@@ -200,23 +200,7 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-    - Name: _temporaryModifiers
-      Entry: 7
-      Data: 2|System.Collections.Generic.Dictionary`2[[SlotModifierType, Assembly-CSharp],[System.Int32,
-        mscorlib]], mscorlib
-    - Name: comparer
-      Entry: 9
-      Data: 1
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-  _card: {fileID: 0}
+  Content: {fileID: 0}
 --- !u!114 &6163416604452465376
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -229,4 +213,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72329b59de8fef24ea8d3a3b50474a93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  newSprite: {fileID: -358813249, guid: 9fe82643c3adaac47a04ff8e7b20a0d4, type: 3}
+  newSprite: {fileID: 21300000, guid: a29ceadb681bb994896545087688effc, type: 3}
