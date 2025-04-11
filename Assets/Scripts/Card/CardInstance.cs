@@ -3,7 +3,6 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
-using UnityEditor.Localization.Editor;
 using System.Collections;
 
 public class CardInstance : SlotContent, IPointerEnterHandler, IPointerExitHandler
@@ -17,7 +16,6 @@ public class CardInstance : SlotContent, IPointerEnterHandler, IPointerExitHandl
     // Modifier storage with persistence levels
     protected Dictionary<ModifierPersistenceType, Dictionary<CardModifierType, int>> _modifiers = new();
 
-
     #region UI References
     [BoxGroup("UI References")]
     [SerializeField] private TMP_Text _cardNameText;
@@ -27,6 +25,9 @@ public class CardInstance : SlotContent, IPointerEnterHandler, IPointerExitHandl
 
     [BoxGroup("UI References")]
     [SerializeField] private TMP_Text _descriptionText;
+
+    [BoxGroup("UI References")]
+    [SerializeField] private Animator _animator;
     #endregion
 
     public void Initialize(AbstractCard template)
@@ -39,6 +40,8 @@ public class CardInstance : SlotContent, IPointerEnterHandler, IPointerExitHandl
         string description = LocalizationHandler.Instance.GetCardDescription(Template.ID);
         description = LocalizationHandler.Instance.ParseDynamicDescription(description, this);
         _descriptionText.text = description;
+
+        LoadAndPlayAnimator();
     }
 
     public void Initialize(CardInstance cardInstance)
@@ -47,10 +50,22 @@ public class CardInstance : SlotContent, IPointerEnterHandler, IPointerExitHandl
         Initialize(cardInstance.Template);
     }
 
-    /// <summary>
-    /// Gets the total modifier value of a specific type, considering all persistence levels.
-    /// </summary>
-    /// <param name="type">The type of modifier to get the value of.</param>
+    private void LoadAndPlayAnimator()
+    {
+        string path = $"Animators/{Template.ID}";
+        RuntimeAnimatorController controller = Resources.Load<RuntimeAnimatorController>(path);
+
+        if (controller != null && _animator != null)
+        {
+            _animator.runtimeAnimatorController = controller;
+            _animator.Play("Idle");
+        }
+        else
+        {
+            Debug.LogWarning($"AnimatorController not found at Resources/{path} or Animator not assigned.");
+        }
+    }
+
     public int GetModifierValue(CardModifierType type)
     {
         int total = 0;
@@ -83,12 +98,6 @@ public class CardInstance : SlotContent, IPointerEnterHandler, IPointerExitHandl
         UpdateDescription();
     }
 
-    /// <summary>
-    /// Removes a modifier from the card based on its type and persistence.
-    /// </summary>
-    /// <param name="type">The type of modifier.</param>
-    /// <param name="amount">The amount to remove.</param>
-    /// <param name="persistence">The persistence level of the modifier.</param>
     public void RemoveModifier(CardModifierType type, int amount, ModifierPersistenceType persistence)
     {
         if (_modifiers.ContainsKey(persistence) && _modifiers[persistence].ContainsKey(type))
@@ -175,7 +184,7 @@ public class CardInstance : SlotContent, IPointerEnterHandler, IPointerExitHandl
                 canvas.overrideSorting = true;
                 canvas.sortingLayerName = "UI";
             }
-            canvas.sortingOrder = 200; // Ensure on top
+            canvas.sortingOrder = 200;
         }
     }
 
