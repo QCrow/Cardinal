@@ -912,6 +912,8 @@ GameObject:
   - component: {fileID: 8535326819738143958}
   - component: {fileID: -2426851625812258039}
   - component: {fileID: 2215672854364740539}
+  - component: {fileID: 480244879796051796}
+  - component: {fileID: 1756690703586387889}
   m_Layer: 5
   m_Name: Card
   m_TagString: Untagged
@@ -1000,6 +1002,7 @@ MonoBehaviour:
   _cardNameText: {fileID: 9122785616294535413}
   _descriptionContainer: {fileID: 4784722892334397502}
   _descriptionText: {fileID: 8288186024201254627}
+  _animator: {fileID: 480244879796051796}
 --- !u!223 &-2426851625812258039
 Canvas:
   m_ObjectHideFlags: 0
@@ -1040,3 +1043,39 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 63
+--- !u!95 &480244879796051796
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7342160196888913245}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!111 &1756690703586387889
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7342160196888913245}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 0}
+  m_Animations: []
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_CullingType: 0
