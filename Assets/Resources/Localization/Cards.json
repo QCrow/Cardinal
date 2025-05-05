@@ -12,6 +12,86 @@
       "3": {
         "name": "Scout",
         "description": "Deal <Damage> damage. When moved, gain <Damage Scaling> damage up for 1 turn."
+      },
+      "4": {
+        "name": "Warrior",
+        "description": "Deal <Damage> damage. <keyword>Front</keyword>: Additionally deal <Damage> damage."
+      },
+      "5": {
+        "name": "Ranger",
+        "description": "Deal <Damage> damage. <keyword>Back</keyword>: Before attack, gain <Damage> up (stackable), if not met, reset."
+      },
+      "6": {
+        "name": "Shield Guard",
+        "description": "Gain <Shield> shield."
+      },
+      "7": {
+        "name": "Herbalist",
+        "description": "At the end of the turn, give the card to the left 4 stacks of <Damage> up (this battle)."
+      },
+      "8": {
+        "name": "Mist Mage",
+        "description": "Each turn, the first 2 times this card moves, gain 1 stack of <keyword>Charge</keyword>. <keyword>Charge</keyword>: Restore 1 MP."
+      },
+      "9": {
+        "name": "Fireball Mage",
+        "description": "<keyword>Back</keyword>: Gain 1 stack of <keyword>Charge</keyword>. <keyword>Charge</keyword>: Deal <Damage> damage."
+      },
+      "10": {
+        "name": "Charged Mage",
+        "description": "Each time a card spends <keyword>Charge</keyword>, gain 1 <keyword>Charge</keyword>. <keyword>Charge</keyword>: Spend all <keyword>Charge</keyword> on this card. Deal <Damage> damage for each."
+      },
+      "11": {
+        "name": "Peddler",
+        "description": "<keyword>Back</keyword>: Gain <Gold>."
+      },
+      "12": {
+        "name": "Tycoon",
+        "description": "<keyword>Skill</keyword>: Spend 5 <Gold> to deal that much damage to an enemy. (No <keyword>Cooldown</keyword>)"
+      },
+      "13": {
+        "name": "Mimic",
+        "description": "When in a corner, copy the attack effect of the diagonally opposite card."
+      },
+      "14": {
+        "name": "Logistics Expert",
+        "description": "All slots in this column gain <keyword>Assistance</keyword>."
+      },
+      "15": {
+        "name": "Ninja",
+        "description": "Deal <Damage> damage. <keyword>Skill</keyword>: Choose a card and swap position with it."
+      },
+      "16": {
+        "name": "Sword Oath Apprentice",
+        "description": "<keyword>Sword Oath</keyword>: Deal <Damage> damage."
+      },
+      "17": {
+        "name": "Sword Oath Seer",
+        "description": "<keyword>Sword Oath</keyword>: Gain 10 <keyword>Insight</keyword>."
+      },
+      "18": {
+        "name": "Ling, Hope’s Messenger",
+        "description": "When the player takes 100 total damage (across battles), gain 1 <keyword>Charge</keyword>. <keyword>Charge</keyword>: Permanently grant 1 <keyword>Light of Hope</keyword> to a card on the field."
+      },
+      "19": {
+        "name": "Cui, Mother of Ten Thousand Blades",
+        "description": "At the end of turn, gain 1 <keyword>Token</keyword> for each adjacent <keyword>Sword Oath</keyword> card. If you have more than 44 <keyword>Token</keyword>, forge a legendary sword. (Tokens persist across battles.)"
+      },
+      "20": {
+        "name": "Mono, Point of Sundering Realms",
+        "description": "Deal <Damage> damage. <keyword>Center</keyword>: At the end of turn, destroy all cards on the field. Gain <Damage> up equal to the damage dealt this turn (this battle)."
+      },
+      "21": {
+        "name": "Si, Lord of the Sword Oath",
+        "description": "Deal <Damage> damage. <keyword>Front</keyword>: For each <keyword>Sword Oath</keyword> card on the field, trigger this effect again."
+      },
+      "22": {
+        "name": "Xis, Hero of Dreams",
+        "description": "Gain <Shield> shield. When attacking, if this card did not move this turn, gain <Shield> up for this battle."
+      },
+      "23": {
+        "name": "Greed",
+        "description": "While in backpack, gain 20% more <Gold>. If current <Gold> is less than X, all cards deal 50% less <Damage> (rounded up)."
       }
     },
     "cn": {

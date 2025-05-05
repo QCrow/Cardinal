@@ -41,7 +41,7 @@ public class NavBarManager : MonoBehaviour
     {
         if (mapRect != null)
         {
-            mapRect.anchoredPosition = new Vector2(Screen.width, 0); // Start off-screen to the right
+            mapRect.anchoredPosition = new Vector2(Screen.width * 2, 0); // Start off-screen to the right
         }
     }
 
@@ -70,7 +70,7 @@ public class NavBarManager : MonoBehaviour
         if (mapRect == null) return;
 
         // Tween the map out of view
-        mapRect.DOAnchorPosX(Screen.width, 0.5f)
+        mapRect.DOAnchorPosX(Screen.width * 2, 0.5f)
                .SetEase(Ease.InQuad);
         mapOpen = false;
     }
